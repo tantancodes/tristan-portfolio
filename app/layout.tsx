@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Menu from "@/components/Menu";
 import Footer from "@/components/Footer";
 import { site } from "@/content/projects";
 import "./globals.css";
@@ -29,7 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <Menu />
         <main id="main">{children}</main>
         <Footer />
       </body>

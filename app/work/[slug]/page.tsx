@@ -36,7 +36,7 @@ export default async function CaseStudy({ params }: Props) {
   return (
     <article className="case container">
       <FadeIn>
-        <Link href="/#work" className="back-link">← All work</Link>
+        <Link href="/#projects" className="back-link">← All projects</Link>
         <p className="eyebrow">{project.label}</p>
         <h1 className="case-headline">{project.headline}</h1>
       </FadeIn>
