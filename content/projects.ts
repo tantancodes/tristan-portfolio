@@ -56,8 +56,8 @@ export const site = {
   firstName: "Tristan",
   // Hero sentence is split around the inline avatar:  "I'm [photo] Tristan, <tagline>"
   tagline: "a data scientist who builds tools that help people learn and grow.",
-  // Replace public/avatar.svg with a real photo (e.g. public/avatar.jpg) and update this path.
-  avatar: "/avatar.svg",
+  // Your photo. To change it, replace public/avatar.jpg (keep it a .jpg, or update this path).
+  avatar: "/avatar.jpg",
   location: "Berkeley, CA",
   email: "tristantan@berkeley.edu",
   github: "https://github.com/tantancodes",
