@@ -54,10 +54,9 @@ export type PlayItem = {
 export const site = {
   name: "Tristan Tan",
   firstName: "Tristan",
-  // Hero sentence is split around the inline avatar:  "I'm [photo] Tristan, <tagline>"
-  tagline: "a data scientist who builds tools that help people learn and grow.",
-  // Your photo. To change it, replace public/avatar.jpg (keep it a .jpg, or update this path).
-  avatar: "/avatar.jpg",
+  // Your photo (background removed), shown inline in the hero: "I'm [photo] Tristan."
+  // Made from _originals/ (git-ignored, never published): trimmed, resized, metadata stripped.
+  avatar: "/avatar.webp",
   location: "Berkeley, CA",
   email: "tristantan@berkeley.edu",
   github: "https://github.com/tantancodes",
@@ -65,6 +64,13 @@ export const site = {
   resume: "/resume.pdf", // TODO: drop your resume at public/resume.pdf
   description:
     "Tristan Tan: data scientist at UC Berkeley (Data Science + Economics '29) building tools that help people learn and grow.",
+};
+
+/** The opening screen (components/Hero.tsx). */
+export const hero = {
+  // Typed out after "I am a", one at a time, on a loop.
+  roles: ["designer", "researcher", "student", "teacher"],
+  cta: { label: "View my work", href: "#work" },
 };
 
 export const about = {

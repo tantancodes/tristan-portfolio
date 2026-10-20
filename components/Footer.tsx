@@ -1,3 +1,4 @@
+import ThemeToggle from "./ThemeToggle";
 import { site } from "@/content/projects";
 
 export default function Footer() {
@@ -23,6 +24,9 @@ export default function Footer() {
               </a>
             </li>
           ))}
+          <li>
+            <ThemeToggle />
+          </li>
         </ul>
       </div>
     </footer>

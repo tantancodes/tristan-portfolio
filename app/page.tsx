@@ -1,25 +1,13 @@
 import Link from "next/link";
 import FadeIn from "@/components/FadeIn";
-import { about, play, projects, site } from "@/content/projects";
+import Hero from "@/components/Hero";
+import { about, play, projects } from "@/content/projects";
 
 export default function Home() {
   return (
     <>
       {/* ---------- Hero ---------- */}
-      <section className="hero container">
-        <FadeIn>
-          <h1 className="hero-line">
-            I&rsquo;m{" "}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={site.avatar} alt={`Photo of ${site.firstName}`} className="avatar" width={96} height={96} />{" "}
-            {site.firstName}, {site.tagline}
-          </h1>
-        </FadeIn>
-        <a href="#work" className="scroll-cue" aria-label="Scroll to work">
-          <span>Scroll</span>
-          <span className="scroll-line" aria-hidden="true" />
-        </a>
-      </section>
+      <Hero />
 
       {/* ---------- Work ---------- */}
       <section id="work" className="section container">

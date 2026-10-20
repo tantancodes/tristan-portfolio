@@ -6,3 +6,6 @@ next-env.d.ts
 .vercel
 .env*.local
 .DS_Store
+
+# Original photos (full size, may contain GPS/camera metadata). Never published.
+_originals/
