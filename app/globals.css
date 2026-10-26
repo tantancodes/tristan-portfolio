@@ -359,3 +359,17 @@ img, svg { display: block; max-width: 100%; }
   .stat { grid-column: 2; text-align: left; }
   .work-arrow { display: none; }
 }
+
+/* Real product screenshots on case studies */
+.cover-image { display: block; width: 100%; height: auto; }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
+.gallery-item { margin: 0; }
+.gallery-item img {
+  display: block; width: 100%; height: auto;
+  border-radius: var(--radius); border: 1px solid var(--line);
+}
+.gallery-item figcaption { margin-top: 10px; font-size: 14px; color: var(--ink-soft); }
+@media (max-width: 720px) { .gallery { grid-template-columns: minmax(0, 1fr); } }
+.gallery-item--phone img { max-width: 300px; margin: 0 auto; }
+.gallery-item--phone figcaption { text-align: center; }
+.case-links { display: flex; flex-wrap: wrap; gap: 12px; }

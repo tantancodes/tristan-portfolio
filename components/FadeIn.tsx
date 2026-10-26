@@ -13,7 +13,7 @@ export default function FadeIn({
 }: {
   children: React.ReactNode;
   delay?: number;
-  as?: "div" | "section" | "li";
+  as?: "div" | "section" | "li" | "figure";
   className?: string;
 }) {
   const ref = useRef<HTMLElement>(null);
