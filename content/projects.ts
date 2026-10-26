@@ -42,6 +42,8 @@ export type Project = {
   highlights: Highlight[]; // aim for 2–3
   lookingForward: string;
   links?: { label: string; href: string }[];
+  /** Screenshots of the real product. The first replaces the generated cover; the rest form a gallery. */
+  images?: { src: string; alt: string; caption?: string; phone?: boolean }[];
 };
 
 /** One role on the Experience timeline (LinkedIn + resume). */
@@ -115,9 +117,9 @@ export const experience: Job[] = [
         title: "Undergraduate Research Assistant",
         dates: "Sep 2026 – Present", // joined as a URAP apprentice in Jan 2026 (LinkedIn: "Jan 2026 – Present")
         points: [
-          "Developed an interactive 3D annotation platform (Next.js, TypeScript, React Three Fiber) integrating 314 scholarly annotations with 607 spatial regions across 6 photogrammetric Egyptian coffin models.",
-          "Implemented mesh raycasting and bidirectional spatial selection, linking 3D hieroglyphic inscriptions to scholarly translations.",
-          "Built a structured annotation data pipeline that connects existing scholarly datasets to the 3D viewer, reducing reliance on manual XML lookup.",
+          "Built the BD3D research viewer (Next.js, TypeScript, React Three Fiber), linking 314 scholarly annotations to 607 surface regions across 6 photogrammetric Egyptian coffin models, with two-way selection, raking-light inspection, and collection-wide search.",
+          "Designed a compressed 3D asset pipeline (meshopt glTF, tiered textures, checksummed provenance) that cut exhibit downloads by 74% (82 MB to 21 MB across six coffins) and geometry parsing from 82–132 ms to 2–3 ms.",
+          "Built a structured annotation data pipeline with schema validation, replacing manual XML lookup; 127 automated tests run in CI.",
           "Lead the incoming URAP students and the design team.",
         ],
       },
@@ -201,9 +203,9 @@ export const experience: Job[] = [
 
 export const projectCards: ProjectCard[] = [
   {
-    title: "3D Egyptian Coffin Annotation Platform",
-    stack: ["Next.js", "TypeScript", "React Three Fiber", "Supabase"],
-    summary: "Pins 314 scholarly annotations to 607 regions across 6 photogrammetric coffin models; click a glyph to reach its translation, and back.",
+    title: "BD3D: 3D Egyptian Coffin Research Viewer",
+    stack: ["Next.js", "TypeScript", "React Three Fiber", "three.js", "glTF", "Playwright"],
+    summary: "Read six ancient coffins in 3D: 314 scholarly annotations linked to 607 surface regions, raking light, word-to-location links, and a compressed asset pipeline that cut downloads by 74%.",
     caseStudy: "egyptology-3d",
   },
   {
@@ -278,38 +280,55 @@ export const about = {
 export const projects: Project[] = [
   {
     slug: "egyptology-3d",
-    headline: "Anchoring translations to the surface of ancient coffins",
+    headline: "Reading ancient coffins where the words were written",
     year: "2026–now",
     org: "Archaeological Research Facility, UC Berkeley",
     role: "Undergraduate Research Assistant",
 
-    label: "Research platform · Egyptology",
+    label: "Research platform · Egyptology · 3D",
     timeline: "Jan 2026 – present\nURAP apprentice (Jan–Aug), Research Assistant (Sep–)",
     team: "URAP students and a design team, both of which I now lead",
-    myRole: "Full-stack and 3D engineering, now team lead",
-    skills: ["Next.js", "TypeScript", "React Three Fiber", "Supabase", "Postgres + RLS", "Vercel"],
+    myRole: "3D engineering, asset pipeline, product design, team lead",
+    skills: [
+      "Next.js",
+      "TypeScript",
+      "React Three Fiber",
+      "three.js",
+      "glTF + meshopt",
+      "zod",
+      "Vitest",
+      "Playwright",
+      "GitHub Actions",
+    ],
     cover: "coffin",
     goal:
-      "Coffin inscriptions are read and translated in one place, while the coffin itself is studied in another. The goal is a single web platform where researchers can open a 3D model of a coffin and attach annotations and translations directly to the spot on the surface they describe.",
+      "Egyptian coffins were written to be read in place: where a spell sits on the lid or the foot end is part of its meaning. The Berkeley Book of the Dead in 3D project had photogrammetric models of six coffins and scholarly editions tying 314 entries to 607 regions on their surfaces. I built the research viewer that brings the two together: turn a coffin, click any outlined region to read its hieroglyphs, transliteration and translation, or start from the text and fly to where it is written.",
     highlights: [
       {
-        title: "Clicks that land on the coffin, not the screen",
+        title: "The object and the text, linked both ways",
         body:
-          "Mesh raycasting projects a click from the camera into the scene to find the exact point it hits on the coffin. Selection works both ways: pick an inscription on the model to open its translation, or pick a translation to fly to its place on the surface.",
+          "Selection reuses the source edition's own polygon rule, so what you click is exactly what the editors drew. Hover a region and its entry lights up; hover an entry and its regions light up. Words in a transliteration link to the edition's dictionary and to every place that word occurs on the coffin. Every view, selection and light angle is a shareable link.",
         stat: "607",
-        statLabel: "spatial regions on 6 coffin models",
+        statLabel: "regions linked to 314 entries",
       },
       {
-        title: "Scholarship, wired to the model",
+        title: "A 3D asset pipeline with provenance",
         body:
-          "A structured data pipeline brings existing scholarly datasets into the 3D viewer, so researchers no longer dig through XML files by hand to match a translation to its spot on the coffin.",
-        stat: "314",
-        statLabel: "scholarly annotations integrated",
+          "I converted the source OBJ models and 4096 px photographs into compressed glTF and tiered textures without moving a vertex. Each file records its own checksum and its source's, and tests check every compressed model against the original. The viewer shows the coffin from small preview files first, then loads the resolution each device can handle.",
+        stat: "−74%",
+        statLabel: "total download, all six coffins (standard quality)",
       },
       {
-        title: "Permissions enforced by the database",
+        title: "Raking light, kept honest",
         body:
-          "Annotations live in Supabase Postgres with row-level security, so the rules for who can read or edit each note are checked by the database itself, not just hidden in the UI. The app is deployed on Vercel.",
+          "A real directional light with shadow maps sweeps across the scanned surface to show its relief. The meshes are too coarse to hold individual carved signs, which live in the photographs, so the interface says so rather than faking detail the scan never measured.",
+      },
+      {
+        title: "Engineered to be trusted",
+        body:
+          "Research data is validated against a schema with two-way link checks at build time. 82 unit tests cover the geometry math, search and linking logic; 45 browser tests drive every coffin, including accessibility scans; CI runs it all on every push.",
+        stat: "127",
+        statLabel: "automated tests in CI",
       },
       {
         title: "From apprentice to lead",
@@ -318,8 +337,38 @@ export const projects: Project[] = [
       },
     ],
     lookingForward:
-      // TODO: replace with what's actually next for the project.
-      "Next I want to make the platform easy for new students to contribute to, and to grow it from a few models into a collection researchers return to.",
+      "With the lab's high-resolution scans, I could bake normal maps so raking light reveals individual carved signs. Next on the list: testing on physical phones, and a side-by-side view for comparing the same spell across coffins.",
+    links: [
+      { label: "View the code", href: "https://github.com/tantancodes/bd3d-website/tree/redesign/foundation" },
+      { label: "Engineering write-up", href: "https://github.com/tantancodes/bd3d-website/blob/redesign/foundation/docs/CASE-STUDY.md" },
+    ],
+    images: [
+      {
+        src: "/work/egyptology-3d/exhibit-selected.jpg",
+        alt: "The coffin of Psamtik-Seneb in the 3D viewer with its central inscription selected and the translation open beside it",
+      },
+      {
+        src: "/work/egyptology-3d/vocabulary.jpg",
+        alt: "A transliterated word opened in the reading panel, with its location highlighted on the coffin",
+        caption: "A word in the transliteration, its dictionary entry, and where it appears on the object.",
+      },
+      {
+        src: "/work/egyptology-3d/raking-light.jpg",
+        alt: "The coffin lit by a low raking light from the left, with the lighting panel open",
+        caption: "Raking light from the left across the scanned surface.",
+      },
+      {
+        src: "/work/egyptology-3d/search.jpg",
+        alt: "Search results for Osiris across all six coffins",
+        caption: "One search across all 314 entries; each result opens the coffin at that spot.",
+      },
+      {
+        src: "/work/egyptology-3d/mobile-exhibit.jpg",
+        alt: "The Irethoriru coffin in the viewer on a phone",
+        caption: "The same viewer on a phone.",
+        phone: true,
+      },
+    ],
   },
 
   {

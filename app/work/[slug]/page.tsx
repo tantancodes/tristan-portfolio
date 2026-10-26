@@ -23,6 +23,7 @@ export default async function CaseStudy({ params }: Props) {
   const project = getProject(slug);
   if (!project) notFound();
 
+  const [cover, ...gallery] = project.images ?? [];
   const index = projects.indexOf(project);
   const next = projects[(index + 1) % projects.length];
 
@@ -53,7 +54,12 @@ export default async function CaseStudy({ params }: Props) {
       </FadeIn>
 
       <FadeIn delay={140} className="cover-frame">
-        <Cover motif={project.cover} seed={project.slug} title={project.headline} />
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="cover-image" src={cover.src} alt={cover.alt} width={1440} height={900} />
+        ) : (
+          <Cover motif={project.cover} seed={project.slug} title={project.headline} />
+        )}
       </FadeIn>
 
       <FadeIn as="section" className="case-section">
@@ -83,6 +89,28 @@ export default async function CaseStudy({ params }: Props) {
           ))}
         </ol>
       </section>
+
+      {gallery.length > 0 && (
+        <section className="case-section">
+          <FadeIn>
+            <h2 className="section-label">In the product</h2>
+          </FadeIn>
+          <div className="gallery">
+            {gallery.map((image, i) => (
+              <FadeIn
+                as="figure"
+                key={image.src}
+                delay={i * 60}
+                className={`gallery-item${image.phone ? " gallery-item--phone" : ""}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={image.src} alt={image.alt} loading="lazy" />
+                {image.caption && <figcaption>{image.caption}</figcaption>}
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+      )}
 
       <FadeIn as="section" className="case-section">
         <h2 className="section-label">Looking forward</h2>
