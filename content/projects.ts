@@ -11,7 +11,7 @@
 /* ---------- Types (describe the shape of the content) ---------- */
 
 /** Which generated SVG illustration a project's cover uses. See components/Cover.tsx. */
-export type CoverMotif = "coffin" | "mesh" | "retrieval" | "houses" | "waveform";
+export type CoverMotif = "coffin" | "mesh" | "retrieval" | "houses" | "waveform" | "candles";
 
 export type Highlight = {
   title: string;
@@ -42,9 +42,14 @@ export type Project = {
   highlights: Highlight[]; // aim for 2–3
   lookingForward: string;
   links?: { label: string; href: string }[];
-  /** Screenshots of the real product. The first replaces the generated cover; the rest form a gallery. */
+  /** A recorded walkthrough of the real product, shown with controls at the top of the case study. */
+  demo?: Clip;
+  /** Screenshots of the real product. The first replaces the generated cover (when there's no demo); the rest form a gallery. */
   images?: { src: string; alt: string; caption?: string; phone?: boolean }[];
 };
+
+/** A silent screen recording plus the still frame shown before it loads (or instead of it, for reduced motion). */
+export type Clip = { video: string; poster: string; label: string };
 
 /** One role on the Experience timeline (LinkedIn + resume). */
 export type Role = {
@@ -67,6 +72,13 @@ export type ProjectCard = {
   summary: string;
   caseStudy?: string;
   href?: string;
+  /** Short muted loop that autoplays in the card. Without one, the card shows its generated cover. */
+  preview?: Clip;
+  cover: CoverMotif;
+  /** Small tag on the media, e.g. "Live app". */
+  badge?: string;
+  /** Where the running product lives, if anywhere. */
+  live?: string;
 };
 
 export type PlayItem = {
@@ -85,8 +97,8 @@ export const site = {
   location: "Berkeley, CA",
   email: "tristantan@berkeley.edu",
   github: "https://github.com/tantancodes",
-  linkedin: "https://www.linkedin.com/in/tristan-yuhin-tan/", // TODO: your LinkedIn URL
-  resume: "/resume.pdf", // TODO: drop your resume at public/resume.pdf
+  linkedin: "https://www.linkedin.com/in/tristan-yuhin-tan/",
+  resume: "/resume.pdf", // web copy built from resume/resume.tex, without the phone number
   // Your phone number from the resume is deliberately left off the site (it attracts spam).
   description:
     "Tristan Tan: Data Science & Economics at UC Berkeley. Research in 3D digital humanities and photogrammetry, NLP retrieval, and machine learning.",
@@ -98,8 +110,8 @@ export const hero = {
   // Typed out after "I am a", one at a time, on a loop.
   roles: ["designer", "researcher", "student", "teacher"],
   ctas: [
-    { label: "View experience", href: "#experience" },
     { label: "View projects", href: "#projects" },
+    { label: "View experience", href: "#experience" },
   ],
 };
 
@@ -131,7 +143,6 @@ export const experience: Job[] = [
     caseStudy: "ten-strands",
     roles: [
       {
-        // CHECK: LinkedIn says "Data Analyst · Internship, Aug 2026 – Present"; your first notes said Jan 2026.
         title: "Data Research Intern",
         dates: "Sep 2026 – Present",
         points: [
@@ -160,7 +171,7 @@ export const experience: Job[] = [
   {
     org: "Lucarelli Photogrammetry Lab, UC Berkeley",
     place: "Berkeley, CA",
-    caseStudy: "bd3d",
+    caseStudy: "reconstruction-quality",
     roles: [
       {
         title: "Undergraduate Research Apprentice",
@@ -207,36 +218,64 @@ export const projectCards: ProjectCard[] = [
     stack: ["Next.js", "TypeScript", "React Three Fiber", "three.js", "glTF", "Playwright"],
     summary: "Read six ancient coffins in 3D: 314 scholarly annotations linked to 607 surface regions, raking light, word-to-location links, and a compressed asset pipeline that cut downloads by 74%.",
     caseStudy: "egyptology-3d",
+    cover: "coffin",
+    badge: "Research platform",
+    preview: {
+      video: "/work/egyptology-3d/preview.mp4",
+      poster: "/work/egyptology-3d/preview-poster.jpg",
+      label: "The BD3D viewer: the landing page, the six-coffin collection, then hovering inscribed regions on the Psamtik coffin",
+    },
+  },
+  {
+    title: "California Housing Atlas",
+    stack: ["Python", "Streamlit", "Plotly", "GeoPandas", "PostgreSQL", "Docker"],
+    summary: "A public explorer of home values and incomes across all 58 California counties, built only on real Census data with recorded provenance, plus a separate local mode for authorized MLS feeds.",
+    caseStudy: "housing-atlas",
+    cover: "houses",
+    badge: "Live app",
+    live: "https://california-housing-atlas.streamlit.app/",
+    preview: {
+      video: "/work/housing-atlas/preview.mp4",
+      poster: "/work/housing-atlas/preview-poster.jpg",
+      label: "Switching the California county map from home value to value-to-income ratio",
+    },
   },
   {
     title: "K–12 Sustainability Evidence Retrieval",
     stack: ["Python", "BM25", "Sentence Transformers", "CrossEncoder"],
     summary: "Hybrid lexical + neural search over 10,000+ district pages and policies. Recall@5 +35%, manual source discovery −76%.",
     caseStudy: "ten-strands",
+    cover: "retrieval",
   },
   {
     title: "Automated Home Valuation",
     stack: ["Python", "scikit-learn", "XGBoost"],
     summary: "End-to-end pipeline on 297K+ California sales with chronological backtesting. 0.92 R², 6% median error.",
     caseStudy: "idx-home-prices",
+    cover: "houses",
   },
   {
     title: "Predicting 3D Reconstruction Quality",
     stack: ["Python", "Agisoft Metashape", "Ridge regression"],
     summary: "Early structure-from-motion signals predict final scan quality: 13.7% lower geometric RMSE than a reprojection-error baseline.",
-    caseStudy: "bd3d",
+    caseStudy: "reconstruction-quality",
+    cover: "mesh",
   },
   {
     title: "Spotify Analytics Platform",
-    stack: ["TypeScript", "Node.js", "FastAPI", "PostgreSQL", "Pandas", "Tableau"],
-    summary: "Spotify OAuth ingest of 1,000+ tracks and 50+ artists, listening analytics, and content-based recommendations via audio-feature cosine similarity.",
+    stack: ["Python", "FastAPI", "SQLAlchemy", "PostgreSQL", "Spotify Web API"],
+    summary: "Spotify OAuth sign-in and listening-history ingest into Postgres, with a recommender redesigned around artist affinity after Spotify shut off audio features.",
     caseStudy: "spotify-analytics",
+    cover: "waveform",
   },
   {
     title: "Quantitative ML Stock Analytics Dashboard",
     stack: ["Python", "Pandas", "scikit-learn", "Streamlit", "yfinance"],
     summary: "Live market data, technical indicators (RSI, MACD, Bollinger Bands), and SVR / Random Forest models evaluated with time-series-aware splits on up to 365 days of history.",
-    // href: "https://github.com/tantancodes/...", // TODO: add a link if the repo is public
+    href: "https://stock-predictor-tristan-project.streamlit.app/",
+    live: "https://stock-predictor-tristan-project.streamlit.app/",
+    cover: "candles",
+    badge: "Live app",
   },
 ];
 
@@ -244,7 +283,7 @@ export const projectCards: ProjectCard[] = [
 
 export const education = {
   school: "University of California, Berkeley",
-  degree: "B.A. Data Science & Economics", // TODO: confirm B.A. vs B.S.
+  degree: "Data Science & Economics",
   dates: "Expected May 2029",
   gpa: "3.88",
   coursework: [
@@ -342,6 +381,11 @@ export const projects: Project[] = [
       { label: "View the code", href: "https://github.com/tantancodes/bd3d-website/tree/redesign/foundation" },
       { label: "Engineering write-up", href: "https://github.com/tantancodes/bd3d-website/blob/redesign/foundation/docs/CASE-STUDY.md" },
     ],
+    demo: {
+      video: "/work/egyptology-3d/demo.mp4",
+      poster: "/work/egyptology-3d/demo-poster.jpg",
+      label: "A walkthrough of the BD3D viewer: the landing page, the six-coffin collection, and inscribed regions on the Psamtik coffin linked to their translations",
+    },
     images: [
       {
         src: "/work/egyptology-3d/exhibit-selected.jpg",
@@ -372,7 +416,60 @@ export const projects: Project[] = [
   },
 
   {
-    slug: "bd3d",
+    slug: "housing-atlas",
+    headline: "Mapping California housing without faking the data",
+    year: "2026",
+    org: "Personal project",
+    role: "Solo developer",
+
+    label: "Data product · Public data",
+    timeline: "Oct 2026",
+    team: "Solo",
+    myRole: "Product design, data pipeline, testing, and deployment",
+    skills: ["Python", "Streamlit", "Plotly", "GeoPandas", "pandas", "PostgreSQL", "Docker", "GitHub Actions"],
+    cover: "houses",
+    goal:
+      "Housing data is easy to misread: a county's median home value is not a sale price, and summary statistics can't be turned back into individual records. I built an atlas that lets anyone compare home values and incomes across California's 58 counties, using only real public data and saying plainly what each number can and can't tell you.",
+    highlights: [
+      {
+        title: "Real data, with receipts",
+        body:
+          "The public view is built from official Census bulk tables: 58 counties across three ACS five-year vintages. Every download records its source URL, retrieval time and SHA-256 hash. There are no fabricated property records anywhere in the public app.",
+        stat: "174",
+        statLabel: "county-year estimates, all real",
+      },
+      {
+        title: "Three kinds of data, kept apart",
+        body:
+          "County estimates, published field-level summaries, and authorized MLS feeds each get their own data contract and their own mode, so the app can't quietly mix a home-value estimate with a transaction price. Licensed MLS data only ever runs locally.",
+      },
+      {
+        title: "Built to be checked",
+        body:
+          "A modular Python pipeline feeds a Streamlit and Plotly front end, with GeoPandas for county geometry and an optional PostgreSQL backend with checksum-tracked migrations. Tests cover the pipeline, spatial joins, dashboard filters, and SQL-to-Python parity, and CI runs them on every push.",
+        stat: "22",
+        statLabel: "automated tests, run in CI",
+      },
+    ],
+    lookingForward:
+      "Next: usability testing with students and analysts, a broader mobile and accessibility pass, and verifying the pipeline end to end on a full authorized MLS feed.",
+    links: [
+      { label: "Open the live app", href: "https://california-housing-atlas.streamlit.app/" },
+      { label: "View the code", href: "https://github.com/tantancodes/california-housing-atlas" },
+    ],
+    demo: {
+      video: "/work/housing-atlas/demo.mp4",
+      poster: "/work/housing-atlas/overview.jpg",
+      label: "A walkthrough of the California Housing Atlas: the county map, switching indicators, a county close-up, and comparisons",
+    },
+    images: [
+      { src: "/work/housing-atlas/overview.jpg", alt: "The California Housing Atlas overview with headline county statistics" },
+      { src: "/work/housing-atlas/compare.jpg", alt: "Three counties compared on home value, household income and value-to-income ratio", caption: "Comparing counties on value, income, and the ratio between them." },
+    ],
+  },
+
+  {
+    slug: "reconstruction-quality",
     headline: "Predicting 3D scan quality before spending the compute",
     year: "2025–26",
     org: "Lucarelli Photogrammetry Lab, UC Berkeley",
@@ -380,7 +477,7 @@ export const projects: Project[] = [
 
     label: "Research · Photogrammetry",
     timeline: "Aug 2025 – May 2026",
-    team: "Lucarelli Photogrammetry Lab (BD3D)", // TODO: e.g. "PI, grad mentor, 2 undergrads"
+    team: "Lucarelli Photogrammetry Lab, UC Berkeley",
     myRole: "Pipeline, feature engineering, and modeling",
     skills: ["Python", "Agisoft Metashape", "ICP", "Ridge regression", "LOOCV"],
     cover: "mesh",
@@ -419,8 +516,8 @@ export const projects: Project[] = [
     role: "Data Research Intern",
 
     label: "Applied NLP · Education",
-    timeline: "Sep 2026 – present", // CHECK: LinkedIn says Aug 2026; your first notes said Jan 2026
-    team: "Ten Strands and the UC Berkeley Data Discovery program", // TODO: team size/roles
+    timeline: "Sep 2026 – present",
+    team: "Ten Strands × UC Berkeley Data Discovery, Indicator Expansion team",
     myRole: "Retrieval system design and evaluation",
     skills: ["Python", "BM25", "Sentence Transformers", "CrossEncoder", "Recall@K / MRR"],
     cover: "retrieval",
@@ -446,8 +543,7 @@ export const projects: Project[] = [
       },
     ],
     lookingForward:
-      // TODO: replace with what's actually next.
-      "I'm interested in keeping the evaluation honest as the corpus grows, and in making the results easy for non-technical users to trust.",
+      "This fall I'm on the Indicator Expansion team, collecting district-level environmental indicators for new regions: the same kind of evidence the retrieval system is built to surface.",
   },
 
   {
@@ -488,34 +584,33 @@ export const projects: Project[] = [
 
   {
     slug: "spotify-analytics",
-    headline: "Turning listening history into better recommendations",
-    year: "2026", // TODO: confirm year
+    headline: "Building a recommender on an API that keeps shrinking",
+    year: "2026",
     org: "Personal project",
     role: "Solo developer",
 
-    label: "Side project · Full-stack",
-    timeline: "2026", // TODO
+    label: "Side project · Backend",
+    timeline: "Summer 2026",
     team: "Solo",
-    myRole: "Design, backend, data, and deployment",
-    skills: ["TypeScript", "Node.js", "Python", "FastAPI", "PostgreSQL", "Pandas", "Tableau"],
+    myRole: "API design, data model, auth, and recommender design",
+    skills: ["Python", "FastAPI", "SQLAlchemy", "PostgreSQL (Neon)", "Spotify Web API", "OAuth 2.0"],
     cover: "waveform",
     goal:
-      "Build an analytics platform on top of my own Spotify data: sign in with Spotify, store listening history, and use it to power a recommendation engine.",
+      "Build an analytics backend on top of real Spotify accounts: sign in with Spotify, store each listener's history in Postgres, and use it to recommend tracks they haven't heard.",
     highlights: [
       {
         title: "Real sign-in, real data",
         body:
-          "Users authenticate with Spotify OAuth 2.0, and the FastAPI backend ingests and normalizes their listening history (1,000+ tracks, 50+ artists) into PostgreSQL.",
+          "Users log in through Spotify's OAuth 2.0 authorization-code flow. A FastAPI backend with SQLAlchemy ingests their top tracks and artists into a normalized Postgres schema of users, artists, tracks, and timestamped listening history.",
       },
       {
-        title: "A recommendation engine on top",
+        title: "Designing around a disappearing API",
         body:
-          "Listening behavior is analyzed with Pandas and Tableau, and a content-based recommender suggests new tracks by cosine similarity over Spotify audio features.",
+          "Spotify closed its audio-features endpoint to new apps in late 2024, and its 2026 Dev Mode changes removed popularity, related artists, and recommendations. Genre tags came back empty for every artist I tested. So the recommender scores candidates by recency-weighted artist affinity, with genre overlap kept as a secondary signal in case Spotify fixes it.",
       },
     ],
     lookingForward:
-      // TODO: replace with what's actually next.
-      "I'd like to add a way to measure whether the recommendations are good, beyond whether they feel right.",
+      "Dev Mode caps an app at five users, and with one listener the pool of unheard candidate tracks is empty by design. Widening that pool is the next problem to solve.",
     links: [{ label: "View on GitHub", href: "https://github.com/tantancodes/spotify-analytics" }],
   },
 ];

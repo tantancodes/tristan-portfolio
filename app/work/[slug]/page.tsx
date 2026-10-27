@@ -54,7 +54,20 @@ export default async function CaseStudy({ params }: Props) {
       </FadeIn>
 
       <FadeIn delay={140} className="cover-frame">
-        {cover ? (
+        {project.demo ? (
+          <video
+            className="cover-image demo-video"
+            src={project.demo.video}
+            poster={project.demo.poster}
+            aria-label={project.demo.label}
+            controls
+            muted
+            playsInline
+            preload="metadata"
+            width={1280}
+            height={800}
+          />
+        ) : cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img className="cover-image" src={cover.src} alt={cover.alt} width={1440} height={900} />
         ) : (

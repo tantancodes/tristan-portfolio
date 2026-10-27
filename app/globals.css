@@ -116,10 +116,12 @@ img, svg { display: block; max-width: 100%; }
 /* ============================================================
    4. Home
    ============================================================ */
+/* The hero stops short of the fold on purpose: the top of the first project's
+   video shows at the bottom of the first screen, so the work is one scroll away. */
 .hero {
-  min-height: 100svh;
+  min-height: calc(100svh - 210px);
   display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 3vw, 32px);
-  padding-top: 64px; padding-bottom: 96px;
+  padding-top: 88px; padding-bottom: 40px;
 }
 .hero-eyebrow {
   font-family: var(--font-code); font-size: 13px; letter-spacing: 0.04em;
@@ -177,6 +179,7 @@ img, svg { display: block; max-width: 100%; }
 .arrow-link:hover .line-new, .arrow-link:focus-visible .line-new { width: 100%; }
 
 .section { padding-top: 96px; scroll-margin-top: 72px; }
+.section--work { padding-top: 24px; }
 .section-label { margin-bottom: 20px; }
 
 .work-list { border-top: 1px solid var(--line); }
@@ -235,23 +238,61 @@ img, svg { display: block; max-width: 100%; }
 .job-points li::before { content: ""; position: absolute; left: 2px; top: 0.72em; width: 6px; height: 1px; background: var(--ink-soft); }
 .job-tags { margin-top: 8px; font-family: var(--font-code); font-size: 12px; color: var(--ink-soft); }
 
-/* ---------- Project cards ---------- */
-.project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.project-grid > li { display: flex; }
-.project-card {
-  flex: 1; display: flex; flex-direction: column; gap: 10px;
-  padding: 26px; border: 1px solid var(--line); border-radius: var(--radius);
-  background: var(--surface); text-decoration: none;
+/* ---------- Project cards ----------
+   Media first: a short muted loop of the real product (or generated cover art),
+   then the words. The whole card is one link via .stretched; "Live app" sits above it. */
+.work-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.work-grid > li { display: flex; }
+.work-grid > li.is-featured { grid-column: 1 / -1; }
+.work-card {
+  position: relative; flex: 1; display: flex; flex-direction: column;
+  border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  background: var(--surface);
   transition: border-color 0.25s, transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
 }
-.project-card.is-link:hover {
-  color: inherit; border-color: var(--ink-soft); transform: translateY(-3px);
-  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.3);
+.work-card:hover, .work-card:focus-within {
+  border-color: var(--ink-soft); transform: translateY(-3px);
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.35);
 }
+.work-media {
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  background: var(--cover-bg); border-bottom: 1px solid var(--line);
+}
+.is-featured .work-media { aspect-ratio: 16 / 8.5; }
+.work-media > .media-fill, .work-media > svg {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center;
+  transition: transform 0.6s var(--ease);
+}
+.work-card:hover .work-media > * { transform: scale(1.025); }
+.work-badge {
+  position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 999px;
+  font-family: var(--font-code); font-size: 11px; letter-spacing: 0.02em;
+  color: #fff; background: rgba(10, 10, 10, 0.62); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.work-body { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 22px 24px 24px; }
+.is-featured .work-body { padding: 26px 30px 28px; }
+.is-featured .project-title { font-size: 24px; }
 .project-title { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.25; }
+.project-title a { text-decoration: none; }
+.stretched::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.stretched:focus-visible { outline: none; }
+.work-card:has(.stretched:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
 .project-summary { color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
 .project-stack { margin-top: auto; padding-top: 8px; font-family: var(--font-code); font-size: 12px; color: var(--ink-soft); }
-.project-go { font-size: 14px; font-weight: 500; }
+.work-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 6px; font-size: 14px; font-weight: 500; }
+.work-cta { transition: transform 0.3s var(--ease); }
+.work-card:hover .work-cta { transform: translateX(3px); }
+.work-live {
+  position: relative; z-index: 2; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px;
+  text-decoration: none; font-size: 13px;
+}
+.work-live:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.demo-video { background: #000; }
+@media (prefers-reduced-motion: reduce) {
+  .work-card, .work-media > *, .work-cta { transition: none; }
+  .work-card:hover { transform: none; }
+  .work-card:hover .work-media > * { transform: none; }
+}
 
 /* ---------- Education & skills ---------- */
 .edu-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 40px; border-top: 1px solid var(--line); padding-top: 28px; }
@@ -353,7 +394,10 @@ img, svg { display: block; max-width: 100%; }
    ============================================================ */
 @media (max-width: 760px) {
   .job { grid-template-columns: minmax(0, 1fr); }
-  .project-grid, .edu-grid { grid-template-columns: minmax(0, 1fr); }
+  .work-grid, .edu-grid { grid-template-columns: minmax(0, 1fr); }
+  .is-featured .work-media { aspect-ratio: 16 / 10; }
+  .is-featured .work-body { padding: 22px 24px 24px; }
+  .is-featured .project-title { font-size: 20px; }
   .strip { grid-template-columns: 1fr 1fr; }
   .highlight { grid-template-columns: 32px 1fr; }
   .stat { grid-column: 2; text-align: left; }
