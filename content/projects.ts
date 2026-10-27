@@ -110,8 +110,8 @@ export const hero = {
   // Typed out after "I am a", one at a time, on a loop.
   roles: ["designer", "researcher", "student", "teacher"],
   ctas: [
-    { label: "View experience", href: "#experience" },
     { label: "View projects", href: "#projects" },
+    { label: "View experience", href: "#experience" },
   ],
 };
 
@@ -223,7 +223,7 @@ export const projectCards: ProjectCard[] = [
     preview: {
       video: "/work/egyptology-3d/preview.mp4",
       poster: "/work/egyptology-3d/preview-poster.jpg",
-      label: "Turning the Psamtik-Seneb coffin in the BD3D viewer and opening an inscription",
+      label: "The BD3D viewer: the landing page, the six-coffin collection, then hovering inscribed regions on the Psamtik coffin",
     },
   },
   {
@@ -383,8 +383,8 @@ export const projects: Project[] = [
     ],
     demo: {
       video: "/work/egyptology-3d/demo.mp4",
-      poster: "/work/egyptology-3d/exhibit-selected.jpg",
-      label: "A walkthrough of the BD3D viewer: turning a coffin, opening inscriptions on its surface, and searching across the collection",
+      poster: "/work/egyptology-3d/demo-poster.jpg",
+      label: "A walkthrough of the BD3D viewer: the landing page, the six-coffin collection, and inscribed regions on the Psamtik coffin linked to their translations",
     },
     images: [
       {

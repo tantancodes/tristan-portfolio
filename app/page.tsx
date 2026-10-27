@@ -11,52 +11,10 @@ export default function Home() {
       {/* ---------- Hero ---------- */}
       <Hero />
 
-      {/* ---------- Experience: a timeline, one row per organization ---------- */}
-      <section id="experience" className="section container">
-        <FadeIn>
-          <h2 className="section-title">Experience</h2>
-        </FadeIn>
-        <ol className="timeline">
-          {experience.map((job, i) => (
-            <FadeIn as="li" key={job.org} delay={Math.min(i, 4) * 50} className="job">
-              <p className="job-dates">
-                {job.roles.map((r) => (
-                  <span key={r.title}>{r.dates}</span>
-                ))}
-              </p>
-              <div className="job-body">
-                <h3 className="job-org">
-                  {job.org}
-                  {job.place && <span className="job-place">{job.place}</span>}
-                </h3>
-                {job.roles.map((r) => (
-                  <div key={r.title} className="job-role">
-                    <p className="job-title">{r.title}</p>
-                    {r.points && (
-                      <ul className="job-points">
-                        {r.points.map((pt) => (
-                          <li key={pt.slice(0, 32)}>{pt}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-                {job.tags && <p className="job-tags">{job.tags.join(" · ")}</p>}
-                {job.caseStudy && (
-                  <Link href={`/work/${job.caseStudy}`} className="text-link">
-                    Read the case study →
-                  </Link>
-                )}
-              </div>
-            </FadeIn>
-          ))}
-        </ol>
-      </section>
-
       {/* ---------- Projects: cards, linking to case studies where they exist ---------- */}
-      <section id="projects" className="section container">
+      <section id="projects" className="section section--work container">
         <FadeIn>
-          <h2 className="section-title">Projects</h2>
+          <h2 className="section-title">Selected work</h2>
         </FadeIn>
         <ul className="work-grid">
           {projectCards.map((p, i) => {
@@ -105,6 +63,48 @@ export default function Home() {
             );
           })}
         </ul>
+      </section>
+
+      {/* ---------- Experience: a timeline, one row per organization ---------- */}
+      <section id="experience" className="section container">
+        <FadeIn>
+          <h2 className="section-title">Experience</h2>
+        </FadeIn>
+        <ol className="timeline">
+          {experience.map((job, i) => (
+            <FadeIn as="li" key={job.org} delay={Math.min(i, 4) * 50} className="job">
+              <p className="job-dates">
+                {job.roles.map((r) => (
+                  <span key={r.title}>{r.dates}</span>
+                ))}
+              </p>
+              <div className="job-body">
+                <h3 className="job-org">
+                  {job.org}
+                  {job.place && <span className="job-place">{job.place}</span>}
+                </h3>
+                {job.roles.map((r) => (
+                  <div key={r.title} className="job-role">
+                    <p className="job-title">{r.title}</p>
+                    {r.points && (
+                      <ul className="job-points">
+                        {r.points.map((pt) => (
+                          <li key={pt.slice(0, 32)}>{pt}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+                {job.tags && <p className="job-tags">{job.tags.join(" · ")}</p>}
+                {job.caseStudy && (
+                  <Link href={`/work/${job.caseStudy}`} className="text-link">
+                    Read the case study →
+                  </Link>
+                )}
+              </div>
+            </FadeIn>
+          ))}
+        </ol>
       </section>
 
       {/* ---------- Education & skills ---------- */}

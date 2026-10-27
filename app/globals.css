@@ -116,10 +116,12 @@ img, svg { display: block; max-width: 100%; }
 /* ============================================================
    4. Home
    ============================================================ */
+/* The hero stops short of the fold on purpose: the top of the first project's
+   video shows at the bottom of the first screen, so the work is one scroll away. */
 .hero {
-  min-height: 100svh;
+  min-height: calc(100svh - 210px);
   display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 3vw, 32px);
-  padding-top: 64px; padding-bottom: 96px;
+  padding-top: 88px; padding-bottom: 40px;
 }
 .hero-eyebrow {
   font-family: var(--font-code); font-size: 13px; letter-spacing: 0.04em;
@@ -177,6 +179,7 @@ img, svg { display: block; max-width: 100%; }
 .arrow-link:hover .line-new, .arrow-link:focus-visible .line-new { width: 100%; }
 
 .section { padding-top: 96px; scroll-margin-top: 72px; }
+.section--work { padding-top: 24px; }
 .section-label { margin-bottom: 20px; }
 
 .work-list { border-top: 1px solid var(--line); }
