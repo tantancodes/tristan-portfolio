@@ -1,6 +1,8 @@
 import Link from "next/link";
 import FadeIn from "@/components/FadeIn";
 import Hero from "@/components/Hero";
+import Cover from "@/components/Cover";
+import VideoPreview from "@/components/VideoPreview";
 import { about, education, experience, projectCards, skills } from "@/content/projects";
 
 export default function Home() {
@@ -56,30 +58,49 @@ export default function Home() {
         <FadeIn>
           <h2 className="section-title">Projects</h2>
         </FadeIn>
-        <ul className="project-grid">
+        <ul className="work-grid">
           {projectCards.map((p, i) => {
             const href = p.caseStudy ? `/work/${p.caseStudy}` : p.href;
-            const inner = (
-              <>
-                <h3 className="project-title">{p.title}</h3>
-                <p className="project-summary">{p.summary}</p>
-                <p className="project-stack">{p.stack.join(" · ")}</p>
-                {href && (
-                  <span className="project-go" aria-hidden="true">
-                    {p.caseStudy ? "Case study →" : "Visit ↗"}
-                  </span>
-                )}
-              </>
-            );
+            const external = !p.caseStudy && !!p.href;
+            const cta = p.caseStudy ? (p.preview ? "Watch the demo" : "Read the case study") : "Open the app";
             return (
-              <FadeIn as="li" key={p.title} delay={(i % 2) * 60}>
-                {href ? (
-                  <Link href={href} className="project-card is-link">
-                    {inner}
-                  </Link>
-                ) : (
-                  <div className="project-card">{inner}</div>
-                )}
+              <FadeIn as="li" key={p.title} delay={(i % 2) * 60} className={i === 0 ? "is-featured" : ""}>
+                <article className="work-card">
+                  <div className="work-media">
+                    {p.preview ? (
+                      <VideoPreview src={p.preview.video} poster={p.preview.poster} label={p.preview.label} />
+                    ) : (
+                      <Cover motif={p.cover} seed={p.title} title={p.title} />
+                    )}
+                    {p.badge && <span className="work-badge">{p.badge}</span>}
+                  </div>
+                  <div className="work-body">
+                    <h3 className="project-title">
+                      {href &&
+                        (external ? (
+                          <a href={href} target="_blank" rel="noreferrer" className="stretched">
+                            {p.title}
+                          </a>
+                        ) : (
+                          <Link href={href} className="stretched">
+                            {p.title}
+                          </Link>
+                        ))}
+                    </h3>
+                    <p className="project-summary">{p.summary}</p>
+                    <p className="project-stack">{p.stack.join(" · ")}</p>
+                    <p className="work-actions">
+                      <span className="work-cta" aria-hidden="true">
+                        {cta} {external ? "↗" : "→"}
+                      </span>
+                      {p.live && p.caseStudy && (
+                        <a href={p.live} target="_blank" rel="noreferrer" className="work-live">
+                          Live app ↗
+                        </a>
+                      )}
+                    </p>
+                  </div>
+                </article>
               </FadeIn>
             );
           })}

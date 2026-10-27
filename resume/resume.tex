@@ -1,0 +1,147 @@
+%-------------------------
+% Resume in LaTeX (based on Jake Gutierrez's template, MIT)
+% Web copy: no phone number.
+%-------------------------
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\pdfgentounicode=1
+
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-2pt}}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Huge \scshape Tristan Tan} \\ \vspace{1pt}
+    \small \href{mailto:tristantan@berkeley.edu}{tristantan@berkeley.edu} $|$
+    \href{https://linkedin.com/in/tristan-yuhin-tan}{linkedin.com/in/tristan-yuhin-tan} $|$
+    \href{https://github.com/tantancodes}{github.com/tantancodes} $|$
+    \href{https://tantan.live}{tantan.live}
+\end{center}
+
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {University of California, Berkeley}{Berkeley, CA}
+      {Data Science \& Economics; GPA: 3.88}{Aug 2025 -- May 2029}
+      \resumeItemListStart
+        \resumeItem{Relevant Coursework: Microeconomics, Probability \& Statistics for Business, Foundations of Data Science, Computational Structures in Data Science, Linear Algebra}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Python, SQL, R, JavaScript, TypeScript, HTML/CSS} \\
+     \textbf{Data Science \& ML}{: Pandas, NumPy, SciPy, scikit-learn, XGBoost, PyTorch, Sentence Transformers, OpenCV} \\
+     \textbf{Visualization}{: Tableau, Matplotlib} \\
+     \textbf{Frameworks \& Tools}{: React, Next.js, FastAPI, PostgreSQL, Supabase, MongoDB, Git, Vercel, OAuth 2.0, REST APIs}
+    }}
+ \end{itemize}
+
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Undergraduate Research Assistant}{Sep 2026 -- Present}
+      {Archaeological Research Facility (ARF), UC Berkeley}{Berkeley, CA}
+      \resumeItemListStart
+        \resumeItem{Developed an interactive 3D annotation platform using Next.js, TypeScript, and React Three Fiber, integrating 314 scholarly annotations with 607 spatial regions across 6 photogrammetric Egyptian coffin models}
+        \resumeItem{Implemented mesh raycasting and bidirectional spatial selection, linking 3D hieroglyphic inscriptions to scholarly translations and enabling direct navigation between annotated surfaces and textual records}
+        \resumeItem{Built a structured annotation data pipeline integrating existing scholarly datasets with interactive 3D visualization, reducing reliance on manual XML lookup and supporting scalable digital humanities research}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Data Research Intern}{Sep 2026 -- Present}
+      {Ten Strands}{Berkeley, CA}
+      \resumeItemListStart
+        \resumeItem{Built an NLP retrieval system combining BM25, dense transformer embeddings, and a CrossEncoder reranker to surface sustainability evidence across 10,000+ California K--12 district webpages and policy documents}
+        \resumeItem{Benchmarked lexical and neural retrieval on human-validated evidence using Recall@K and MRR, improving Recall@5 by 35\% and reducing manual source-discovery time by 76\%}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Data Science Intern}{May 2026 -- Aug 2026}
+      {IDX Exchange}{Remote}
+      \resumeItemListStart
+        \resumeItem{Engineered an end-to-end Python/scikit-learn ML pipeline for automated residential property valuation on 297K+ California real estate transactions across 27 months, covering data cleaning, feature engineering, and model training}
+        \resumeItem{Optimized Linear Regression, Random Forest, and XGBoost models with chronological backtesting and hyperparameter tuning across 11K+ property sales, achieving 0.92 R\textsuperscript{2}, 6\% median prediction error, and 34\% lower MAE than the linear baseline}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Undergraduate Research Apprentice}{Aug 2025 -- May 2026}
+      {Lucarelli Photogrammetry Lab, UC Berkeley}{Berkeley, CA}
+      \resumeItemListStart
+        \resumeItem{Built an automated Python photogrammetry pipeline for archaeological artifacts using the Agisoft Metashape API, processing 1,000+ images into 3D reconstructions and cutting manual processing time by 40\% ($\sim$30 to $\sim$18 min)}
+        \resumeItem{Built Ridge regression models on SfM and image-overlap graph features to predict 3D reconstruction quality, achieving 13.7\% lower geometric RMSE than a reprojection-error baseline under leakage-aware CV}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+\section{Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Spotify Analytics Platform} $|$ \emph{Python, FastAPI, SQLAlchemy, PostgreSQL, Spotify Web API, OAuth 2.0}}{}
+          \resumeItemListStart
+            \resumeItem{Built a FastAPI and PostgreSQL backend that authenticates users through Spotify OAuth 2.0 and ingests their top tracks, artists, and listening history into a normalized relational schema}
+            \resumeItem{Found that Spotify's audio-features endpoint is deprecated and its artist-genre data returns empty in practice, and redesigned the recommender around recency-weighted artist affinity instead}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\textbf{Quantitative ML Stock Analytics Dashboard} $|$ \emph{Python, Pandas, scikit-learn, Streamlit, yfinance}}{}
+          \resumeItemListStart
+            \resumeItem{Built an end-to-end financial analytics platform that ingests live market data, computes technical indicators (RSI, MACD, Bollinger Bands), and visualizes market trends in an interactive Streamlit dashboard}
+            \resumeItem{Developed and evaluated Support Vector Regression (RBF) and Random Forest models using time-series-aware train/test splits, feature scaling, and out-of-sample testing on up to 365 days of historical market data}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+\end{document}

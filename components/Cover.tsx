@@ -229,7 +229,40 @@ function Waveform({ rng }: { rng: Rng }) {
   );
 }
 
+
+// A run of daily candles with a smoothed trend line through them.
+function Candles({ rng }: { rng: Rng }) {
+  const n = 34, x0 = 170, step = 26, mid = 470;
+  let price = 0;
+  const bars = Array.from({ length: n }, (_, k) => {
+    const open = price;
+    price += gauss(rng) * 14 + 4;
+    const close = price;
+    const hi = Math.max(open, close) + rng() * 10, lo = Math.min(open, close) - rng() * 10;
+    return { x: x0 + k * step, open, close, hi, lo };
+  });
+  const y = (v: number) => mid - v * 1.6;
+  const trend = bars.map((b, k) => {
+    const w = bars.slice(Math.max(0, k - 4), k + 1);
+    const avg = w.reduce((s, c) => s + c.close, 0) / w.length;
+    return `${k ? "L" : "M"}${f(b.x)},${f(y(avg))}`;
+  });
+  return (
+    <g>
+      {bars.map((b, k) => (
+        <g key={k}>
+          <line x1={b.x} y1={f(y(b.hi))} x2={b.x} y2={f(y(b.lo))} className="c-line c-thin" />
+          <rect x={b.x - 7} y={f(y(Math.max(b.open, b.close)))} width="14" height={f(Math.max(3, Math.abs(b.close - b.open) * 1.6))} rx="2" className={b.close >= b.open ? "c-accent" : "c-card c-line"} />
+        </g>
+      ))}
+      <path d={trend.join("")} className="c-accent-stroke c-bold" fill="none" opacity="0.5" />
+      <line x1={x0 - 30} y1="600" x2={x0 + n * step} y2="600" className="c-line c-faint" />
+    </g>
+  );
+}
+
 const motifs: Record<CoverMotif, (p: { rng: Rng }) => React.ReactElement> = {
+  candles: Candles,
   coffin: Coffin,
   mesh: Mesh,
   retrieval: Retrieval,
@@ -239,9 +272,10 @@ const motifs: Record<CoverMotif, (p: { rng: Rng }) => React.ReactElement> = {
 
 export default function Cover({ motif, seed, title }: { motif: CoverMotif; seed: string; title: string }) {
   const Motif = motifs[motif];
-  const patternId = `dots-${seed}`;
+  // Element ids can't contain spaces, or url(#id) silently fails and paints black.
+  const patternId = `dots-${seed.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="cover" role="img" aria-label={`Illustration for ${title}`}>
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" className="cover" role="img" aria-label={`Illustration for ${title}`}>
       <defs>
         <pattern id={patternId} width="24" height="24" patternUnits="userSpaceOnUse">
           <circle cx="2" cy="2" r="1.2" className="c-grid" />
