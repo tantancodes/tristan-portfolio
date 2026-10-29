@@ -24,7 +24,11 @@ export default async function CaseStudy({ params }: Props) {
   const project = getProject(slug);
   if (!project) notFound();
 
-  const [cover, ...gallery] = project.images ?? [];
+  // Normally the first screenshot is the cover and the rest form the gallery.
+  // When there's a demo video, the video is the cover, so every screenshot goes in the gallery.
+  const images = project.images ?? [];
+  const cover = project.video ? undefined : images[0];
+  const gallery = project.video ? images : images.slice(1);
 
   // The video's poster is the biggest thing on screen at load (the LCP element):
   // ask for it in <head> at high priority instead of waiting for the <video> tag.
@@ -60,7 +64,7 @@ export default async function CaseStudy({ params }: Props) {
       </FadeIn>
 
       {/* Cover, in order of preference: the demo video, else the first product screenshot, else the
-          generated SVG. The video is muted by default; width/height reserve its box so nothing shifts. */}
+          generated SVG. The video is muted by default; its box takes the video's own shape, so nothing is cropped or shifts. */}
       <FadeIn delay={140} className="cover-frame">
         {project.video ? (
           <video
@@ -72,6 +76,7 @@ export default async function CaseStudy({ params }: Props) {
             poster={project.video.poster}
             width={project.video.width}
             height={project.video.height}
+            style={{ aspectRatio: `${project.video.width} / ${project.video.height}` }}
             aria-label={project.video.label}
           >
             <source src={project.video.mp4} type="video/mp4" />

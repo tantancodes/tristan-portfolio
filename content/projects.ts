@@ -119,8 +119,8 @@ export const hero = {
   // Typed out after "I am a", one at a time, on a loop.
   roles: ["designer", "researcher", "student", "teacher"],
   ctas: [
-    { label: "View experience", href: "#experience" },
     { label: "View projects", href: "#projects" },
+    { label: "View experience", href: "#experience" },
   ],
 };
 
@@ -227,6 +227,14 @@ export const projectCards: ProjectCard[] = [
     stack: ["Next.js", "TypeScript", "React Three Fiber", "three.js", "glTF", "Playwright"],
     summary: "Read six ancient coffins in 3D: 314 scholarly annotations linked to 607 surface regions, raking light, word-to-location links, and a compressed asset pipeline that cut downloads by 74%.",
     caseStudy: "egyptology-3d",
+    video: {
+      mp4: "/work/egyptology-3d/preview-720.mp4",
+      webm: "/work/egyptology-3d/preview-720.webm",
+      poster: "/work/egyptology-3d/preview-poster-720.webp",
+      width: 720,
+      height: 416,
+      label: "The BD3D viewer: the landing page, the six-coffin collection, then hovering inscribed regions on the Psamtik coffin",
+    },
   },
   {
     title: "K–12 Sustainability Evidence Retrieval",
@@ -372,6 +380,14 @@ export const projects: Project[] = [
       { label: "View the code", href: "https://github.com/tantancodes/bd3d-website/tree/redesign/foundation" },
       { label: "Engineering write-up", href: "https://github.com/tantancodes/bd3d-website/blob/redesign/foundation/docs/CASE-STUDY.md" },
     ],
+    video: {
+      mp4: "/work/egyptology-3d/demo.mp4",
+      poster: "/work/egyptology-3d/demo-poster.webp",
+      width: 1920,
+      height: 1106,
+      label:
+        "A walkthrough of the BD3D viewer: the landing page, the six-coffin collection, and inscribed regions on the Psamtik coffin linked to their translations",
+    },
     images: [
       {
         src: "/work/egyptology-3d/exhibit-selected.jpg",

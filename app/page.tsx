@@ -10,6 +10,49 @@ export default function Home() {
       {/* ---------- Hero ---------- */}
       <Hero />
 
+      {/* ---------- Selected work: right under the hero, so the first project's video
+           is already playing at the bottom of the first screen. Cards link to case studies. ---------- */}
+      <section id="projects" className="section section--work container">
+        <FadeIn>
+          <h2 className="section-title">Selected work</h2>
+        </FadeIn>
+        <ul className="project-grid">
+          {projectCards.map((p, i) => {
+            const href = p.caseStudy ? `/work/${p.caseStudy}` : p.href;
+            const inner = (
+              <>
+                {p.video && (
+                  // The box takes the video's own shape, so nothing is cropped and nothing shifts.
+                  <div className="project-media" style={{ aspectRatio: `${p.video.width} / ${p.video.height}` }}>
+                    <AutoplayVideo video={p.video} />
+                  </div>
+                )}
+                <h3 className="project-title">{p.title}</h3>
+                <p className="project-summary">{p.summary}</p>
+                {p.stat && <p className="project-stat">{p.stat}</p>}
+                <p className="project-stack">{p.stack.join(" · ")}</p>
+                {href && (
+                  <span className="project-go" aria-hidden="true">
+                    {p.caseStudy ? "Case study →" : "Visit ↗"}
+                  </span>
+                )}
+              </>
+            );
+            return (
+              <FadeIn as="li" key={p.title} delay={(i % 2) * 60}>
+                {href ? (
+                  <Link href={href} className="project-card is-link">
+                    {inner}
+                  </Link>
+                ) : (
+                  <div className="project-card">{inner}</div>
+                )}
+              </FadeIn>
+            );
+          })}
+        </ul>
+      </section>
+
       {/* ---------- Experience: a timeline, one row per organization ---------- */}
       <section id="experience" className="section container">
         <FadeIn>
@@ -50,47 +93,6 @@ export default function Home() {
             </FadeIn>
           ))}
         </ol>
-      </section>
-
-      {/* ---------- Projects: cards, linking to case studies where they exist ---------- */}
-      <section id="projects" className="section container">
-        <FadeIn>
-          <h2 className="section-title">Projects</h2>
-        </FadeIn>
-        <ul className="project-grid">
-          {projectCards.map((p, i) => {
-            const href = p.caseStudy ? `/work/${p.caseStudy}` : p.href;
-            const inner = (
-              <>
-                {p.video && (
-                  <div className="project-media">
-                    <AutoplayVideo video={p.video} />
-                  </div>
-                )}
-                <h3 className="project-title">{p.title}</h3>
-                <p className="project-summary">{p.summary}</p>
-                {p.stat && <p className="project-stat">{p.stat}</p>}
-                <p className="project-stack">{p.stack.join(" · ")}</p>
-                {href && (
-                  <span className="project-go" aria-hidden="true">
-                    {p.caseStudy ? "Case study →" : "Visit ↗"}
-                  </span>
-                )}
-              </>
-            );
-            return (
-              <FadeIn as="li" key={p.title} delay={(i % 2) * 60}>
-                {href ? (
-                  <Link href={href} className="project-card is-link">
-                    {inner}
-                  </Link>
-                ) : (
-                  <div className="project-card">{inner}</div>
-                )}
-              </FadeIn>
-            );
-          })}
-        </ul>
       </section>
 
       {/* ---------- Education & skills ---------- */}

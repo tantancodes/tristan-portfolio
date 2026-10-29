@@ -116,10 +116,12 @@ img, svg { display: block; max-width: 100%; }
 /* ============================================================
    4. Home
    ============================================================ */
+/* The hero stops short of the fold on purpose: the top of the first project's
+   video shows at the bottom of the first screen, so the work is one scroll away. */
 .hero {
-  min-height: 100svh;
+  min-height: calc(100svh - 210px);
   display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 3vw, 32px);
-  padding-top: 64px; padding-bottom: 96px;
+  padding-top: 88px; padding-bottom: 40px;
 }
 .hero-eyebrow {
   font-family: var(--font-code); font-size: 13px; letter-spacing: 0.04em;
@@ -177,6 +179,7 @@ img, svg { display: block; max-width: 100%; }
 .arrow-link:hover .line-new, .arrow-link:focus-visible .line-new { width: 100%; }
 
 .section { padding-top: 96px; scroll-margin-top: 72px; }
+.section--work { padding-top: 24px; }
 .section-label { margin-bottom: 20px; }
 
 .work-list { border-top: 1px solid var(--line); }
@@ -249,7 +252,8 @@ img, svg { display: block; max-width: 100%; }
   box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.3);
 }
 .project-card.is-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: var(--radius); }
-/* Video preview: a fixed 16:10 box (matches the recording), so the card never shifts when it loads */
+/* Video preview box. Its aspect-ratio is set inline from the video's own width/height (16:10 is
+   just the fallback), so the card never crops the video or shifts when it loads. */
 .project-media {
   margin: -10px -10px 6px; aspect-ratio: 16 / 10; overflow: hidden;
   border-radius: calc(var(--radius) - 4px); border: 1px solid var(--line); background: var(--cover-bg);
@@ -296,7 +300,7 @@ img, svg { display: block; max-width: 100%; }
 .cover { width: 100%; height: auto; }
 
 .case-section { margin-top: 80px; }
-.case-video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; background: var(--cover-bg); }
+.case-video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; background: var(--cover-bg); } /* aspect set inline per video */
 .case-list { margin-top: 4px; display: grid; gap: 8px; max-width: 62ch; font-size: 19px; }
 .case-list li { position: relative; padding-left: 22px; }
 .case-list li::before { content: ""; position: absolute; left: 2px; top: 0.8em; width: 8px; height: 1px; background: var(--ink-soft); }
