@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AutoplayVideo from "@/components/AutoplayVideo";
 import FadeIn from "@/components/FadeIn";
 import Hero from "@/components/Hero";
 import { about, education, experience, projectCards, skills } from "@/content/projects";
@@ -61,8 +62,14 @@ export default function Home() {
             const href = p.caseStudy ? `/work/${p.caseStudy}` : p.href;
             const inner = (
               <>
+                {p.video && (
+                  <div className="project-media">
+                    <AutoplayVideo video={p.video} />
+                  </div>
+                )}
                 <h3 className="project-title">{p.title}</h3>
                 <p className="project-summary">{p.summary}</p>
+                {p.stat && <p className="project-stat">{p.stat}</p>}
                 <p className="project-stack">{p.stack.join(" · ")}</p>
                 {href && (
                   <span className="project-go" aria-hidden="true">

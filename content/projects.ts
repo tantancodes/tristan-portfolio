@@ -21,6 +21,19 @@ export type Highlight = {
   statLabel?: string;
 };
 
+/** A demo video: a 16:10 screen recording, with a poster frame for before it loads. */
+export type Video = {
+  mp4: string;
+  webm?: string;
+  poster: string;
+  width: number;
+  height: number;
+  /** Describes what the video shows, for screen readers (it has no audio). */
+  label: string;
+};
+
+export type Screenshot = { src: string; width: number; height: number; alt: string; caption?: string };
+
 export type Project = {
   /** URL segment: /work/<slug>. Lowercase, dashes, no spaces. */
   slug: string;
@@ -39,11 +52,17 @@ export type Project = {
   skills: string[];
   cover: CoverMotif;
   goal: string;
-  highlights: Highlight[]; // aim for 2–3
-  lookingForward: string;
+  highlights?: Highlight[]; // aim for 2–3
+  lookingForward?: string;
   links?: { label: string; href: string }[];
   /** Screenshots of the real product. The first replaces the generated cover; the rest form a gallery. */
   images?: { src: string; alt: string; caption?: string; phone?: boolean }[];
+
+  // Optional extras (used by the home value estimator page):
+  video?: Video; // shown instead of the generated cover (takes priority over images)
+  writeup?: { heading: string; body: string[]; list?: string[]; stats?: { value: string; label: string }[] }[]; // shown instead of goal / highlights / looking forward
+  note?: string; // one short line next to the links
+  screenshots?: Screenshot[];
 };
 
 /** One role on the Experience timeline (LinkedIn + resume). */
@@ -65,6 +84,8 @@ export type ProjectCard = {
   title: string;
   stack: string[];
   summary: string;
+  stat?: string; // one headline number, shown under the summary
+  video?: Video; // small auto-playing preview at the top of the card
   caseStudy?: string;
   href?: string;
 };
@@ -147,12 +168,11 @@ export const experience: Job[] = [
     caseStudy: "idx-home-prices",
     roles: [
       {
-        // CHECK: LinkedIn (and your first notes) say "Sep 2026 – Present".
         title: "Data Science Intern",
         dates: "May 2026 – Aug 2026",
         points: [
-          "Engineered an end-to-end Python / scikit-learn pipeline for automated residential valuation on 297K+ California transactions across 27 months.",
-          "Tuned Linear Regression, Random Forest, and XGBoost with chronological backtesting across 11K+ sales: 0.92 R², 6% median error, 34% lower MAE than the linear baseline.",
+          "Built a model that estimates California single-family sale prices from 309K cleaned CRMLS sales (Jan 2024 – Apr 2026), adding location, property-age, and school-district features via a spatial join across 680 districts.",
+          "Evaluated chronologically with leakage rules: the final XGBoost model reached 7.7% median error on 11,890 held-out April 2026 sales, versus 16.5% for a linear baseline.",
         ],
       },
     ],
@@ -215,10 +235,20 @@ export const projectCards: ProjectCard[] = [
     caseStudy: "ten-strands",
   },
   {
-    title: "Automated Home Valuation",
-    stack: ["Python", "scikit-learn", "XGBoost"],
-    summary: "End-to-end pipeline on 297K+ California sales with chronological backtesting. 0.92 R², 6% median error.",
+    title: "California Home Value Estimator",
+    stack: ["Python", "XGBoost", "scikit-learn", "GeoPandas", "Streamlit"],
+    summary: "Predicts California home sale prices from property and location data, with an explanation for every estimate.",
+    stat: "7.7% median error on 11,900 held-out sales",
     caseStudy: "idx-home-prices",
+    video: {
+      mp4: "/projects/home-value-estimator/demo-720.mp4",
+      webm: "/projects/home-value-estimator/demo-720.webm",
+      poster: "/projects/home-value-estimator/poster-720.webp",
+      width: 720,
+      height: 450,
+      label:
+        "Screen recording of the California Home Value Estimator: entering a home's ZIP code, size and age, and getting an estimated sale price with an error range and a breakdown of what moved the estimate.",
+    },
   },
   {
     title: "Predicting 3D Reconstruction Quality",
@@ -452,38 +482,92 @@ export const projects: Project[] = [
 
   {
     slug: "idx-home-prices",
-    headline: "Estimating California home prices from listing data",
+    headline: "California Home Value Estimator",
     year: "2026",
     org: "IDX Exchange",
     role: "Data Science Intern",
 
     label: "Machine learning · Real estate",
-    timeline: "May – Aug 2026 · Remote", // CHECK: LinkedIn and your first notes say Sep 2026 – present
-    team: "IDX Exchange data science interns", // TODO
-    myRole: "Data pipeline, modeling, and evaluation",
-    skills: ["Python", "scikit-learn", "XGBoost", "Random Forest", "Backtesting"],
-    cover: "houses",
+    timeline: "May 2026 – Aug 2026 · Remote",
+    team: "Data science internship, IDX Exchange",
+    myRole: "Data, modeling, evaluation, and the app",
+    skills: ["Python", "XGBoost", "scikit-learn", "GeoPandas", "Streamlit"],
+    cover: "houses", // fallback only; the page shows the demo video
     goal:
-      "Build an end-to-end pipeline that values California homes automatically, from 297K+ real transactions across 27 months, and prove it works on sales it has never seen.",
-    highlights: [
+      "Predicts California home sale prices from property and location data, with an explanation for every estimate.",
+    video: {
+      mp4: "/projects/home-value-estimator/demo.mp4",
+      poster: "/projects/home-value-estimator/poster.webp",
+      width: 1280,
+      height: 800,
+      label:
+        "Demo of the California Home Value Estimator: choosing a ZIP code and home details, reading the estimated sale price and its error range, then the model comparison page.",
+    },
+    writeup: [
       {
-        title: "Tested the way it would be used",
-        body:
-          "Linear Regression, Random Forest, and XGBoost were tuned with chronological backtesting: always training on the past and predicting later sales, across 11K+ held-out transactions.",
-        stat: "0.92",
-        statLabel: "R² on held-out sales",
+        heading: "The problem",
+        body: [
+          "I wanted to estimate what a California single-family home will sell for from its property details and location, and to be honest about how far off that estimate is likely to be.",
+        ],
       },
       {
-        title: "Typically within about 6%",
-        body:
-          "The median prediction error is 6%, and mean absolute error is 34% lower than the original linear baseline.",
-        stat: "6%",
-        statLabel: "median error",
+        heading: "The data",
+        body: [
+          "I used 309K cleaned single-family sales from CRMLS, January 2024 through April 2026, through a data science internship at IDX Exchange. I added location, property age and school district as features, matching each home to one of 680 school districts with a spatial join.",
+        ],
+      },
+      {
+        heading: "How I evaluated it",
+        body: [
+          "Chronologically, never on a random split. I tuned on earlier months, locked the model, and only then scored April 2026, once. Leakage rules kept list price and other sale-process fields out of the model.",
+        ],
+      },
+      {
+        heading: "Results",
+        body: [
+          "The final model is XGBoost. On the 11,890 April sales inside the training price range, its median error is 7.7%, and 85.5% of homes are estimated within 20% of their sale price. Across all 12,022 April sales, the median error is 7.8%.",
+          "In the app, every estimate comes with per-feature contributions, so you can see what pushed the price up or down, and an empirical error range.",
+        ],
+        stats: [
+          { value: "7.7%", label: "median error, 11,890 April sales" },
+          { value: "85.5%", label: "of homes within 20% of sale price" },
+          { value: "16.5%", label: "median error, linear baseline" },
+        ],
+      },
+      {
+        heading: "What didn't work",
+        body: [
+          "A more powerful model barely mattered. Adding location, property age and school district features took a random forest from 9.2% to 7.8% median error. Switching to gradient boosting improved that by only about 0.1 points. What boosting did change was size: the model went from 268 MB to 4 MB.",
+        ],
+      },
+      {
+        heading: "Limitations",
+        body: [],
+        list: [
+          "It under-predicts luxury homes.",
+          "It can't predict above the highest price it was trained on ($8.4M).",
+          "It's weakest on older homes, and in Oakland, the worst of the 15 highest-volume cities.",
+        ],
       },
     ],
-    lookingForward:
-      // TODO: replace with what's actually next.
-      "Next I want to understand where the model is least accurate, by region and price band, and make those errors visible rather than averaging them away.",
+    links: [{ label: "View on GitHub", href: "https://github.com/tantancodes/IDX-Exchange-Data-Science" }],
+    note: "No live demo: the CRMLS data is licensed, so the app runs locally.",
+    screenshots: [
+      {
+        src: "/projects/home-value-estimator/screenshot-estimate.webp",
+        width: 1400,
+        height: 2186,
+        alt: "The Estimate page: home details on the left; on the right, an estimated sale price of $1.31M for a home in Oakland, its error range, a bar chart of what moved the estimate, and a map of the school district.",
+        caption: "Estimate, with its error range and what moved it",
+      },
+      {
+        src: "/projects/home-value-estimator/screenshot-model-comparison.webp",
+        width: 1400,
+        height: 1920,
+        alt: "The Model comparison page: a scoreboard of seven models on April 2026 sales, from linear regression at 16.46% typical error down to XGBoost at 7.70%, with bar and line charts of error by model and by month.",
+        caption: "Model comparison on the April 2026 test",
+      },
+    ],
   },
 
   {
