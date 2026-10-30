@@ -86,6 +86,7 @@ export type ProjectCard = {
   summary: string;
   stat?: string; // one headline number, shown under the summary
   video?: Video; // small auto-playing preview at the top of the card
+  featured?: boolean; // spans the full width of the Selected work grid on desktop (use on one card)
   caseStudy?: string;
   href?: string;
 };
@@ -227,12 +228,14 @@ export const projectCards: ProjectCard[] = [
     stack: ["Next.js", "TypeScript", "React Three Fiber", "three.js", "glTF", "Playwright"],
     summary: "Read six ancient coffins in 3D: 314 scholarly annotations linked to 607 surface regions, raking light, word-to-location links, and a compressed asset pipeline that cut downloads by 74%.",
     caseStudy: "egyptology-3d",
+    featured: true,
+    // 1280px because the featured card is ~1000px wide on desktop. No WebM: at this size VP9
+    // blurred the carved signs more than this H.264 does, so it only made the card worse.
     video: {
-      mp4: "/work/egyptology-3d/preview-720.mp4",
-      webm: "/work/egyptology-3d/preview-720.webm",
-      poster: "/work/egyptology-3d/preview-poster-720.webp",
-      width: 720,
-      height: 416,
+      mp4: "/work/egyptology-3d/preview-1280.mp4",
+      poster: "/work/egyptology-3d/preview-poster-1280.webp",
+      width: 1280,
+      height: 738,
       label: "The BD3D viewer: the landing page, the six-coffin collection, then hovering inscribed regions on the Psamtik coffin",
     },
   },
@@ -270,12 +273,14 @@ export const projectCards: ProjectCard[] = [
     summary: "Spotify OAuth ingest of 1,000+ tracks and 50+ artists, listening analytics, and content-based recommendations via audio-feature cosine similarity.",
     caseStudy: "spotify-analytics",
   },
-  {
-    title: "Quantitative ML Stock Analytics Dashboard",
-    stack: ["Python", "Pandas", "scikit-learn", "Streamlit", "yfinance"],
-    summary: "Live market data, technical indicators (RSI, MACD, Bollinger Bands), and SVR / Random Forest models evaluated with time-series-aware splits on up to 365 days of history.",
-    // href: "https://github.com/tantancodes/...", // TODO: add a link if the repo is public
-  },
+  // Hidden so the Selected work grid stays even (featured card + 4 normal cards).
+  // Uncomment to bring it back; add or remove another card too, or the grid gets a gap.
+  // {
+  //   title: "Quantitative ML Stock Analytics Dashboard",
+  //   stack: ["Python", "Pandas", "scikit-learn", "Streamlit", "yfinance"],
+  //   summary: "Live market data, technical indicators (RSI, MACD, Bollinger Bands), and SVR / Random Forest models evaluated with time-series-aware splits on up to 365 days of history.",
+  //   // href: "https://github.com/tantancodes/...", // TODO: add a link if the repo is public
+  // },
 ];
 
 /* ---------- Education & skills (resume) ---------- */

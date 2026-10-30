@@ -241,6 +241,11 @@ img, svg { display: block; max-width: 100%; }
 /* ---------- Project cards ---------- */
 .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .project-grid > li { display: flex; }
+/* Featured card (ported from recruiter-ready): spans the whole row on desktop and tablet.
+   Its video box still takes the video's own shape, so nothing is cropped. */
+.project-grid > li.is-featured { grid-column: 1 / -1; }
+.is-featured .project-card { padding: 30px 32px 32px; }
+.is-featured .project-title { font-size: 24px; }
 .project-card {
   flex: 1; display: flex; flex-direction: column; gap: 10px;
   padding: 26px; border: 1px solid var(--line); border-radius: var(--radius);
@@ -379,6 +384,8 @@ img, svg { display: block; max-width: 100%; }
 @media (max-width: 760px) {
   .job { grid-template-columns: minmax(0, 1fr); }
   .project-grid, .edu-grid, .case-shots { grid-template-columns: minmax(0, 1fr); }
+  .is-featured .project-card { padding: 26px; }
+  .is-featured .project-title { font-size: 20px; }
   .case-stats { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .strip { grid-template-columns: 1fr 1fr; }
   .highlight { grid-template-columns: 32px 1fr; }

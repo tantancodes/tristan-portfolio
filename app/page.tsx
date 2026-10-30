@@ -18,6 +18,8 @@ export default function Home() {
         </FadeIn>
         <ul className="project-grid">
           {projectCards.map((p, i) => {
+            // Stagger the fade-in by column; a featured card takes a whole row, so count only normal cards.
+            const column = projectCards.slice(0, i).filter((c) => !c.featured).length % 2;
             const href = p.caseStudy ? `/work/${p.caseStudy}` : p.href;
             const inner = (
               <>
@@ -39,7 +41,7 @@ export default function Home() {
               </>
             );
             return (
-              <FadeIn as="li" key={p.title} delay={(i % 2) * 60}>
+              <FadeIn as="li" key={p.title} delay={p.featured ? 0 : column * 60} className={p.featured ? "is-featured" : ""}>
                 {href ? (
                   <Link href={href} className="project-card is-link">
                     {inner}
