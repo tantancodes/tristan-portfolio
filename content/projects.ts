@@ -64,7 +64,13 @@ export type Project = {
 
   // Optional extras (used by the home value estimator page):
   video?: Video; // shown instead of the generated cover (takes priority over images)
-  writeup?: { heading: string; body: string[]; list?: string[]; stats?: { value: string; label: string }[] }[]; // shown instead of goal / highlights / looking forward
+  writeup?: {
+    heading: string;
+    body: string[];
+    list?: string[];
+    stats?: { value: string; label: string }[];
+    figure?: Screenshot; // one chart or map under the section text
+  }[]; // shown instead of goal / highlights / looking forward
   note?: string; // one short line next to the links
   screenshots?: Screenshot[];
 };
@@ -157,6 +163,7 @@ export const experience: Job[] = [
   {
     org: "Ten Strands",
     place: "Berkeley, CA",
+    caseStudy: "rural-urban-gap",
     roles: [
       {
         title: "Data Research Intern",
@@ -258,10 +265,18 @@ export const projectCards: ProjectCard[] = [
     group: "Ten Strands",
     title: "Rural–Urban Gaps in Documented Climate Action",
     status: "Research · 2026 · In progress",
-    cover: "gap",
+    video: {
+      mp4: "/work/rural-urban-gap/demo-720.mp4",
+      poster: "/work/rural-urban-gap/poster-720.webp",
+      width: 720,
+      height: 450,
+      label:
+        "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
+    },
     stack: ["Python", "pandas", "Jupyter"],
-    // TODO: add the poster, key findings and a case study once the symposium is done (and Ten Strands is OK with posting it).
-    summary: "Do rural California districts take less environmental and climate action, or just document less of it? An analysis of district indicator data, building toward the team's research symposium poster.",
+    summary: "Rural California districts document fewer climate protections than urban ones. Is that a gap in capacity, or in paperwork? A regression analysis of 865 districts.",
+    stat: "The rural–urban gap disappears once district size is accounted for",
+    caseStudy: "rural-urban-gap",
   },
   {
     group: "More projects",
@@ -467,6 +482,106 @@ export const projects: Project[] = [
     ],
     lookingForward:
       "The next step is camera-coverage features: describing how thoroughly the cameras actually see each part of the object, which should transfer across scenes better than overlap statistics.",
+  },
+
+  {
+    slug: "rural-urban-gap",
+    headline: "Is the rural climate-action gap about capacity, or paperwork?",
+    year: "2026–now",
+    org: "Ten Strands",
+    role: "Data Research Intern",
+
+    label: "Research · Education policy · In progress",
+    timeline: "Oct 2026 – Present",
+    team: "Ten Strands Indicator Expansion Team 1 (UC Berkeley Data Discovery)",
+    myRole: "Research question, data cleaning, modeling, and figures",
+    skills: ["Python", "pandas", "statsmodels", "GeoPandas", "seaborn"],
+    cover: "gap", // fallback only; the page shows the animated chart
+    video: {
+      mp4: "/work/rural-urban-gap/demo.mp4",
+      poster: "/work/rural-urban-gap/poster.webp",
+      width: 1280,
+      height: 800,
+      label:
+        "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
+    },
+    goal:
+      "Rural California school districts document fewer climate protections than urban ones. I'm testing whether that gap reflects what districts can do, or what they write down.",
+    writeup: [
+      {
+        heading: "The question",
+        body: [
+          "Rural California school districts publicly document fewer climate protections than urban ones. That could mean they have less capacity to act: fewer staff, smaller budgets. Or it could mean they act just as much but publish less of it. The two call for very different responses, so I wanted to know which one the data supports.",
+        ],
+      },
+      {
+        heading: "The data",
+        body: [
+          "937 California districts, combining Ten Strands' district dataset (enrollment, demographics, income, politics, locale) with indicators our Indicator Expansion team collected this fall from district websites and documents. The outcome is a count of seven climate protections a district documents publicly: heat, wildfire, poor air quality, indoor air quality, energy resilience, air conditioning, and stormwater. 865 districts had complete data for the models.",
+        ],
+      },
+      {
+        heading: "The gap is real",
+        body: [
+          "Rural districts document 1.2 of the seven protections on average; suburban and urban districts document about 2.1. The difference is largest for heat protection (7% of rural districts vs. 32% of urban ones), stormwater, and air quality planning.",
+        ],
+        figure: {
+          src: "/work/rural-urban-gap/protection_heatmap.webp",
+          width: 1800,
+          height: 736,
+          alt: "Heatmap of the share of districts documenting each of seven climate protections, by locale and by enrollment quartile. Both rise from rural to urban and from smallest to largest districts; for heat protection, 7% of rural vs. 32% of urban districts, and 4% of the smallest vs. 40% of the largest.",
+          caption: "The same pattern shows up by locale (left) and by district size (right).",
+        },
+      },
+      {
+        heading: "It disappears once size is accounted for",
+        body: [
+          "In a regression with income, poverty, and politics, urban districts document 0.76 more protections than rural ones (95% CI 0.32 to 1.20). Adding district size (log enrollment) changes that to −0.03 (95% CI −0.57 to 0.50): no rural–urban difference left. A district ten times larger documents about 0.55 more protections, holding everything else equal.",
+          "The result held when I kept districts with missing values as zeros, added region controls, and refit without the most influential districts.",
+        ],
+        figure: {
+          src: "/work/rural-urban-gap/rural_gap_size.webp",
+          width: 1400,
+          height: 700,
+          alt: "Coefficient plot comparing each locale with rural districts. Without size, urban and suburban districts document about 0.7 more protections; after adjusting for district size, all three estimates sit at or near zero with intervals crossing zero.",
+          caption: "Gray: without district size. Blue: adjusting for district size.",
+        },
+        stats: [
+          { value: "+0.76 → −0.03", label: "urban vs. rural gap, before and after size" },
+          { value: "+0.55", label: "protections per 10× enrollment" },
+          { value: "865", label: "districts in the model" },
+        ],
+      },
+      {
+        heading: "Income matters less than expected",
+        body: [
+          "Community income predicts documented protections on its own, but that relationship disappears once size and political context are included. The share of low-income students shows no consistent relationship. Democratic vote share has a modest positive association. Even so, low-income districts with zero documented protections cluster in the far north and the inland south of the state, which is where follow-up matters most.",
+        ],
+        figure: {
+          src: "/work/rural-urban-gap/protection_predictors.webp",
+          width: 1200,
+          height: 600,
+          alt: "Standardized coefficient plot: district size has a clear positive association with documented protections; Democratic vote share a small positive one; median income and percent low-income students have intervals crossing zero.",
+          caption: "Change in documented protections per standard deviation of each predictor. Standard errors clustered by county.",
+        },
+      },
+      {
+        heading: "What this doesn't show yet",
+        body: [
+          "Size explains the rural gap, but size can mean two things: larger districts may have more capacity to act, or more staff to publish what they do. This analysis can't separate those yet; that's the next stage. Everything here is an association, not a cause, the model explains about 18% of the variation, and it measures what districts document publicly, not what they actually do.",
+        ],
+        figure: {
+          src: "/work/rural-urban-gap/income_vs_protection_maps.webp",
+          width: 1800,
+          height: 810,
+          alt: "Three maps of California districts: community median income, number of documented climate protections, and low-income districts with no documented protections, which cluster in the far north and the inland south.",
+          caption: "Left to right: community median income, documented protections, and low-income districts with none documented.",
+        },
+      },
+    ],
+    lookingForward:
+      "Next: break the gap down by type of action, then test the documentation explanation directly, to see whether smaller districts are doing less or just publishing less.",
+    note: "Preliminary results from ongoing work, building toward the team's research symposium poster.",
   },
 
   {

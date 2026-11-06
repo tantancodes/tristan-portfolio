@@ -112,6 +112,13 @@ export default async function CaseStudy({ params }: Props) {
                   ))}
                 </ul>
               )}
+              {w.figure && (
+                <figure className="case-figure">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={w.figure.src} alt={w.figure.alt} width={w.figure.width} height={w.figure.height} loading="lazy" decoding="async" />
+                  {w.figure.caption && <figcaption>{w.figure.caption}</figcaption>}
+                </figure>
+              )}
               {w.stats && (
                 <dl className="case-stats">
                   {w.stats.map((st) => (
