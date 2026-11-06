@@ -269,7 +269,14 @@ export const projectCards: ProjectCard[] = [
     group: "Ten Strands",
     title: "Rural–Urban Gaps in Documented Climate Action",
     status: "Research · 2026 · In progress",
-    cover: "gap",
+    video: {
+      mp4: "/work/rural-urban-gap/demo-720.mp4",
+      poster: "/work/rural-urban-gap/poster-720.webp",
+      width: 720,
+      height: 450,
+      label:
+        "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
+    },
     stack: ["Python", "pandas", "Jupyter"],
     summary: "Rural California districts document fewer climate protections than urban ones. Is that a gap in capacity, or in paperwork? A regression analysis of 865 districts.",
     stat: "The rural–urban gap disappears once district size is accounted for",
@@ -493,7 +500,15 @@ export const projects: Project[] = [
     team: "Ten Strands Indicator Expansion Team 1 (UC Berkeley Data Discovery)",
     myRole: "Research question, data cleaning, modeling, and figures",
     skills: ["Python", "pandas", "statsmodels", "GeoPandas", "seaborn"],
-    cover: "gap",
+    cover: "gap", // fallback only; the page shows the animated chart
+    video: {
+      mp4: "/work/rural-urban-gap/demo.mp4",
+      poster: "/work/rural-urban-gap/poster.webp",
+      width: 1280,
+      height: 800,
+      label:
+        "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
+    },
     goal:
       "Rural California school districts document fewer climate protections than urban ones. I'm testing whether that gap reflects what districts can do, or what they write down.",
     writeup: [
