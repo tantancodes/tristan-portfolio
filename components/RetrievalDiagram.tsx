@@ -54,7 +54,7 @@ function Wide() {
   return (
     <svg viewBox="0 0 1000 356" className="diagram diagram--wide" aria-hidden="true">
       <defs><Head id="rd-wide" /></defs>
-      <Stage box={corpus} tag="01 Corpus" title="10,000+ documents" sub={["District webpages", "and policies"]} />
+      <Stage box={corpus} tag="01 Corpus" title="50 documents" sub={["2,157 passages from", "district pages and policies"]} />
       <Stage box={bm25} tag="02 Retrieve" title="BM25" sub={["Matches the words"]} />
       <Stage box={dense} tag="" title="Dense embeddings" sub={["Matches the meaning"]} />
       <Stage box={rerank} tag="03 Rerank" title="CrossEncoder" sub={["Scores each question", "and document together"]} />
@@ -69,11 +69,11 @@ function Wide() {
 
       {/* Evaluation, under the whole pipeline */}
       <path d="M20,310 V300 H980 V310" className="d-eval" />
-      <text x="20" y="342" className="d-tag">Evaluated on human-validated evidence · Recall@K, MRR</text>
-      <text x="640" y="346" className="d-stat">+35%</text>
-      <text x="712" y="346" className="d-sub">Recall@5</text>
-      <text x="800" y="346" className="d-stat">−76%</text>
-      <text x="868" y="346" className="d-sub">search time</text>
+      <text x="20" y="342" className="d-tag">Exploratory test · 34 development queries · known-source Recall@5</text>
+      <text x="620" y="346" className="d-stat">97.1%</text>
+      <text x="704" y="346" className="d-sub">reranked</text>
+      <text x="790" y="346" className="d-stat">88.2%</text>
+      <text x="874" y="346" className="d-sub">BM25</text>
     </svg>
   );
 }
@@ -87,7 +87,7 @@ function Tall() {
   return (
     <svg viewBox="0 0 420 790" className="diagram diagram--tall" aria-hidden="true">
       <defs><Head id="rd-tall" /></defs>
-      <Stage box={corpus} tag="01 Corpus" title="10,000+ documents" sub={["District webpages and policies"]} />
+      <Stage box={corpus} tag="01 Corpus" title="50 documents" sub={["2,157 passages from district pages and policies"]} />
       <Stage box={bm25} tag="02 Retrieve" title="BM25" sub={["Matches the words"]} />
       <Stage box={dense} tag="" title="Dense embeddings" sub={["Matches the meaning"]} />
       <Stage box={rerank} tag="03 Rerank" title="CrossEncoder" sub={["Scores each question and document together"]} />
@@ -101,18 +101,18 @@ function Tall() {
       <Arrow id="rd-tall" d="M210,444 V494" />
 
       <path d="M20,690 V680 H400 V690" className="d-eval" />
-      <text x="20" y="716" className="d-tag">Evaluated on human-validated evidence</text>
-      <text x="20" y="770" className="d-stat">+35%</text>
-      <text x="92" y="770" className="d-sub">Recall@5</text>
-      <text x="220" y="770" className="d-stat">−76%</text>
-      <text x="288" y="770" className="d-sub">search time</text>
+      <text x="20" y="716" className="d-tag">Exploratory test · 34 dev queries · Recall@5</text>
+      <text x="20" y="770" className="d-stat">97.1%</text>
+      <text x="104" y="770" className="d-sub">reranked</text>
+      <text x="220" y="770" className="d-stat">88.2%</text>
+      <text x="304" y="770" className="d-sub">BM25</text>
     </svg>
   );
 }
 
 export default function RetrievalDiagram() {
   return (
-    <figure className="diagram-figure" role="img" aria-label="Retrieval pipeline: 10,000+ district webpages and policies go to BM25 keyword search and dense embedding search; their results are reranked by a CrossEncoder into a ranked list of evidence. Evaluated on human-validated evidence with Recall@K and MRR: Recall@5 up 35%, manual search time down 76%.">
+    <figure className="diagram-figure" role="img" aria-label="Retrieval pipeline: 50 district documents (2,157 passages) go to BM25 keyword search and dense embedding search; their results are reranked by a CrossEncoder into a ranked list of evidence. In an exploratory test on 34 development queries, known-source Recall@5 was 97.1% with reranking versus 88.2% for BM25.">
       <Wide />
       <Tall />
     </figure>

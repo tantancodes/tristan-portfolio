@@ -16,7 +16,7 @@ export type CoverMotif = "coffin" | "mesh" | "retrieval" | "houses" | "waveform"
 export type Highlight = {
   title: string;
   body: string;
-  /** Optional big number shown beside the highlight, e.g. "+35%". */
+  /** Optional big number shown beside the highlight, e.g. "97.1%". */
   stat?: string;
   statLabel?: string;
 };
@@ -164,8 +164,8 @@ export const experience: Job[] = [
         title: "Data Research Intern",
         dates: "Sep 2026 – Present",
         points: [
-          "Built an NLP retrieval system combining BM25, dense transformer embeddings, and a sentence-transformers CrossEncoder reranker over 10,000+ California K–12 district webpages and policy documents.",
-          "Benchmarked lexical and neural retrieval on human-validated evidence (Recall@K, MRR): Recall@5 up 35%, manual source-discovery time down 76%.",
+          "Built a local evidence search tool for California K–12 sustainability research (FastAPI, Hugging Face models), combining BM25, dense embeddings, and CrossEncoder reranking; the local LLM answers only with verbatim, cited excerpts.",
+          "Compared BM25, dense, hybrid, and reranked retrieval: reranking raised known-source Recall@5 from 88.2% to 97.1% on 34 development queries, with reproducible runs.",
         ],
       },
     ],
@@ -242,7 +242,8 @@ export const projectCards: ProjectCard[] = [
     status: "Internship · 2026",
     stack: ["Python", "BM25", "Sentence Transformers", "CrossEncoder"],
     art: "retrieval",
-    summary: "Hybrid lexical + neural search over 10,000+ district pages and policies. Recall@5 +35%, manual source discovery −76%.",
+    summary: "Keyword + neural search over district pages and policies, with answers that quote and cite their sources.",
+    stat: "97.1% Recall@5 vs. 88.2% for BM25 (exploratory, 34 queries)",
     caseStudy: "ten-strands",
     // No WebM: VP9 came out larger than this H.264 for a mostly-static UI recording.
     video: {
@@ -488,7 +489,7 @@ export const projects: Project[] = [
         "Demo of the K–12 sustainability evidence search: choosing an indicator filter, searching \"fire protection\", then the cited answer, the ranked source passages, and the saved evidence list with export.",
     },
     goal:
-      "Evidence about California K-12 sustainability is scattered across 10,000+ district webpages and policy documents, and finding it by hand is slow. The goal was a retrieval system that puts the most relevant sources at the top for a given question, so people spend their time using data instead of hunting for it.",
+      "Evidence about California K-12 sustainability is scattered across district webpages and policy documents, and finding it by hand is slow. I built a local search tool over 50 of those documents (2,157 passages): ask a question, get the most relevant passages and a short answer that only quotes its sources, or an honest “not enough evidence.”",
     highlights: [
       {
         title: "Keyword, meaning, then a second opinion",
@@ -497,20 +498,17 @@ export const projects: Project[] = [
       },
       {
         title: "More of the right answers up top",
-        body: "Benchmarked lexical against neural retrieval on human-validated evidence using Recall@K and MRR. Recall@5 improved by 35%.",
-        stat: "+35%",
-        statLabel: "Recall@5",
+        body: "On 34 development queries, the reranked pipeline found the known source in the top five for 97.1% of questions, versus 88.2% for BM25 alone. That's 33 of 34 versus 30 of 34: promising, but too few questions to call the gain significant (95% CI 0 to 20 points).",
+        stat: "97.1%",
+        statLabel: "known-source Recall@5 (BM25: 88.2%)",
       },
       {
-        title: "Time back for the people doing the work",
-        body: "Manual source-finding time dropped by 76%.",
-        stat: "−76%",
-        statLabel: "manual search time",
+        title: "Answers that quote instead of invent",
+        body: "The local LLM may only answer with verbatim excerpts from the retrieved passages, each cited. Automated checks reject unsupported quotes, and when the evidence is thin the app says so instead of guessing.",
       },
     ],
     lookingForward:
-      // TODO: replace with what's actually next.
-      "I'm interested in keeping the evaluation honest as the corpus grows, and in making the results easy for non-technical users to trust.",
+      "Next is a held-out evaluation: about 50 new questions from districts the system has never seen, with passages judged by people rather than matched against a known URL. That's what it takes to turn a promising result into a real one.",
   },
 
   {
