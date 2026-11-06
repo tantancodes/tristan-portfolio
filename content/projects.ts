@@ -255,7 +255,7 @@ export const projectCards: ProjectCard[] = [
       width: 720,
       height: 452,
       label:
-        "Screen recording of the K–12 sustainability evidence search: picking the Wildfire Protection indicator, searching \"fire protection\", and reading the cited answer, its source passages, and the saved evidence list.",
+        "Screen recording of the K–12 sustainability evidence search: a short intro where a magnifying glass sweeps through bushes that part to reveal the app, then searching \"fire protection\", the saved evidence list, and opening a source document.",
     },
   },
   {
@@ -493,7 +493,7 @@ export const projects: Project[] = [
       width: 1280,
       height: 804,
       label:
-        "Demo of the K–12 sustainability evidence search: choosing an indicator filter, searching \"fire protection\", then the cited answer, the ranked source passages, and the saved evidence list with export.",
+        "Demo of the K–12 sustainability evidence search: the bushes-and-magnifier intro, searching \"fire protection\", the saved evidence list with export, and opening the original source PDF.",
     },
     goal:
       "Evidence about California K-12 sustainability is scattered across district webpages and policy documents, and finding it by hand is slow. I built a local search tool over 50 of those documents (2,157 passages): ask a question, get the most relevant passages and a short answer that only quotes its sources, or an honest “not enough evidence.”",
