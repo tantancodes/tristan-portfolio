@@ -274,12 +274,6 @@ img, svg { display: block; max-width: 100%; }
 .project-stack { margin-top: auto; padding-top: 8px; font-family: var(--font-code); font-size: 12px; color: var(--ink-soft); }
 .project-go { font-size: 14px; font-weight: 500; }
 
-/* ---------- Education & skills ---------- */
-.edu-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 40px; border-top: 1px solid var(--line); padding-top: 28px; }
-.edu-course { margin-top: 16px; color: var(--ink-soft); font-size: 15px; }
-.skills { display: grid; gap: 20px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chips li { padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; }
 
 .play-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
 .play-card {
@@ -387,7 +381,7 @@ img, svg { display: block; max-width: 100%; }
    ============================================================ */
 @media (max-width: 760px) {
   .job { grid-template-columns: minmax(0, 1fr); }
-  .project-grid, .edu-grid, .case-shots { grid-template-columns: minmax(0, 1fr); }
+  .project-grid, .case-shots { grid-template-columns: minmax(0, 1fr); }
   .is-featured .project-card { padding: 26px; }
   .is-featured .project-title { font-size: 20px; }
   .case-stats { grid-template-columns: minmax(0, 1fr); gap: 18px; }

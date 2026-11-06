@@ -3,7 +3,7 @@ import AutoplayVideo from "@/components/AutoplayVideo";
 import FadeIn from "@/components/FadeIn";
 import Hero from "@/components/Hero";
 import RetrievalCardArt from "@/components/RetrievalCardArt";
-import { about, education, experience, experienceAlso, projectCards, skills } from "@/content/projects";
+import { experience, experienceAlso, projectCards } from "@/content/projects";
 
 export default function Home() {
   return (
@@ -61,7 +61,6 @@ export default function Home() {
           })}
         </ul>
       </section>
-
       {/* ---------- Experience: a timeline, one row per organization ---------- */}
       <section id="experience" className="section container">
         <FadeIn>
@@ -104,50 +103,6 @@ export default function Home() {
         </ol>
         <FadeIn>
           <p className="experience-also">{experienceAlso}</p>
-        </FadeIn>
-      </section>
-
-      {/* ---------- Education & skills ---------- */}
-      <section id="education" className="section container">
-        <FadeIn>
-          <h2 className="section-title">Education &amp; skills</h2>
-        </FadeIn>
-        <div className="edu-grid">
-          <FadeIn className="edu">
-            <h3 className="job-org">{education.school}</h3>
-            <p className="job-title">{education.degree}</p>
-            <p className="muted">
-              {education.dates} · GPA {education.gpa}
-            </p>
-            <p className="edu-course">
-              <span className="label">Coursework</span>
-              {education.coursework.join(", ")}
-            </p>
-          </FadeIn>
-          <FadeIn delay={60} className="skills">
-            {skills.map((g) => (
-              <div key={g.group} className="skill-group">
-                <p className="label">{g.group}</p>
-                <ul className="chips">
-                  {g.items.map((it) => (
-                    <li key={it}>{it}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ---------- About ---------- */}
-      <section id="about" className="section container">
-        <FadeIn>
-          <h2 className="section-title">About</h2>
-        </FadeIn>
-        <FadeIn className="prose about">
-          {about.paragraphs.map((para) => (
-            <p key={para.slice(0, 24)}>{para}</p>
-          ))}
         </FadeIn>
       </section>
     </>
