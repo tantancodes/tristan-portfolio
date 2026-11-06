@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { preload } from "react-dom";
 import Cover from "@/components/Cover";
 import FadeIn from "@/components/FadeIn";
+import RetrievalDiagram from "@/components/RetrievalDiagram";
 import { getProject, projects } from "@/content/projects";
 
 // Pre-render one static page per project at build time; any other slug is a 404.
@@ -125,6 +126,15 @@ export default async function CaseStudy({ params }: Props) {
         </FadeIn>
       )}
 
+      {project.diagram === "retrieval" && (
+        <FadeIn as="section" className="case-section">
+          <h2 className="section-label">How it works</h2>
+          <div className="diagram-frame">
+            <RetrievalDiagram />
+          </div>
+        </FadeIn>
+      )}
+
       {project.highlights && (
         <section className="case-section">
           <FadeIn>
@@ -172,7 +182,7 @@ export default async function CaseStudy({ params }: Props) {
         </section>
       )}
 
-      {(project.lookingForward || project.links) && (
+      {(project.lookingForward || project.links || project.credits) && (
         <FadeIn as="section" className="case-section">
           {project.lookingForward && (
             <>
@@ -190,6 +200,12 @@ export default async function CaseStudy({ params }: Props) {
             </p>
           )}
           {project.note && <p className="case-note">{project.note}</p>}
+          {project.credits && (
+            <p className="case-credits">
+              <span className="label">Credits</span>
+              {project.credits}
+            </p>
+          )}
         </FadeIn>
       )}
 

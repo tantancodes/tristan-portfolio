@@ -1,13 +1,15 @@
-"use client";
-
 import ArrowLink from "./ArrowLink";
 import FadeIn from "./FadeIn";
-import TypewriterEffect from "./vendor/TypewriterEffect";
 import { hero, site } from "@/content/projects";
 
 const firstName = site.name.split(" ")[0];
 
 export default function Hero() {
+  const now = [
+    { label: "Currently", items: hero.currently },
+    { label: "Previously", items: hero.previously },
+  ];
+
   return (
     <section className="hero container">
       <FadeIn>
@@ -23,24 +25,20 @@ export default function Hero() {
       </FadeIn>
 
       <FadeIn delay={150}>
-        <p className="hero-role">
-          {/* Screen readers get one plain sentence; the typing animation is visual only. */}
-          <span className="sr-only">I am a {hero.roles.join(", ")}.</span>
-          <span aria-hidden="true">
-            I am a{" "}
-            <TypewriterEffect
-              words={hero.roles.map((word) => ({ word }))}
-              typingSpeed={90}
-              deletingSpeed={45}
-              pauseDuration={1400}
-              cursorColor="var(--ink-soft)"
-              cursorWidth={2}
-              cursorHeight={90}
-              font={{ fontSize: "1em", fontWeight: 500 }}
-              textColor="var(--ink)"
-            />
-          </span>
-        </p>
+        <p className="hero-role">{hero.positioning}</p>
+      </FadeIn>
+
+      <FadeIn delay={220}>
+        <dl className="hero-now">
+          {now.map((group) => (
+            <div key={group.label}>
+              <dt className="label">{group.label}</dt>
+              {group.items.map((item) => (
+                <dd key={item}>{item}</dd>
+              ))}
+            </div>
+          ))}
+        </dl>
       </FadeIn>
 
       <FadeIn delay={300}>

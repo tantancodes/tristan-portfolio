@@ -55,6 +55,10 @@ export type Project = {
   highlights?: Highlight[]; // aim for 2–3
   lookingForward?: string;
   links?: { label: string; href: string }[];
+  /** A diagram shown under "How it works". See components/RetrievalDiagram.tsx. */
+  diagram?: "retrieval";
+  /** One short line naming the people I built this with, shown near the end of the page. */
+  credits?: string;
   /** Screenshots of the real product. The first replaces the generated cover; the rest form a gallery. */
   images?: { src: string; alt: string; caption?: string; phone?: boolean }[];
 
@@ -82,10 +86,13 @@ export type Job = {
 /** A project card. Case studies link to /work/<slug>; others can link out or not at all. */
 export type ProjectCard = {
   title: string;
+  /** Small label above the title: what kind of work it is and when, e.g. "Research · 2026". */
+  status: string;
   stack: string[];
   summary: string;
   stat?: string; // one headline number, shown under the summary
   video?: Video; // small auto-playing preview at the top of the card
+  art?: "retrieval"; // drawn card art when there's no video (components/RetrievalCardArt.tsx)
   featured?: boolean; // spans the full width of the Selected work grid on desktop (use on one card)
   caseStudy?: string;
   href?: string;
@@ -94,6 +101,25 @@ export type ProjectCard = {
 export type PlayItem = {
   title: string;
   blurb: string;
+};
+
+/** A research poster, shown in the Research section and at /research/<slug>. */
+export type ResearchEntry = {
+  slug: string;
+  title: string;
+  /** The poster as an image (webp/jpg). Width and height keep the page from shifting as it loads. */
+  poster?: { src: string; width: number; height: number; alt: string };
+  /** The full poster as a PDF, offered as a download. */
+  pdf?: string;
+  abstract: string;
+  venue: string;
+  date: string;
+  collaborators: string[];
+  pi?: string;
+  /** Slug of the related case study at /work/<slug>. */
+  project?: string;
+  /** Drafts show while developing locally (next dev) and are left out of the built site. */
+  draft?: boolean;
 };
 
 /* ---------- You ---------- */
@@ -117,8 +143,10 @@ export const site = {
 /** The opening screen (components/Hero.tsx). */
 export const hero = {
   eyebrow: "Data Science & Economics · UC Berkeley",
-  // Typed out after "I am a", one at a time, on a loop.
-  roles: ["designer", "researcher", "student", "teacher"],
+  positioning:
+    "I build tools that help people learn and do research — from 3D viewers for Egyptologists to search for K–12 sustainability data.",
+  currently: ["Research Assistant at Berkeley's Archaeological Research Facility", "Data Research Intern at Ten Strands"],
+  previously: ["IDX Exchange", "Lucarelli Photogrammetry Lab"],
   ctas: [
     { label: "View projects", href: "#projects" },
     { label: "View experience", href: "#experience" },
@@ -126,8 +154,7 @@ export const hero = {
 };
 
 /* ---------- Experience (LinkedIn + resume) ----------
- * Where LinkedIn, the resume, and older notes disagreed, the RESUME wins.
- * Each disagreement is marked "CHECK:" so you can confirm it. */
+ * Where LinkedIn, the resume, and older notes disagree, the RESUME wins. */
 
 export const experience: Job[] = [
   {
@@ -153,7 +180,6 @@ export const experience: Job[] = [
     caseStudy: "ten-strands",
     roles: [
       {
-        // CHECK: LinkedIn says "Data Analyst · Internship, Aug 2026 – Present"; your first notes said Jan 2026.
         title: "Data Research Intern",
         dates: "Sep 2026 – Present",
         points: [
@@ -204,27 +230,18 @@ export const experience: Job[] = [
       { title: "Marketing Officer", dates: "Jan 2026 – May 2026" },
     ],
   },
-  {
-    org: "Goldman Sachs",
-    roles: [{ title: "Possibilities Summit", dates: "Jan 2025 – May 2025" }],
-  },
-  {
-    org: "Rose Water Capital",
-    place: "United States",
-    tags: ["Design and Advertising"],
-    roles: [{ title: "Business Consulting Intern", dates: "Aug 2024 – Feb 2025" }],
-  },
-  {
-    org: "Shaolin Temple Cultural Center",
-    roles: [{ title: "Martial Arts Coach", dates: "Feb 2023 – May 2024" }],
-  },
 ];
+
+/** One short line under the timeline for smaller roles. */
+export const experienceAlso =
+  "Also: Goldman Sachs Possibilities Summit (2025) and business consulting at Rose Water Capital (2024–25).";
 
 /* ---------- Projects (the "View projects" section) ---------- */
 
 export const projectCards: ProjectCard[] = [
   {
     title: "BD3D: 3D Egyptian Coffin Research Viewer",
+    status: "Research · 2026",
     stack: ["Next.js", "TypeScript", "React Three Fiber", "three.js", "glTF", "Playwright"],
     summary: "Read six ancient coffins in 3D: 314 scholarly annotations linked to 607 surface regions, raking light, word-to-location links, and a compressed asset pipeline that cut downloads by 74%.",
     caseStudy: "egyptology-3d",
@@ -241,7 +258,9 @@ export const projectCards: ProjectCard[] = [
   },
   {
     title: "K–12 Sustainability Evidence Retrieval",
+    status: "Internship · 2026",
     stack: ["Python", "BM25", "Sentence Transformers", "CrossEncoder"],
+    art: "retrieval",
     summary: "Hybrid lexical + neural search over 10,000+ district pages and policies. Recall@5 +35%, manual source discovery −76%.",
     caseStudy: "ten-strands",
     // No WebM: VP9 came out larger than this H.264 for a mostly-static UI recording.
@@ -256,6 +275,7 @@ export const projectCards: ProjectCard[] = [
   },
   {
     title: "California Home Value Estimator",
+    status: "Internship · 2026",
     stack: ["Python", "XGBoost", "scikit-learn", "GeoPandas", "Streamlit"],
     summary: "Predicts California home sale prices from property and location data, with an explanation for every estimate.",
     stat: "7.7% median error on 11,900 held-out sales",
@@ -272,51 +292,43 @@ export const projectCards: ProjectCard[] = [
   },
   {
     title: "Predicting 3D Reconstruction Quality",
+    status: "Research · 2025–26",
     stack: ["Python", "Agisoft Metashape", "Ridge regression"],
     summary: "Early structure-from-motion signals predict final scan quality: 13.7% lower geometric RMSE than a reprojection-error baseline.",
     caseStudy: "bd3d",
   },
   {
     title: "Spotify Analytics Platform",
-    stack: ["TypeScript", "Node.js", "FastAPI", "PostgreSQL", "Pandas", "Tableau"],
-    summary: "Spotify OAuth ingest of 1,000+ tracks and 50+ artists, listening analytics, and content-based recommendations via audio-feature cosine similarity.",
+    status: "Personal · 2026",
+    // Only what the public repo's code uses (github.com/tantancodes/spotify-analytics).
+    stack: ["Python", "FastAPI", "SQLAlchemy", "PostgreSQL", "OAuth 2.0"],
+    summary: "Spotify OAuth ingest of 1,000+ tracks and 50+ artists, listening analytics, and content-based recommendations from artist affinity and genre overlap.",
     caseStudy: "spotify-analytics",
   },
-  // Hidden so the Selected work grid stays even (featured card + 4 normal cards).
-  // Uncomment to bring it back; add or remove another card too, or the grid gets a gap.
-  // {
-  //   title: "Quantitative ML Stock Analytics Dashboard",
-  //   stack: ["Python", "Pandas", "scikit-learn", "Streamlit", "yfinance"],
-  //   summary: "Live market data, technical indicators (RSI, MACD, Bollinger Bands), and SVR / Random Forest models evaluated with time-series-aware splits on up to 365 days of history.",
-  //   // href: "https://github.com/tantancodes/...", // TODO: add a link if the repo is public
-  // },
 ];
 
 /* ---------- Education & skills (resume) ---------- */
 
 export const education = {
   school: "University of California, Berkeley",
-  degree: "B.A. Data Science & Economics", // TODO: confirm B.A. vs B.S.
+  degree: "B.A. Data Science & Economics",
   dates: "Expected May 2029",
   gpa: "3.88",
-  coursework: [
-    "Microeconomics",
-    "Probability and Statistics for Business",
-    "Foundations of Data Science",
-    "Computational Structures in Data Science",
-    "Linear Algebra",
-  ],
+  // Same as the resume.
+  coursework: ["Data Science (Foundations, Computational Structures)", "Probability & Statistics", "Linear Algebra"],
 };
 
+// Copied from the resume (public/resume.pdf), same groups and order. Update both together.
 export const skills: { group: string; items: string[] }[] = [
-  { group: "Languages", items: ["Python", "SQL", "JavaScript", "TypeScript", "HTML/CSS"] },
+  { group: "Languages", items: ["Python", "SQL", "TypeScript", "JavaScript", "R", "HTML/CSS"] },
   {
-    group: "Frameworks & tools",
-    items: ["React", "Next.js", "FastAPI", "PostgreSQL", "Supabase", "MongoDB", "Git", "Vercel", "OAuth 2.0", "REST APIs"],
+    group: "Machine Learning & Data",
+    items: ["pandas", "scikit-learn", "XGBoost", "LightGBM", "PyTorch", "Sentence Transformers", "GeoPandas"],
   },
+  { group: "Visualization & Apps", items: ["Streamlit", "Tableau", "Matplotlib", "Plotly", "Altair"] },
   {
-    group: "Data science & ML",
-    items: ["scikit-learn", "PyTorch", "Sentence Transformers", "OpenCV", "Pandas", "NumPy", "SciPy", "Matplotlib", "Tableau"],
+    group: "Web & Infrastructure",
+    items: ["React", "Next.js", "React Three Fiber", "FastAPI", "PostgreSQL", "Supabase", "OAuth 2.0", "Git", "Vercel"],
   },
 ];
 
@@ -324,8 +336,38 @@ export const about = {
   paragraphs: [
     "I study Data Science and Economics at UC Berkeley (class of 2029). I like problems where a model or a tool is only half the job and the other half is making it useful to the people who rely on it: researchers, teachers, students.",
     "Every week I teach Python to 100+ high schoolers as a Computer Science Mentor at Berkeley ANova. Explaining an idea to a room of fifteen-year-olds is the fastest way I know to find out whether I really understand it.",
+    "Outside of school I train kung fu. Before Berkeley, I coached martial arts at the Shaolin Temple Cultural Center from 2023 to 2024.",
   ],
 };
+
+/* ---------- Research (posters) ----------
+ * Each entry gets a card in the Research section and a page at /research/<slug>.
+ * The section only appears once at least one entry is published (no draft flag). */
+
+export const research: ResearchEntry[] = [
+  {
+    slug: "k12-sustainability-retrieval",
+    title: "Hybrid retrieval for California K–12 sustainability evidence",
+    draft: true, // TODO: remove once the poster is in public/research/k12-sustainability-retrieval/
+    // poster: { src: "/research/k12-sustainability-retrieval/poster.webp", width: 0, height: 0, alt: "" },
+    // pdf: "/research/k12-sustainability-retrieval/poster.pdf",
+    // TODO: replace with the poster's abstract.
+    abstract:
+      "Evidence about sustainability work in California K–12 districts is spread across 10,000+ webpages and policy documents. I built a retrieval pipeline that combines BM25, dense Sentence Transformer embeddings, and CrossEncoder reranking, and evaluated it against human-validated evidence with Recall@K and MRR. Recall@5 improved by 35% and manual source-discovery time fell by 76%.",
+    venue: "TODO: venue",
+    date: "TODO: date",
+    collaborators: [], // TODO
+    pi: undefined, // TODO
+    project: "ten-strands",
+  },
+];
+
+/** Research entries to show. Drafts appear only in local development. */
+export const publishedResearch = research.filter((r) => !r.draft || process.env.NODE_ENV === "development");
+
+export function getResearch(slug: string): ResearchEntry | undefined {
+  return publishedResearch.find((r) => r.slug === slug);
+}
 
 /* ---------- Work ---------- */
 
@@ -479,11 +521,12 @@ export const projects: Project[] = [
     role: "Data Research Intern",
 
     label: "Applied NLP · Education",
-    timeline: "Sep 2026 – present", // CHECK: LinkedIn says Aug 2026; your first notes said Jan 2026
+    timeline: "Sep 2026 – Present",
     team: "Ten Strands and the UC Berkeley Data Discovery program", // TODO: team size/roles
     myRole: "Retrieval system design and evaluation",
     skills: ["Python", "BM25", "Sentence Transformers", "CrossEncoder", "Recall@K / MRR"],
     cover: "retrieval", // fallback only; the page shows the demo video
+    diagram: "retrieval",
     video: {
       mp4: "/projects/k12-retrieval/demo.mp4",
       poster: "/projects/k12-retrieval/poster.webp",
@@ -632,7 +675,7 @@ export const projects: Project[] = [
       {
         title: "A recommendation engine on top",
         body:
-          "Listening behavior is analyzed with Pandas and Tableau, and a content-based recommender suggests new tracks by cosine similarity over Spotify audio features.",
+          "Listening behavior is analyzed with Pandas and Tableau, and a content-based recommender suggests new tracks from artist affinity and genre overlap.",
       },
     ],
     lookingForward:
