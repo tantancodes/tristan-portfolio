@@ -129,7 +129,7 @@ export const hero = {
   eyebrow: "Data Science & Economics · UC Berkeley",
   ctas: [
     { label: "View projects", href: "#projects" },
-    { label: "View experience", href: "#experience" },
+    { label: "View experience", href: "/experience" },
   ],
 };
 
