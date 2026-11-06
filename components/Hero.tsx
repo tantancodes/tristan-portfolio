@@ -5,11 +5,6 @@ import { hero, site } from "@/content/projects";
 const firstName = site.name.split(" ")[0];
 
 export default function Hero() {
-  const now = [
-    { label: "Currently", items: hero.currently },
-    { label: "Previously", items: hero.previously },
-  ];
-
   return (
     <section className="hero container">
       <FadeIn>
@@ -25,23 +20,6 @@ export default function Hero() {
       </FadeIn>
 
       <FadeIn delay={150}>
-        <p className="hero-role">{hero.positioning}</p>
-      </FadeIn>
-
-      <FadeIn delay={220}>
-        <dl className="hero-now">
-          {now.map((group) => (
-            <div key={group.label}>
-              <dt className="label">{group.label}</dt>
-              {group.items.map((item) => (
-                <dd key={item}>{item}</dd>
-              ))}
-            </div>
-          ))}
-        </dl>
-      </FadeIn>
-
-      <FadeIn delay={300}>
         <div className="hero-ctas">
           {hero.ctas.map((c) => (
             <ArrowLink key={c.href} href={c.href}>
