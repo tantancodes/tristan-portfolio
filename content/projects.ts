@@ -244,6 +244,15 @@ export const projectCards: ProjectCard[] = [
     stack: ["Python", "BM25", "Sentence Transformers", "CrossEncoder"],
     summary: "Hybrid lexical + neural search over 10,000+ district pages and policies. Recall@5 +35%, manual source discovery −76%.",
     caseStudy: "ten-strands",
+    // No WebM: VP9 came out larger than this H.264 for a mostly-static UI recording.
+    video: {
+      mp4: "/projects/k12-retrieval/demo-720.mp4",
+      poster: "/projects/k12-retrieval/poster-720.webp",
+      width: 720,
+      height: 452,
+      label:
+        "Screen recording of the K–12 sustainability evidence search: picking the Wildfire Protection indicator, searching \"fire protection\", and reading the cited answer, its source passages, and the saved evidence list.",
+    },
   },
   {
     title: "California Home Value Estimator",
@@ -474,7 +483,15 @@ export const projects: Project[] = [
     team: "Ten Strands and the UC Berkeley Data Discovery program", // TODO: team size/roles
     myRole: "Retrieval system design and evaluation",
     skills: ["Python", "BM25", "Sentence Transformers", "CrossEncoder", "Recall@K / MRR"],
-    cover: "retrieval",
+    cover: "retrieval", // fallback only; the page shows the demo video
+    video: {
+      mp4: "/projects/k12-retrieval/demo.mp4",
+      poster: "/projects/k12-retrieval/poster.webp",
+      width: 1280,
+      height: 804,
+      label:
+        "Demo of the K–12 sustainability evidence search: choosing an indicator filter, searching \"fire protection\", then the cited answer, the ranked source passages, and the saved evidence list with export.",
+    },
     goal:
       "Evidence about California K-12 sustainability is scattered across 10,000+ district webpages and policy documents, and finding it by hand is slow. The goal was a retrieval system that puts the most relevant sources at the top for a given question, so people spend their time using data instead of hunting for it.",
     highlights: [
