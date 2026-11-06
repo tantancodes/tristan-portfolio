@@ -11,7 +11,7 @@
 /* ---------- Types (describe the shape of the content) ---------- */
 
 /** Which generated SVG illustration a project's cover uses. See components/Cover.tsx. */
-export type CoverMotif = "coffin" | "mesh" | "retrieval" | "houses" | "waveform";
+export type CoverMotif = "coffin" | "mesh" | "retrieval" | "houses" | "waveform" | "gap";
 
 export type Highlight = {
   title: string;
@@ -93,7 +93,10 @@ export type ProjectCard = {
   stat?: string; // one headline number, shown under the summary
   video?: Video; // small auto-playing preview at the top of the card
   art?: "retrieval"; // drawn card art when there's no video (components/RetrievalCardArt.tsx)
+  cover?: CoverMotif; // generated cover art at the top of the card when there's no video (components/Cover.tsx)
   featured?: boolean; // spans the full width of the Selected work grid on desktop (use on one card)
+  /** Small heading shown above the first card of a group, e.g. "Ten Strands". Cards in a group sit together. */
+  group?: string;
   caseStudy?: string;
   href?: string;
 };
@@ -237,6 +240,7 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
+    group: "Ten Strands",
     title: "K–12 Sustainability Evidence Retrieval",
     status: "Project · 2026",
     stack: ["Python", "BM25", "Sentence Transformers", "CrossEncoder"],
@@ -255,6 +259,25 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
+    group: "Ten Strands",
+    title: "Rural–Urban Gaps in Documented Climate Action",
+    status: "Research · 2026 · In progress",
+    cover: "gap",
+    stack: ["Python", "pandas", "Jupyter"],
+    // TODO: add the poster, key findings and a case study once the symposium is done (and Ten Strands is OK with posting it).
+    summary: "Do rural California districts take less environmental and climate action, or just document less of it? An analysis of district indicator data, building toward the team's research symposium poster.",
+  },
+  {
+    group: "More projects",
+    title: "Predicting 3D Reconstruction Quality",
+    status: "Research · 2025–26",
+    cover: "mesh",
+    stack: ["Python", "Agisoft Metashape", "Ridge regression"],
+    summary: "Early structure-from-motion signals predict final scan quality: 13.7% lower geometric RMSE than a reprojection-error baseline.",
+    caseStudy: "bd3d",
+  },
+  {
+    group: "More projects",
     title: "California Home Value Estimator",
     status: "Internship · 2026",
     stack: ["Python", "XGBoost", "scikit-learn", "GeoPandas", "Streamlit"],
@@ -270,21 +293,6 @@ export const projectCards: ProjectCard[] = [
       label:
         "Screen recording of the California Home Value Estimator: entering a home's ZIP code, size and age, and getting an estimated sale price with an error range and a breakdown of what moved the estimate.",
     },
-  },
-  {
-    title: "Predicting 3D Reconstruction Quality",
-    status: "Research · 2025–26",
-    stack: ["Python", "Agisoft Metashape", "Ridge regression"],
-    summary: "Early structure-from-motion signals predict final scan quality: 13.7% lower geometric RMSE than a reprojection-error baseline.",
-    caseStudy: "bd3d",
-  },
-  {
-    title: "Spotify Analytics Platform",
-    status: "Personal · 2026",
-    // Only what the public repo's code uses (github.com/tantancodes/spotify-analytics).
-    stack: ["Python", "FastAPI", "SQLAlchemy", "PostgreSQL", "OAuth 2.0"],
-    summary: "Spotify OAuth ingest of 1,000+ tracks and 50+ artists, listening analytics, and content-based recommendations from artist affinity and genre overlap.",
-    caseStudy: "spotify-analytics",
   },
 ];
 
@@ -600,38 +608,6 @@ export const projects: Project[] = [
     ],
   },
 
-  {
-    slug: "spotify-analytics",
-    headline: "Turning listening history into better recommendations",
-    year: "2026", // TODO: confirm year
-    org: "Personal project",
-    role: "Solo developer",
-
-    label: "Side project · Full-stack",
-    timeline: "2026", // TODO
-    team: "Solo",
-    myRole: "Design, backend, data, and deployment",
-    skills: ["TypeScript", "Node.js", "Python", "FastAPI", "PostgreSQL", "Pandas", "Tableau"],
-    cover: "waveform",
-    goal:
-      "Build an analytics platform on top of my own Spotify data: sign in with Spotify, store listening history, and use it to power a recommendation engine.",
-    highlights: [
-      {
-        title: "Real sign-in, real data",
-        body:
-          "Users authenticate with Spotify OAuth 2.0, and the FastAPI backend ingests and normalizes their listening history (1,000+ tracks, 50+ artists) into PostgreSQL.",
-      },
-      {
-        title: "A recommendation engine on top",
-        body:
-          "Listening behavior is analyzed with Pandas and Tableau, and a content-based recommender suggests new tracks from artist affinity and genre overlap.",
-      },
-    ],
-    lookingForward:
-      // TODO: replace with what's actually next.
-      "I'd like to add a way to measure whether the recommendations are good, beyond whether they feel right.",
-    links: [{ label: "View on GitHub", href: "https://github.com/tantancodes/spotify-analytics" }],
-  },
 ];
 
 /* ---------- Play ---------- */

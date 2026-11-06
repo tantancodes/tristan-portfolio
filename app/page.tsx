@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AutoplayVideo from "@/components/AutoplayVideo";
+import Cover from "@/components/Cover";
 import FadeIn from "@/components/FadeIn";
 import Hero from "@/components/Hero";
 import RetrievalCardArt from "@/components/RetrievalCardArt";
@@ -35,6 +36,11 @@ export default function Home() {
                     <RetrievalCardArt />
                   </div>
                 )}
+                {!p.video && !p.art && p.cover && (
+                  <div className="project-media project-media--cover">
+                    <Cover motif={p.cover} seed={`card-${p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} title={p.title} />
+                  </div>
+                )}
                 <p className="project-status">{p.status}</p>
                 <h3 className="project-title">{p.title}</h3>
                 <p className="project-summary">{p.summary}</p>
@@ -47,7 +53,14 @@ export default function Home() {
                 )}
               </>
             );
-            return (
+            // A group heading ("Ten Strands") goes in front of the first card of each group.
+            const heading = p.group && p.group !== projectCards[i - 1]?.group && (
+              <li key={`group-${p.group}`} className="project-group">
+                <h3 className="project-group-title">{p.group}</h3>
+              </li>
+            );
+            return [
+              heading,
               <FadeIn as="li" key={p.title} delay={p.featured ? 0 : column * 60} className={p.featured ? "is-featured" : ""}>
                 {href ? (
                   <Link href={href} className="project-card is-link">
@@ -56,8 +69,8 @@ export default function Home() {
                 ) : (
                   <div className="project-card">{inner}</div>
                 )}
-              </FadeIn>
-            );
+              </FadeIn>,
+            ];
           })}
         </ul>
       </section>

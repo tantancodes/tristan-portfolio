@@ -248,6 +248,8 @@ img, svg { display: block; max-width: 100%; }
 /* Featured card (ported from recruiter-ready): spans the whole row on desktop and tablet.
    Its video box still takes the video's own shape, so nothing is cropped. */
 .project-grid > li.is-featured { grid-column: 1 / -1; }
+.project-grid > li.project-group { grid-column: 1 / -1; padding-top: 28px; }
+.project-group-title { font-family: var(--font-code); font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink-soft); }
 .is-featured .project-card { padding: 30px 32px 32px; }
 .is-featured .project-title { font-size: 24px; }
 .project-card {
@@ -268,6 +270,8 @@ img, svg { display: block; max-width: 100%; }
   border-radius: calc(var(--radius) - 4px); border: 1px solid var(--line); background: var(--cover-bg);
 }
 .project-media video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.project-media--cover { aspect-ratio: 16 / 9; }
+.project-media--cover .cover { display: block; }
 .project-stat { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
 .project-title { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.25; }
 .project-summary { color: var(--ink-soft); font-size: 15px; line-height: 1.55; }

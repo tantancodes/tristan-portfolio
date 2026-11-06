@@ -229,12 +229,39 @@ function Waveform({ rng }: { rng: Rng }) {
   );
 }
 
+// Two columns of districts, rural and urban: filled dots are documented action, hollow ones aren't.
+// The open question sits between them: missing action, or missing paperwork?
+function Gap({ rng }: { rng: Rng }) {
+  const col = (x0: number, rate: number) =>
+    Array.from({ length: 48 }, (_, k) => ({
+      x: x0 + (k % 6) * 46 + gauss(rng) * 3,
+      y: 150 + Math.floor(k / 6) * 50 + gauss(rng) * 3,
+      on: rng() < rate,
+    }));
+  const rural = col(200, 0.32);
+  const urban = col(740, 0.7);
+  return (
+    <g>
+      {[...rural, ...urban].map((d, k) => (
+        <circle key={k} cx={f(d.x)} cy={f(d.y)} r="11" className={d.on ? "c-accent" : "c-card c-line"} />
+      ))}
+      <line x1="500" y1="130" x2="500" y2="530" className="c-line c-dash" />
+      <line x1="700" y1="130" x2="700" y2="530" className="c-line c-dash" />
+      <rect x="532" y="300" width="136" height="44" rx="22" className="c-card c-line" />
+      <rect x="560" y="318" width="80" height="8" rx="4" className="c-ink-soft" />
+      <rect x="200" y="570" width="230" height="8" rx="4" className="c-ink-soft" />
+      <rect x="740" y="570" width="230" height="8" rx="4" className="c-ink-soft" />
+    </g>
+  );
+}
+
 const motifs: Record<CoverMotif, (p: { rng: Rng }) => React.ReactElement> = {
   coffin: Coffin,
   mesh: Mesh,
   retrieval: Retrieval,
   houses: Houses,
   waveform: Waveform,
+  gap: Gap,
 };
 
 export default function Cover({ motif, seed, title }: { motif: CoverMotif; seed: string; title: string }) {
