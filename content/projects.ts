@@ -103,25 +103,6 @@ export type PlayItem = {
   blurb: string;
 };
 
-/** A research poster, shown in the Research section and at /research/<slug>. */
-export type ResearchEntry = {
-  slug: string;
-  title: string;
-  /** The poster as an image (webp/jpg). Width and height keep the page from shifting as it loads. */
-  poster?: { src: string; width: number; height: number; alt: string };
-  /** The full poster as a PDF, offered as a download. */
-  pdf?: string;
-  abstract: string;
-  venue: string;
-  date: string;
-  collaborators: string[];
-  pi?: string;
-  /** Slug of the related case study at /work/<slug>. */
-  project?: string;
-  /** Drafts show while developing locally (next dev) and are left out of the built site. */
-  draft?: boolean;
-};
-
 /* ---------- You ---------- */
 
 export const site = {
@@ -339,35 +320,6 @@ export const about = {
     "Outside of school I train kung fu. Before Berkeley, I coached martial arts at the Shaolin Temple Cultural Center from 2023 to 2024.",
   ],
 };
-
-/* ---------- Research (posters) ----------
- * Each entry gets a card in the Research section and a page at /research/<slug>.
- * The section only appears once at least one entry is published (no draft flag). */
-
-export const research: ResearchEntry[] = [
-  {
-    slug: "k12-sustainability-retrieval",
-    title: "Hybrid retrieval for California K–12 sustainability evidence",
-    draft: true, // TODO: remove once the poster is in public/research/k12-sustainability-retrieval/
-    // poster: { src: "/research/k12-sustainability-retrieval/poster.webp", width: 0, height: 0, alt: "" },
-    // pdf: "/research/k12-sustainability-retrieval/poster.pdf",
-    // TODO: replace with the poster's abstract.
-    abstract:
-      "Evidence about sustainability work in California K–12 districts is spread across 10,000+ webpages and policy documents. I built a retrieval pipeline that combines BM25, dense Sentence Transformer embeddings, and CrossEncoder reranking, and evaluated it against human-validated evidence with Recall@K and MRR. Recall@5 improved by 35% and manual source-discovery time fell by 76%.",
-    venue: "TODO: venue",
-    date: "TODO: date",
-    collaborators: [], // TODO
-    pi: undefined, // TODO
-    project: "ten-strands",
-  },
-];
-
-/** Research entries to show. Drafts appear only in local development. */
-export const publishedResearch = research.filter((r) => !r.draft || process.env.NODE_ENV === "development");
-
-export function getResearch(slug: string): ResearchEntry | undefined {
-  return publishedResearch.find((r) => r.slug === slug);
-}
 
 /* ---------- Work ---------- */
 

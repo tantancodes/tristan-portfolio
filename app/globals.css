@@ -417,18 +417,6 @@ img, svg { display: block; max-width: 100%; }
 /* ---------- Experience: one line for smaller roles ---------- */
 .experience-also { margin-top: 20px; font-size: 15px; color: var(--ink-soft); }
 
-/* ---------- Research posters ---------- */
-.research-list { border-top: 1px solid var(--line); }
-.research-row { display: grid; gap: 8px; padding: 28px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
-.research-row:hover { color: inherit; }
-.research-row:hover .research-title { color: var(--ink-soft); }
-.research-meta { font-family: var(--font-code); font-size: 13px; color: var(--ink-soft); }
-.research-title { font-size: clamp(20px, 2.6vw, 26px); letter-spacing: -0.02em; line-height: 1.25; max-width: 40ch; transition: color 0.2s; }
-.draft-badge {
-  display: inline-block; margin-left: 10px; padding: 1px 8px; vertical-align: 1px;
-  border: 1px dashed var(--ink-soft); border-radius: 999px;
-  font-family: var(--font-code); font-size: 11px; letter-spacing: 0.04em; text-transform: none; color: var(--ink-soft);
-}
 .poster-frame a { display: block; }
 .poster-missing {
   display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--cover-bg);

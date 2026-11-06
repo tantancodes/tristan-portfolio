@@ -3,7 +3,7 @@ import AutoplayVideo from "@/components/AutoplayVideo";
 import FadeIn from "@/components/FadeIn";
 import Hero from "@/components/Hero";
 import RetrievalCardArt from "@/components/RetrievalCardArt";
-import { about, education, experience, experienceAlso, projectCards, publishedResearch, skills } from "@/content/projects";
+import { about, education, experience, experienceAlso, projectCards, skills } from "@/content/projects";
 
 export default function Home() {
   return (
@@ -61,29 +61,6 @@ export default function Home() {
           })}
         </ul>
       </section>
-
-      {/* ---------- Research: posters. Hidden until at least one entry is published. ---------- */}
-      {publishedResearch.length > 0 && (
-        <section id="research" className="section container">
-          <FadeIn>
-            <h2 className="section-title">Research</h2>
-          </FadeIn>
-          <ul className="research-list">
-            {publishedResearch.map((r, i) => (
-              <FadeIn as="li" key={r.slug} delay={Math.min(i, 4) * 50}>
-                <Link href={`/research/${r.slug}`} className="research-row">
-                  <p className="research-meta">
-                    {r.venue} · {r.date}
-                    {r.draft && <span className="draft-badge">Draft</span>}
-                  </p>
-                  <h3 className="research-title">{r.title}</h3>
-                  <span className="project-go" aria-hidden="true">Poster →</span>
-                </Link>
-              </FadeIn>
-            ))}
-          </ul>
-        </section>
-      )}
 
       {/* ---------- Experience: a timeline, one row per organization ---------- */}
       <section id="experience" className="section container">
