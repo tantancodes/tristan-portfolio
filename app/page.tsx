@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import AutoplayVideo from "@/components/AutoplayVideo";
 import Cover from "@/components/Cover";
 import FadeIn from "@/components/FadeIn";
@@ -8,7 +9,7 @@ import { projectCards } from "@/content/projects";
 
 export default function Home() {
   return (
-    <>
+    <ViewTransition enter="page-enter" exit="page-exit" default="none">
       {/* ---------- Hero ---------- */}
       <Hero />
 
@@ -23,7 +24,9 @@ export default function Home() {
             // Stagger the fade-in by column; a featured card takes a whole row, so count only normal cards.
             const column = projectCards.slice(0, i).filter((c) => !c.featured).length % 2;
             const href = p.caseStudy ? `/work/${p.caseStudy}` : p.href;
-            const inner = (
+            // The card's picture morphs into the case study's cover when you open it; its cover has the same name.
+            const morph = p.caseStudy && projectCards.findIndex((c) => c.caseStudy === p.caseStudy) === i ? p.caseStudy : undefined;
+            const media = (
               <>
                 {p.video && (
                   // The box takes the video's own shape, so nothing is cropped and nothing shifts.
@@ -40,6 +43,17 @@ export default function Home() {
                   <div className="project-media project-media--cover">
                     <Cover motif={p.cover} seed={`card-${p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} title={p.title} />
                   </div>
+                )}
+              </>
+            );
+            const inner = (
+              <>
+                {morph ? (
+                  <ViewTransition name={`cover-${morph}`} share="morph" default="none">
+                    {media}
+                  </ViewTransition>
+                ) : (
+                  media
                 )}
                 <p className="project-status">{p.status}</p>
                 <h3 className="project-title">{p.title}</h3>
@@ -74,6 +88,6 @@ export default function Home() {
           })}
         </ul>
       </section>
-    </>
+    </ViewTransition>
   );
 }
