@@ -411,12 +411,6 @@ img, svg { display: block; max-width: 100%; }
 /* ---------- Experience: one line for smaller roles ---------- */
 .experience-also { margin-top: 20px; font-size: 15px; color: var(--ink-soft); }
 
-.poster-frame a { display: block; }
-.poster-missing {
-  display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--cover-bg);
-  font-family: var(--font-code); font-size: 13px; color: var(--ink-soft);
-}
-
 /* ---------- Case study credits ---------- */
 .case-credits { margin-top: 14px; font-size: 15px; color: var(--ink-soft); }
 .case-credits .label { display: inline; margin-right: 8px; }
