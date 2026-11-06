@@ -447,6 +447,60 @@ img, svg { display: block; max-width: 100%; }
 @keyframes page-fade { from { opacity: 0; } }
 @keyframes page-rise { from { translate: 0 14px; } }
 
+/* ---------- Spotlight on project cards (components/CardSpotlight.tsx sets --mx / --my) ---------- */
+.project-card { position: relative; isolation: isolate; }
+.project-card::before, .project-card::after {
+  content: ""; position: absolute; pointer-events: none; border-radius: inherit;
+  opacity: 0; transition: opacity 0.35s var(--ease);
+}
+/* a soft pool of light under the cursor */
+.project-card::before {
+  inset: 0; z-index: -1;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), var(--accent-soft), transparent 65%);
+}
+/* the same light, drawn only on the 1px border */
+.project-card::after {
+  inset: -1px; padding: 1px;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), var(--ink-soft), transparent 70%);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.project-media video, .project-media svg { transition: transform 0.7s var(--ease); }
+.project-go { display: inline-block; transition: transform 0.35s var(--ease); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .project-card.is-link:hover::before, .project-card.is-link:hover::after { opacity: 1; }
+  .project-card.is-link:hover .project-media video,
+  .project-card.is-link:hover .project-media svg { transform: scale(1.025); }
+  .project-card.is-link:hover .project-go { transform: translateX(6px); }
+}
+
+/* ---------- Scroll-driven entrances ----------
+   Where the browser supports scroll timelines, cards rise and come into focus as they scroll
+   into view, tied to the scroll position (scroll back up and they reverse). Elsewhere the
+   one-time fade-in from section 7 still applies. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .js .project-grid > li.fade {
+      opacity: 1; transform: none; transition: none;
+      animation: card-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+    @keyframes card-in {
+      from { opacity: 0; translate: 0 48px; scale: 0.97; filter: blur(6px); }
+      to { opacity: 1; translate: 0 0; scale: 1; filter: none; }
+    }
+
+    /* the big name drifts back and dims as you scroll past the hero */
+    .hero-name {
+      transform-origin: 0 50%;
+      animation: hero-recede linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 70svh;
+    }
+    @keyframes hero-recede { to { scale: 0.9; opacity: 0.35; translate: 0 -24px; } }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) {
     animation-duration: 0s !important; animation-delay: 0s !important;

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ViewTransition } from "react";
 import AutoplayVideo from "@/components/AutoplayVideo";
+import CardSpotlight from "@/components/CardSpotlight";
 import Cover from "@/components/Cover";
 import FadeIn from "@/components/FadeIn";
 import Hero from "@/components/Hero";
@@ -10,6 +11,7 @@ import { projectCards } from "@/content/projects";
 export default function Home() {
   return (
     <ViewTransition enter="page-enter" exit="page-exit" default="none">
+      <CardSpotlight />
       {/* ---------- Hero ---------- */}
       <Hero />
 
