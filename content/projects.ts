@@ -158,14 +158,13 @@ export const experience: Job[] = [
   {
     org: "Ten Strands",
     place: "Berkeley, CA",
-    caseStudy: "ten-strands",
     roles: [
       {
         title: "Data Research Intern",
         dates: "Sep 2026 – Present",
         points: [
-          "Built a local evidence search tool for California K–12 sustainability research (FastAPI, Hugging Face models), combining BM25, dense embeddings, and CrossEncoder reranking; the local LLM answers only with verbatim, cited excerpts.",
-          "Compared BM25, dense, hybrid, and reranked retrieval: reranking raised known-source Recall@5 from 88.2% to 97.1% on 34 development queries, with reproducible runs.",
+          "Collect district-level environmental and climate indicator data for California K–12 districts on the Indicator Expansion team (Region 9), contributing to the team's statewide dataset.",
+          "Leading an independent analysis in Python of whether the rural–urban gap in documented environmental action reflects a gap in district capacity or in documentation, for the team's research symposium poster.",
         ],
       },
     ],
@@ -239,12 +238,12 @@ export const projectCards: ProjectCard[] = [
   },
   {
     title: "K–12 Sustainability Evidence Retrieval",
-    status: "Internship · 2026",
+    status: "Project · 2026",
     stack: ["Python", "BM25", "Sentence Transformers", "CrossEncoder"],
     art: "retrieval",
     summary: "Keyword + neural search over district pages and policies, with answers that quote and cite their sources.",
     stat: "97.1% Recall@5 vs. 88.2% for BM25 (exploratory, 34 queries)",
-    caseStudy: "ten-strands",
+    caseStudy: "k12-retrieval",
     // No WebM: VP9 came out larger than this H.264 for a mostly-static UI recording.
     video: {
       mp4: "/projects/k12-retrieval/demo-720.mp4",
@@ -467,8 +466,8 @@ export const projects: Project[] = [
   },
 
   {
-    slug: "ten-strands",
-    headline: "Cutting the search time for K‑12 sustainability data",
+    slug: "k12-retrieval",
+    headline: "Searching K‑12 sustainability evidence, with sources attached",
     year: "2026–now",
     org: "Ten Strands",
     role: "Data Research Intern",
