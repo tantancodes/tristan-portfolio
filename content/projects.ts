@@ -177,8 +177,9 @@ export const experience: Job[] = [
         title: "Data Research Intern",
         dates: "Sep 2026 – Present",
         points: [
-          "Collect district-level environmental and climate indicator data for California K–12 districts on the Indicator Expansion team (Region 9), contributing to the team's statewide dataset.",
-          "Leading an independent analysis in Python of whether the rural–urban gap in documented environmental action reflects a gap in district capacity or in documentation, for the team's research symposium poster.",
+          "Analyzed climate preparedness in 937 California school districts across 200+ demographic and policy indicators (Python, pandas, statsmodels, GeoPandas).",
+          "Found district enrollment was the strongest predictor of documented climate protections in county-clustered regression; the urban–rural gap disappeared after controlling for district size.",
+          "Identified 199 high-wildfire-risk and 176 high-pollution districts with no matching documented protections, and mapped geographic clusters with spatial autocorrelation (Moran's I).",
         ],
       },
     ],
@@ -204,11 +205,12 @@ export const experience: Job[] = [
     caseStudy: "bd3d",
     roles: [
       {
-        title: "Undergraduate Research Apprentice",
+        title: "Undergraduate Machine Learning Researcher",
         dates: "Aug 2025 – May 2026",
         points: [
-          "Built an automated Python photogrammetry pipeline (Agisoft Metashape API) processing 1,000+ images into 3D reconstructions, cutting manual processing time by 40% (~30 → ~18 min each).",
-          "Developed Ridge regression models on SfM and image-overlap graph features to predict reconstruction quality: 13.7% lower geometric RMSE than a reprojection-error baseline, with leakage-aware cross-validation.",
+          "Built PyTorch PointNet and multi-head self-attention models that predict photogrammetric camera-coverage gaps from camera layouts.",
+          "Benchmarked against Ridge regression across five-seed synthetic experiments: attention reached 42–49% lower MAE. Built a camera-guided ICP evaluation to measure geometric reconstruction error.",
+          "Earlier phase: automated Agisoft Metashape reconstructions and showed that a central gap in camera coverage, not image count, drove the worst geometric errors.",
         ],
       },
     ],
@@ -218,11 +220,27 @@ export const experience: Job[] = [
     caseStudy: "anova-marketing",
     roles: [
       {
-        title: "Computer Science Mentor",
-        dates: "Aug 2025 – Present",
-        points: ["Teach Python weekly to 100+ high school students."],
+        title: "Marketing Officer",
+        dates: "Aug 2025 – May 2026",
+        points: [
+          "Taught weekly Python lessons and programming labs to 100+ students across 7 Bay Area schools.",
+          "Led digital marketing and outreach campaigns that generated 100,000+ impressions and increased recruitment engagement by 137%.",
+        ],
       },
-      { title: "Marketing Officer", dates: "Jan 2026 – May 2026" },
+    ],
+  },
+  {
+    org: "IxD @ ArtCenter College of Design",
+    place: "Pasadena, CA",
+    roles: [
+      {
+        title: "Lead Product Designer",
+        dates: "May 2025 – Jul 2025",
+        points: [
+          "Led end-to-end UX/UI design of Pasadena High School's App Academy website with ArtCenter designers: high-fidelity Figma prototypes, visual branding, and responsive interfaces.",
+          "Ran user research and usability testing (card sorting, focus groups, A/B walkthroughs) and turned stakeholder feedback into a launched site built with HTML, CSS, JavaScript, and Vue.js.",
+        ],
+      },
     ],
   },
 ];
@@ -292,8 +310,16 @@ export const projectCards: ProjectCard[] = [
     title: "Predicting 3D Reconstruction Quality",
     status: "Research · 2025–26",
     cover: "mesh",
-    stack: ["Python", "Agisoft Metashape", "Ridge regression"],
-    summary: "Early structure-from-motion signals predict final scan quality: 13.7% lower geometric RMSE than a reprojection-error baseline.",
+    stack: ["Python", "PyTorch", "Agisoft Metashape", "ICP"],
+    summary: "Photogrammetry fails where the cameras leave gaps. PointNet and self-attention models predict those coverage gaps from the camera layout alone, before any reconstruction runs.",
+    stat: "42–49% lower MAE than Ridge with attention (five-seed synthetic experiments)",
+    video: {
+      mp4: "/work/bd3d/coverage-720.mp4",
+      poster: "/work/bd3d/coverage-720.webp",
+      width: 720,
+      height: 450,
+      label: "Illustration: 48 cameras orbit an object; a block of cameras on one side is removed and highlighted, showing the coverage gap the model predicts.",
+    },
     caseStudy: "bd3d",
   },
   {
@@ -471,42 +497,88 @@ export const projects: Project[] = [
 
   {
     slug: "bd3d",
-    headline: "Predicting 3D scan quality before spending the compute",
+    headline: "Predicting where 3D scans will fail, before spending the compute",
     year: "2025–26",
     org: "Lucarelli Photogrammetry Lab, UC Berkeley",
-    role: "Undergraduate Research Apprentice",
+    role: "Undergraduate Machine Learning Researcher",
 
-    label: "Research · Photogrammetry",
+    label: "Research · Photogrammetry · Machine learning",
     timeline: "Aug 2025 – May 2026",
-    team: "Lucarelli Photogrammetry Lab (BD3D)", // TODO: e.g. "PI, grad mentor, 2 undergrads"
-    myRole: "Pipeline, feature engineering, and modeling",
-    skills: ["Python", "Agisoft Metashape", "ICP", "Ridge regression", "LOOCV"],
-    cover: "mesh",
+    team: "Lucarelli Photogrammetry Lab (BD3D)",
+    myRole: "Pipeline, experiments, feature engineering, and modeling",
+    skills: ["Python", "PyTorch", "Agisoft Metashape", "ICP", "scikit-learn"],
+    cover: "mesh", // fallback only; the page shows the animation
+    video: {
+      mp4: "/work/bd3d/coverage-1280.mp4",
+      poster: "/work/bd3d/coverage-1280.webp",
+      width: 1280,
+      height: 800,
+      label: "Illustration: 48 cameras orbit an object; a block of cameras on one side is removed and highlighted, showing the coverage gap the model predicts.",
+    },
     goal:
-      "Photogrammetry turns a stack of photos into a 3D model, but a full reconstruction is expensive and you only learn whether it worked at the end. The question: can signals from the earliest stages of the pipeline predict the final reconstruction quality before you commit the compute?",
-    highlights: [
+      "Photogrammetry turns a stack of photos into a 3D model, but a full reconstruction is expensive and you only learn whether it worked at the end. Can you tell, before running it, where a scan will fail?",
+    writeup: [
       {
-        title: "A ground truth for 'good'",
-        body:
-          "I automated the Agisoft Metashape workflow in Python, processing 1,000+ images into 3D reconstructions, and scored each finished model against a reference surface with ICP alignment. That gave every run a quality number to predict, and image-overlap graphs from the input photos gave the features to predict it with.",
-        stat: "−40%",
-        statLabel: "processing time (~30 → ~18 min)",
+        heading: "The question",
+        body: [
+          "Photogrammetry turns a stack of photos into a 3D model, but a full reconstruction takes minutes to hours, and you only find out whether it worked at the end. I wanted to know whether signals available before the expensive dense stage could predict the final geometric quality.",
+        ],
       },
       {
-        title: "Early signals beat the obvious baseline",
-        body:
-          "With leakage-aware Ridge models (no information from the finished reconstruction allowed into the features), early structure-from-motion features cut geometric RMSE by 13.7% compared with a reprojection-error baseline.",
-        stat: "−13.7%",
-        statLabel: "geometric RMSE vs. baseline",
+        heading: "Phase 1: what actually breaks a reconstruction",
+        body: [
+          "I automated Agisoft Metashape reconstructions of one artifact under controlled conditions (random subsets, and structured removals at a fixed 30 images) and scored each result against a 50-image reference with rigid ICP alignment.",
+          "The clearest finding: how many photos you have matters less than where they are. At the same 30 images, removing a central block of viewpoints produced 5.7× the surface error of the best removal strategy.",
+        ],
+        figure: {
+          src: "/work/bd3d/structured_30_comparison.webp",
+          width: 1600,
+          height: 972,
+          alt: "Bar chart of normalized surface RMSE at a fixed 30 images: central gap is far worst (about 0.044, flagged caution), then uniform thinning (about 0.019), remove weakest overlap (about 0.009), and remove strongest overlap (about 0.008).",
+          caption: "Same number of images, very different results. A central gap in coverage is by far the worst.",
+        },
       },
       {
-        title: "An honest negative result",
-        body:
-          "The improvement didn't hold under extrapolation, meaning scenes outside the range the model was trained on. Reporting that clearly matters as much as the headline number: it says the features capture something real, but not yet something general.",
+        heading: "The usual quality signal misses it",
+        body: [
+          "Reprojection error, the number photogrammetry software reports, barely tracked geometric quality (Spearman ρ = −0.17). The worst reconstructions actually had some of the lowest reprojection error, because it only measures consistency among the photos you kept, not what's missing.",
+        ],
+        figure: {
+          src: "/work/bd3d/reprojection_vs_geometry.webp",
+          width: 1600,
+          height: 1098,
+          alt: "Scatter plot of sparse reprojection RMSE against normalized surface RMSE for 16 candidate reconstructions, showing little relationship; several of the worst reconstructions have low reprojection error.",
+          caption: "Low reprojection error did not mean a good model.",
+        },
+      },
+      {
+        heading: "Early models, and an honest negative result",
+        body: [
+          "Small Ridge models on early structure-from-motion features beat the reprojection baseline by 13.7% under leave-one-condition-out validation, but the advantage did not survive extrapolation to new selection strategies or a pass-QC-only check. With 16 observations from one artifact, that is the honest reading: the features capture something real, but not yet something general.",
+        ],
+        figure: {
+          src: "/work/bd3d/model_ablation.webp",
+          width: 1600,
+          height: 914,
+          alt: "Grouped bar chart of cross-validated RMSE for dummy, image count, reprojection, early SfM, graph, and combined feature models under three validation schemes; early SfM is best under two schemes but not under selection-family holdout.",
+          caption: "Model families compared under three validation schemes.",
+        },
+      },
+      {
+        heading: "Phase 2: predicting coverage gaps with PyTorch",
+        body: [
+          "Phase 1 pointed at the cause: localized gaps in camera coverage. So I built models that look at the camera layout itself. Each camera becomes a point (position and viewing direction), and PointNet and multi-head self-attention models predict where coverage gaps fall, before any reconstruction runs.",
+          "Across five-seed synthetic experiments, the attention model reached 42–49% lower MAE than a Ridge baseline. To connect predictions back to real geometry, I built a camera-guided ICP evaluation that measures reconstruction error around each region.",
+        ],
+        stats: [
+          { value: "5.7×", label: "error from a central coverage gap, same image count" },
+          { value: "ρ = −0.17", label: "reprojection error vs. geometric quality" },
+          { value: "42–49%", label: "lower MAE than Ridge (synthetic, 5 seeds)" },
+        ],
       },
     ],
     lookingForward:
-      "The next step is camera-coverage features: describing how thoroughly the cameras actually see each part of the object, which should transfer across scenes better than overlap statistics.",
+      "The synthetic results are a starting point. Next is testing the coverage model on real camera layouts from the lab's coffin scans.",
   },
 
   {
