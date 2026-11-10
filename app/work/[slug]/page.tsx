@@ -224,17 +224,23 @@ export default async function CaseStudy({ params }: Props) {
         {project.screenshots && (
           <section className="case-section">
             <FadeIn>
-              <h2 className="section-label">Screenshots</h2>
+              <h2 className="section-label">{project.screenshotsLabel ?? "Screenshots"}</h2>
             </FadeIn>
             <div className="case-shots">
               {project.screenshots.map((shot) => (
                 <FadeIn key={shot.src}>
                   <figure>
-                    {/* Opens the full-size image; lazy so it costs nothing until scrolled to. */}
-                    <a href={shot.src} target="_blank" rel="noreferrer">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} loading="lazy" decoding="async" />
-                    </a>
+                    {shot.video ? (
+                      <div className="case-shot-video">
+                        <video src={shot.video} poster={shot.src} width={shot.width} height={shot.height} autoPlay muted loop playsInline preload="metadata" aria-label={shot.alt} />
+                      </div>
+                    ) : (
+                      /* Opens the full-size image; lazy so it costs nothing until scrolled to. */
+                      <a href={shot.src} target="_blank" rel="noreferrer">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} loading="lazy" decoding="async" />
+                      </a>
+                    )}
                     {shot.caption && <figcaption>{shot.caption}</figcaption>}
                   </figure>
                 </FadeIn>

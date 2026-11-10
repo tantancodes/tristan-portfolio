@@ -32,7 +32,14 @@ export type Video = {
   label: string;
 };
 
-export type Screenshot = { src: string; width: number; height: number; alt: string; caption?: string };
+export type Screenshot = {
+  src: string; // the image, or the still frame shown before a video plays
+  width: number;
+  height: number;
+  alt: string;
+  caption?: string;
+  video?: string; // mp4: plays muted on loop in place of the image
+};
 
 export type Project = {
   /** URL segment: /work/<slug>. Lowercase, dashes, no spaces. */
@@ -73,6 +80,7 @@ export type Project = {
   }[]; // shown instead of goal / highlights / looking forward
   note?: string; // one short line next to the links
   screenshots?: Screenshot[];
+  screenshotsLabel?: string; // heading over the screenshots, "Screenshots" by default
 };
 
 /** One role on the Experience timeline (LinkedIn + resume). */
@@ -207,6 +215,7 @@ export const experience: Job[] = [
   },
   {
     org: "Berkeley ANova",
+    caseStudy: "anova-marketing",
     roles: [
       {
         title: "Computer Science Mentor",
@@ -303,6 +312,22 @@ export const projectCards: ProjectCard[] = [
       height: 450,
       label:
         "Screen recording of the California Home Value Estimator: entering a home's ZIP code, size and age, and getting an estimated sale price with an error range and a breakdown of what moved the estimate.",
+    },
+  },
+  {
+    group: "Design & outreach",
+    title: "ANova Spring 2026 Recruitment Campaign",
+    status: "Marketing · 2026",
+    stack: ["Motion design", "Illustration", "Social media"],
+    summary: "Animated Instagram posts and an infosession poster for Berkeley ANova's spring recruitment, a club teaching computer science to under-resourced Bay Area students.",
+    caseStudy: "anova-marketing",
+    featured: true,
+    video: {
+      mp4: "/work/anova-marketing/computer-card.mp4",
+      poster: "/work/anova-marketing/computer-card.webp",
+      width: 722,
+      height: 406,
+      label: "Animated ANova Spring 2026 poster: a retro computer whose screen flickers on to show the ANova logo.",
     },
   },
 ];
@@ -482,6 +507,57 @@ export const projects: Project[] = [
     ],
     lookingForward:
       "The next step is camera-coverage features: describing how thoroughly the cameras actually see each part of the object, which should transfer across scenes better than overlap statistics.",
+  },
+
+  {
+    slug: "anova-marketing",
+    headline: "Recruiting the next class of CS mentors, one animated post at a time",
+    year: "2026",
+    org: "Berkeley ANova",
+    role: "Marketing Officer",
+
+    label: "Marketing · Motion design",
+    timeline: "Spring 2026 recruitment",
+    team: "Berkeley ANova officer board",
+    myRole: "Design and animation of the recruitment posts",
+    skills: ["Motion design", "Illustration", "Social media", "Branding"],
+    cover: "waveform", // fallback only; the page shows the animated poster
+    video: {
+      mp4: "/work/anova-marketing/computer-1280.mp4",
+      poster: "/work/anova-marketing/computer-1280.webp",
+      width: 1280,
+      height: 720,
+      label: "Animated ANova Spring 2026 poster: a retro computer whose screen flickers on to show the ANova logo.",
+    },
+    goal:
+      "Berkeley ANova teaches computer science to under-resourced middle and high school students in the Bay Area. Each semester it needs new mentors, and recruiting happens mostly on Instagram.",
+    writeup: [
+      {
+        heading: "The brief",
+        body: [
+          "ANova recruits new members every semester, and most students first hear about it through Instagram. As Marketing Officer, I made the posts for the Spring 2026 recruitment cycle: an introduction to who we are, a call to apply, and the poster for our infosessions.",
+        ],
+      },
+      {
+        heading: "The approach",
+        body: [
+          "Instead of static flyers, I animated each post. Short loops stop the scroll better than still images. Every piece shares the same visual system: the teal ANova palette, a light circuit-board texture, soft organic shapes, and the club's mascot, so the feed reads as one campaign rather than separate announcements.",
+        ],
+      },
+      {
+        heading: "Results",
+        body: [
+          "Across the year, our campaigns generated 100,000+ impressions and a 137% increase in recruitment engagement.",
+        ],
+      },
+    ],
+    screenshotsLabel: "The posts",
+    screenshots: [
+      { src: "/work/anova-marketing/intro.webp", video: "/work/anova-marketing/intro.mp4", width: 720, height: 720, alt: "Opening slide: the ANova Spring 2026 title with the club mascot.", caption: "Opening slide" },
+      { src: "/work/anova-marketing/who-we-are.webp", video: "/work/anova-marketing/who-we-are.mp4", width: 720, height: 720, alt: "Who are we: ANova teaches computer science to under-resourced middle and high school students in the Bay Area.", caption: "Who we are" },
+      { src: "/work/anova-marketing/apply.webp", video: "/work/anova-marketing/apply.mp4", width: 720, height: 720, alt: "Interested in joining? Apply by Saturday, January 31st, with the mascot saying 'Do it!' next to member photos.", caption: "Call to apply" },
+      { src: "/work/anova-marketing/computer.webp", video: "/work/anova-marketing/computer.mp4", width: 720, height: 720, alt: "Infosession poster: a retro computer whose screen lights up with the ANova logo.", caption: "Infosession poster" },
+    ],
   },
 
   {
