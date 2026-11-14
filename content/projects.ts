@@ -39,6 +39,7 @@ export type Screenshot = {
   alt: string;
   caption?: string;
   video?: string; // mp4: plays muted on loop in place of the image
+  href?: string; // optional: clicking the image opens this (e.g. a full-size PDF) in a new tab
 };
 
 export type Project = {
@@ -706,6 +707,26 @@ export const projects: Project[] = [
         ],
       },
       {
+        heading: "The team poster",
+        body: [
+          "My analysis is one strand of our team's research poster, School Districts in California Are Lagging Behind in Environmental Action, made with Aritra Nag, Nata Petrovi and Kevin Phongsa and mentored by Judy He and Sarah Whiting. It draws on the indicators our team collected this fall from district websites, board policies, social media and local news, using LLM-assisted search with manual verification.",
+          "Across the 937 districts, most indicators are rare: only five of the climate practices we tracked are documented by more than 40% of districts. 72% of districts show no documented wildfire readiness, and rural and town districts trail urban and suburban ones at both lower and higher wildfire risk, which fits the size story in my analysis below. A logistic regression on community-based partnerships found higher English-learner shares going with more partnerships, and higher pollution burden and BIPOC enrollment going with fewer.",
+        ],
+        figure: {
+          src: "/work/rural-urban-gap/team-poster.webp",
+          width: 2400,
+          height: 1600,
+          alt: "Research poster titled School Districts in California Are Lagging Behind in Environmental Action, with sections for introduction, data collection, analysis and conclusion, a bar chart of which climate practices districts publicly document, a bar chart of wildfire readiness by community type and risk, and a logistic regression odds-ratio plot for community-based partnerships.",
+          caption: "The finished team poster. Click it to open the full-resolution PDF.",
+          href: "/work/rural-urban-gap/team-poster.pdf",
+        },
+        stats: [
+          { value: "937", label: "California districts tracked" },
+          { value: "72%", label: "with no documented wildfire readiness" },
+          { value: "15% vs 36%", label: "wildfire-ready: high-risk rural vs. high-risk suburban districts" },
+        ],
+      },
+      {
         heading: "The data",
         body: [
           "937 California districts, combining Ten Strands' district dataset (enrollment, demographics, income, politics, locale) with indicators our Indicator Expansion team collected this fall from district websites and documents. The outcome is a count of seven climate protections a district documents publicly: heat, wildfire, poor air quality, indoor air quality, energy resilience, air conditioning, and stormwater. 865 districts had complete data for the models.",
@@ -768,25 +789,6 @@ export const projects: Project[] = [
           alt: "Three maps of California districts: community median income, number of documented climate protections, and low-income districts with no documented protections, which cluster in the far north and the inland south.",
           caption: "Left to right: community median income, documented protections, and low-income districts with none documented.",
         },
-      },
-      {
-        heading: "The team poster",
-        body: [
-          "This analysis is one strand of our team's research poster, School Districts in California Are Lagging Behind in Environmental Action, made with Aritra Nag, Nata Petrovi and Kevin Phongsa and mentored by Judy He and Sarah Whiting. It draws on the indicators our team collected this fall from district websites, board policies, social media and local news, using LLM-assisted search with manual verification.",
-          "Across the 937 districts, most indicators are rare: only five of the climate practices we tracked are documented by more than 40% of districts. 72% of districts show no documented wildfire readiness, and rural and town districts trail urban and suburban ones at both lower and higher wildfire risk, which fits the size story above. A logistic regression on community-based partnerships found higher English-learner shares going with more partnerships, and higher pollution burden and BIPOC enrollment going with fewer.",
-        ],
-        figure: {
-          src: "/work/rural-urban-gap/team-poster.webp",
-          width: 2400,
-          height: 1600,
-          alt: "Research poster titled School Districts in California Are Lagging Behind in Environmental Action, with sections for introduction, data collection, analysis and conclusion, a bar chart of which climate practices districts publicly document, a bar chart of wildfire readiness by community type and risk, and a logistic regression odds-ratio plot for community-based partnerships.",
-          caption: "The finished team poster. Open the PDF for full resolution.",
-        },
-        stats: [
-          { value: "937", label: "California districts tracked" },
-          { value: "72%", label: "with no documented wildfire readiness" },
-          { value: "15% vs 36%", label: "wildfire-ready: high-risk rural vs. high-risk suburban districts" },
-        ],
       },
     ],
     lookingForward:

@@ -303,6 +303,9 @@ img, svg { display: block; max-width: 100%; }
 .case-stats div { display: flex; flex-direction: column-reverse; gap: 6px; }
 .case-figure { margin: 32px 0 0; }
 .case-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.case-figure-link { display: block; cursor: zoom-in; }
+.case-figure-link img { transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
+.case-figure-link:hover img, .case-figure-link:focus-visible img { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
 .case-figure figcaption { margin-top: 10px; font-size: 14px; color: var(--ink-soft); }
 .case-stats dd { margin: 0; }
 .case-note { margin-top: 14px; font-size: 15px; color: var(--ink-soft); }

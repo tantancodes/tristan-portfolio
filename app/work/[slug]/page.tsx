@@ -115,7 +115,14 @@ export default async function CaseStudy({ params }: Props) {
               {w.figure && (
                 <figure className="case-figure">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={w.figure.src} alt={w.figure.alt} width={w.figure.width} height={w.figure.height} loading="lazy" decoding="async" />
+                  {w.figure.href ? (
+                    <a href={w.figure.href} target="_blank" rel="noopener noreferrer" className="case-figure-link">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={w.figure.src} alt={w.figure.alt} width={w.figure.width} height={w.figure.height} loading="lazy" decoding="async" />
+                    </a>
+                  ) : (
+                    <img src={w.figure.src} alt={w.figure.alt} width={w.figure.width} height={w.figure.height} loading="lazy" decoding="async" />
+                  )}
                   {w.figure.caption && <figcaption>{w.figure.caption}</figcaption>}
                 </figure>
               )}
