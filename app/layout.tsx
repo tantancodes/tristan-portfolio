@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Shippori_Mincho } from "next/font/google";
 import Footer from "@/components/Footer";
+import TopBar from "@/components/TopBar";
 import { site } from "@/content/projects";
 import "./globals.css";
 
@@ -8,6 +9,7 @@ import "./globals.css";
 // Each exposes a CSS variable that globals.css uses.
 const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const serif = Shippori_Mincho({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
   title: { default: site.name, template: `%s · ${site.name}` },
@@ -20,7 +22,7 @@ const bootScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${serif.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
@@ -28,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">
           Skip to content
         </a>
+        <TopBar />
         <main id="main">{children}</main>
         <Footer />
       </body>

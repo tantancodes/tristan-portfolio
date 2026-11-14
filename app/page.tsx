@@ -57,16 +57,12 @@ export default function Home() {
                 ) : (
                   media
                 )}
-                <p className="project-status">{p.status}</p>
                 <h3 className="project-title">{p.title}</h3>
                 <p className="project-summary">{p.summary}</p>
                 {p.stat && <p className="project-stat">{p.stat}</p>}
-                <p className="project-stack">{p.stack.join(" · ")}</p>
-                {href && (
-                  <span className="project-go" aria-hidden="true">
-                    {p.caseStudy ? "Case study →" : "Visit ↗"}
-                  </span>
-                )}
+                <p className="project-meta">
+                  {[p.status.replace(/\s·\s/g, ", ").toLowerCase(), ...p.stack.slice(0, 3).map((t) => t.toLowerCase())].join(", ")}
+                </p>
               </>
             );
             // A group heading ("Ten Strands") goes in front of the first card of each group.

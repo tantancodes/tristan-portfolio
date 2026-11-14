@@ -141,7 +141,8 @@ export const site = {
 
 /** The opening screen (components/Hero.tsx). */
 export const hero = {
-  eyebrow: "Data Science & Economics · UC Berkeley",
+  statement: "I turn research data into tools people can actually use.",
+  now: "Data Science & Economics at UC Berkeley. Right now: a 3D research viewer for ancient Egyptian coffins at the Archaeological Research Facility, and climate-action research across 937 California school districts with Ten Strands.",
   ctas: [
     { label: "View projects", href: "#projects" },
     { label: "View experience", href: "/experience" },

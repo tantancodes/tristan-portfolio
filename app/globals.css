@@ -5,24 +5,24 @@
    ============================================================ */
 /* Light theme (default) */
 :root {
-  --bg: #fafafa;
-  --surface: #ffffff;
-  --ink: #0a0a0a;
-  --ink-soft: #737373;
-  --line: #e5e5e5;
-  --accent: #0a0a0a;      /* minimal: the "accent" is just ink */
-  --accent-soft: rgba(10, 10, 10, 0.07);
-  --cover-bg: #f1f1f1;
-  --avatar-bg: #e9e9e9;
+  --bg: #f3efe7;
+  --surface: #faf8f2;
+  --ink: #211c15;
+  --ink-soft: #78705f;
+  --line: #ddd5c4;
+  --accent: #211c15;      /* minimal: the "accent" is just ink */
+  --accent-soft: rgba(33, 28, 21, 0.07);
+  --cover-bg: #ebe6da;
+  --avatar-bg: #e2dccd;
 
 
-  --font-display: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-serif), "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --font-body: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-code: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
   --max: 1080px;
   --gutter: clamp(16px, 4vw, 40px);
-  --radius: 12px;
+  --radius: 2px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
   color-scheme: light;
@@ -31,28 +31,28 @@
 /* Dark theme: follows the OS unless the visitor picked light, or applies when they picked dark */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0a0a0a;
-    --surface: #141414;
-    --ink: #ededed;
-    --ink-soft: #8f8f8f;
-    --line: #262626;
-    --accent: #ededed;
-    --accent-soft: rgba(237, 237, 237, 0.09);
-    --cover-bg: #121212;
-    --avatar-bg: #d4d4d4;
+    --bg: #161310;
+    --surface: #1d1915;
+    --ink: #eae4d7;
+    --ink-soft: #99907e;
+    --line: #352f26;
+    --accent: #eae4d7;
+    --accent-soft: rgba(234, 228, 215, 0.09);
+    --cover-bg: #1b1713;
+    --avatar-bg: #d6cfc0;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0a0a0a;
-  --surface: #141414;
-  --ink: #ededed;
-  --ink-soft: #8f8f8f;
-  --line: #262626;
-  --accent: #ededed;
-  --accent-soft: rgba(237, 237, 237, 0.09);
-  --cover-bg: #121212;
-  --avatar-bg: #d4d4d4;
+  --bg: #161310;
+  --surface: #1d1915;
+  --ink: #eae4d7;
+  --ink-soft: #99907e;
+  --line: #352f26;
+  --accent: #eae4d7;
+  --accent-soft: rgba(234, 228, 215, 0.09);
+  --cover-bg: #1b1713;
+  --avatar-bg: #d6cfc0;
   color-scheme: dark;
 }
 
@@ -67,11 +67,11 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 17px;
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s, color 0.3s;
 }
-h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.025em; line-height: 1.1; margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.005em; line-height: 1.2; margin: 0; }
 p { margin: 0; }
 ul, ol { list-style: none; margin: 0; padding: 0; }
 a { color: inherit; text-decoration-color: var(--line); text-underline-offset: 3px; transition: color 0.2s, text-decoration-color 0.2s; }
@@ -89,10 +89,10 @@ img, svg { display: block; max-width: 100%; }
 /* Small uppercase labels: "WORK", "THE GOAL", "TIMELINE"… */
 .section-label, .eyebrow, .strip dt {
   font-family: var(--font-code);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 400;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
   color: var(--ink-soft);
 }
 .eyebrow { color: var(--ink-soft); }
@@ -100,8 +100,14 @@ img, svg { display: block; max-width: 100%; }
 /* ============================================================
    3. Nav & footer
    ============================================================ */
+.topbar { border-bottom: 1px solid var(--line); }
+.topbar-inner { display: flex; align-items: baseline; justify-content: space-between; padding-top: 18px; padding-bottom: 18px; }
+.topbar-name { font-family: var(--font-code); font-size: 14px; text-decoration: none; }
+.topbar-nav { display: flex; gap: 28px; font-family: var(--font-code); font-size: 14px; }
+.topbar-nav a { text-decoration: none; color: var(--ink-soft); }
+.topbar-nav a:hover { color: var(--ink); }
 .theme-toggle {
-  width: 32px; height: 32px; border-radius: 50%;
+  width: 32px; height: 32px; border-radius: var(--radius);
   border: 1px solid var(--line); background: transparent; color: var(--ink);
   cursor: pointer; font-size: 14px; line-height: 1;
   transition: border-color 0.2s;
@@ -119,22 +125,22 @@ img, svg { display: block; max-width: 100%; }
 /* The hero stops short of the fold on purpose: the top of the first project's
    video shows at the bottom of the first screen, so the work is one scroll away. */
 .hero {
-  min-height: calc(100svh - 210px);
-  display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 3vw, 32px);
-  padding-top: 88px; padding-bottom: 40px;
+  display: flex; flex-direction: column; justify-content: center; gap: clamp(18px, 2.6vw, 28px);
+  padding-top: clamp(64px, 10vw, 120px); padding-bottom: clamp(40px, 7vw, 88px);
 }
 .hero-eyebrow {
-  font-family: var(--font-code); font-size: 13px; letter-spacing: 0.04em;
+  font-family: var(--font-code); font-size: 13px; letter-spacing: 0.03em; text-transform: lowercase;
   color: var(--ink-soft);
 }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: 16px 40px; margin-top: 8px; }
-.hero-name {
-  font-size: clamp(56px, 11vw, 148px);
+.hero-statement {
+  font-size: clamp(34px, 5.2vw, 62px);
   font-weight: 500;
-  letter-spacing: -0.055em;
-  word-spacing: -0.06em;
-  line-height: 0.95;
+  letter-spacing: -0.005em;
+  line-height: 1.22;
+  max-width: 21ch;
 }
+.hero-now { max-width: 58ch; font-size: 17px; line-height: 1.7; color: var(--ink-soft); }
 .avatar {
   display: inline-block;
   width: 0.78em; height: 0.78em;
@@ -203,7 +209,8 @@ img, svg { display: block; max-width: 100%; }
 
 /* ---------- Section titles ---------- */
 .section-title {
-  font-size: clamp(28px, 3.6vw, 40px); font-weight: 500; letter-spacing: -0.035em;
+  font-size: clamp(24px, 3vw, 32px); font-weight: 500; letter-spacing: -0.005em;
+  padding-top: 18px; border-top: 1px solid var(--ink);
   margin-bottom: clamp(24px, 4vw, 40px);
 }
 .label {
@@ -237,34 +244,32 @@ img, svg { display: block; max-width: 100%; }
    Its video box still takes the video's own shape, so nothing is cropped. */
 .project-grid > li.is-featured { grid-column: 1 / -1; }
 .project-grid > li.project-group { grid-column: 1 / -1; padding-top: 28px; }
-.project-group-title { font-family: var(--font-code); font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink-soft); }
-.is-featured .project-card { padding: 30px 32px 32px; }
-.is-featured .project-title { font-size: 24px; }
+.project-group-title { font-family: var(--font-code); font-size: 13px; font-weight: 500; letter-spacing: 0.03em; text-transform: lowercase; color: var(--ink-soft); }
+.is-featured .project-card { padding: 22px; }
+.is-featured .project-title { font-size: 26px; }
 .project-card {
   flex: 1; display: flex; flex-direction: column; gap: 10px;
-  padding: 26px; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px; border: 1px solid var(--line); border-radius: var(--radius);
   background: var(--surface); text-decoration: none;
-  transition: border-color 0.25s, transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  transition: border-color 0.25s;
 }
 .project-card.is-link:hover {
-  color: inherit; border-color: var(--ink-soft); transform: translateY(-3px);
-  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.3);
+  color: inherit; border-color: var(--ink);
 }
 .project-card.is-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: var(--radius); }
 /* Video preview box. Its aspect-ratio is set inline from the video's own width/height (16:10 is
    just the fallback), so the card never crops the video or shifts when it loads. */
 .project-media {
-  margin: -10px -10px 6px; aspect-ratio: 16 / 10; overflow: hidden;
-  border-radius: calc(var(--radius) - 4px); border: 1px solid var(--line); background: var(--cover-bg);
+  margin: -22px -22px 10px; aspect-ratio: 16 / 10; overflow: hidden;
+  border-radius: 0; border: 0; border-bottom: 1px solid var(--line); background: var(--cover-bg);
 }
 .project-media video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .project-media--cover { aspect-ratio: 16 / 9; }
 .project-media--cover .cover { display: block; }
-.project-stat { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
-.project-title { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.25; }
+.project-stat { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; border-left: 2px solid var(--ink); padding-left: 10px; }
+.project-title { font-size: 22px; font-weight: 500; letter-spacing: 0; line-height: 1.3; }
 .project-summary { color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
-.project-stack { margin-top: auto; padding-top: 8px; font-family: var(--font-code); font-size: 12px; color: var(--ink-soft); }
-.project-go { font-size: 14px; font-weight: 500; }
+.project-meta { margin-top: auto; padding-top: 10px; font-family: var(--font-code); font-size: 12.5px; color: var(--ink-soft); }
 
 
 .play-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
@@ -279,9 +284,9 @@ img, svg { display: block; max-width: 100%; }
 /* ============================================================
    5. Case study
    ============================================================ */
-.case { padding-top: 64px; }
+.case { padding-top: 48px; }
 .back-link { display: inline-block; font-size: 14px; color: var(--ink-soft); text-decoration: none; margin-bottom: 40px; }
-.case-headline { font-size: clamp(34px, 5.4vw, 60px); letter-spacing: -0.015em; max-width: 20ch; margin-top: 12px; }
+.case-headline { font-size: clamp(30px, 4.6vw, 52px); letter-spacing: -0.005em; line-height: 1.22; max-width: 24ch; margin-top: 12px; }
 
 .strip {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
@@ -304,8 +309,8 @@ img, svg { display: block; max-width: 100%; }
 .case-figure { margin: 32px 0 0; }
 .case-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
 .case-figure-link { display: block; cursor: zoom-in; }
-.case-figure-link img { transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
-.case-figure-link:hover img, .case-figure-link:focus-visible img { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.case-figure-link img { transition: border-color 0.2s; }
+.case-figure-link:hover img, .case-figure-link:focus-visible img { border-color: var(--ink); }
 .case-figure figcaption { margin-top: 10px; font-size: 14px; color: var(--ink-soft); }
 .case-stats dd { margin: 0; }
 .case-note { margin-top: 14px; font-size: 15px; color: var(--ink-soft); }
@@ -328,12 +333,12 @@ img, svg { display: block; max-width: 100%; }
 .highlight p { max-width: 58ch; color: var(--ink-soft); }
 .stat { display: flex; flex-direction: column; text-align: right; }
 .highlight .stat { color: var(--ink); }
-.stat-value { font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--accent); }
+.stat-value { font-family: var(--font-display); font-size: 38px; line-height: 1.1; color: var(--accent); }
 .stat-label { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
 
 .case-links { margin-top: 28px; }
 .button {
-  display: inline-block; padding: 10px 18px; border-radius: 999px;
+  display: inline-block; padding: 10px 18px; border-radius: var(--radius);
   border: 1px solid var(--ink); text-decoration: none; font-size: 15px;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
@@ -382,8 +387,8 @@ img, svg { display: block; max-width: 100%; }
 @media (max-width: 760px) {
   .job { grid-template-columns: minmax(0, 1fr); }
   .project-grid, .case-shots { grid-template-columns: minmax(0, 1fr); }
-  .is-featured .project-card { padding: 26px; }
-  .is-featured .project-title { font-size: 20px; }
+  .is-featured .project-title { font-size: 22px; }
+  .topbar-nav { gap: 18px; }
   .case-stats { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .strip { grid-template-columns: 1fr 1fr; }
   .highlight { grid-template-columns: 32px 1fr; }
@@ -404,9 +409,6 @@ img, svg { display: block; max-width: 100%; }
 .gallery-item--phone img { max-width: 300px; margin: 0 auto; }
 .gallery-item--phone figcaption { text-align: center; }
 .case-links { display: flex; flex-wrap: wrap; gap: 12px; }
-
-/* ---------- Project card status ("Research · 2026") ---------- */
-.project-status { font-family: var(--font-code); font-size: 12px; letter-spacing: 0.04em; color: var(--ink-soft); }
 
 /* ---------- Experience: one line for smaller roles ---------- */
 .experience-also { margin-top: 20px; font-size: 15px; color: var(--ink-soft); }
@@ -455,32 +457,6 @@ img, svg { display: block; max-width: 100%; }
 @keyframes page-fade { from { opacity: 0; } }
 @keyframes page-rise { from { translate: 0 14px; } }
 
-/* ---------- Spotlight on project cards (components/CardSpotlight.tsx sets --mx / --my) ---------- */
-.project-card { position: relative; isolation: isolate; }
-.project-card::before, .project-card::after {
-  content: ""; position: absolute; pointer-events: none; border-radius: inherit;
-  opacity: 0; transition: opacity 0.35s var(--ease);
-}
-/* a soft pool of light under the cursor */
-.project-card::before {
-  inset: 0; z-index: -1;
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), var(--accent-soft), transparent 65%);
-}
-/* the same light, drawn only on the 1px border */
-.project-card::after {
-  inset: -1px; padding: 1px;
-  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), var(--ink-soft), transparent 70%);
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-}
-.project-media video, .project-media svg { transition: transform 0.7s var(--ease); }
-.project-go { display: inline-block; transition: transform 0.35s var(--ease); }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .project-card.is-link:hover::before, .project-card.is-link:hover::after { opacity: 1; }
-  .project-card.is-link:hover .project-media video,
-  .project-card.is-link:hover .project-media svg { transform: scale(1.025); }
-  .project-card.is-link:hover .project-go { transform: translateX(6px); }
-}
-
 /* ---------- Scroll-driven entrances ----------
    Where the browser supports scroll timelines, cards rise and come into focus as they scroll
    into view, tied to the scroll position (scroll back up and they reverse). Elsewhere the
@@ -494,12 +470,12 @@ img, svg { display: block; max-width: 100%; }
       animation-range: entry 0% entry 70%;
     }
     @keyframes card-in {
-      from { opacity: 0; translate: 0 48px; scale: 0.97; filter: blur(6px); }
-      to { opacity: 1; translate: 0 0; scale: 1; filter: none; }
+      from { opacity: 0; translate: 0 24px; }
+      to { opacity: 1; translate: 0 0; }
     }
 
     /* the big name drifts back and dims as you scroll past the hero */
-    .hero-name {
+    .hero-statement {
       transform-origin: 0 50%;
       animation: hero-recede linear both;
       animation-timeline: scroll(root);
