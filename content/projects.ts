@@ -180,6 +180,7 @@ export const experience: Job[] = [
           "Analyzed climate preparedness in 937 California school districts across 200+ demographic and policy indicators (Python, pandas, statsmodels, GeoPandas).",
           "Found district enrollment was the strongest predictor of documented climate protections in county-clustered regression; the urban–rural gap disappeared after controlling for district size.",
           "Identified 199 high-wildfire-risk and 176 high-pollution districts with no matching documented protections, and mapped geographic clusters with spatial autocorrelation (Moran's I).",
+          "Co-authored the team's research poster on environmental and climate action across California school districts, mentored by Judy He and Sarah Whiting.",
         ],
       },
     ],
@@ -603,9 +604,23 @@ export const projects: Project[] = [
           caption: "Example runs on the dog (left two) and the coffin (right two).",
         },
       },
+      {
+        heading: "Where it stands: a capture-check app",
+        body: [
+          "The research question needs more objects, and each new object means a new capture. So I turned the pipeline into a one-window desktop app that a photographer can run right after shooting: pick a photo folder, align it in Metashape, and see straight away where the cameras are thin compared with a reference capture, before spending an hour on the dense step. Building the mesh and scoring it with the corrected evaluator are optional next buttons in the same window.",
+          "The coverage view moves the new run into the reference's frame with the same camera fit the evaluator uses, then counts cameras by direction and height. On the coffin run that dropped one side, it flags exactly the low cameras that were removed and nothing else. The evaluator now lives in the package with regression tests, and a walkthrough notebook follows one coffin run from photos to label.",
+        ],
+        figure: {
+          src: "/work/bd3d/capture_check_coverage.webp",
+          width: 1716,
+          height: 728,
+          alt: "The capture-check app's coverage view for a coffin run with one side removed. Left: top-down camera positions colored by elevation, with the 145 reference cameras as hollow circles; the 23 removed cameras on one side are hollow only. Right: a grid of azimuth against elevation showing cameras per cell as run over reference, with the four low-elevation cells on the removed side shaded red.",
+          caption: "The app on the coffin's one-side-removed run (122 of 145 cameras). Red cells: the reference had cameras there and this run doesn't.",
+        },
+      },
     ],
     lookingForward:
-      "Next: a third object, so holding one out means more than two folds; repeating runs at full depth-map resolution; and predicting alignment failure as its own outcome, since one 30-image coffin subset never produced a mesh at all.",
+      "Next: capture a third object with the app so holding one out means more than two folds, predict alignment failure as its own outcome, and show where on the object the geometry goes wrong, not just one error number per run.",
     links: [{ label: "Code and full results on GitHub", href: "https://github.com/tantancodes/reconstruction-quality" }],
   },
 
@@ -754,10 +769,30 @@ export const projects: Project[] = [
           caption: "Left to right: community median income, documented protections, and low-income districts with none documented.",
         },
       },
+      {
+        heading: "The team poster",
+        body: [
+          "This analysis is one strand of our team's research poster, School Districts in California Are Lagging Behind in Environmental Action, made with Aritra Nag, Nata Petrovi and Kevin Phongsa and mentored by Judy He and Sarah Whiting. It draws on the indicators our team collected this fall from district websites, board policies, social media and local news, using LLM-assisted search with manual verification.",
+          "Across the 937 districts, most indicators are rare: only five of the climate practices we tracked are documented by more than 40% of districts. 72% of districts show no documented wildfire readiness, and rural and town districts trail urban and suburban ones at both lower and higher wildfire risk, which fits the size story above. A logistic regression on community-based partnerships found higher English-learner shares going with more partnerships, and higher pollution burden and BIPOC enrollment going with fewer.",
+        ],
+        figure: {
+          src: "/work/rural-urban-gap/team-poster.webp",
+          width: 2400,
+          height: 1600,
+          alt: "Research poster titled School Districts in California Are Lagging Behind in Environmental Action, with sections for introduction, data collection, analysis and conclusion, a bar chart of which climate practices districts publicly document, a bar chart of wildfire readiness by community type and risk, and a logistic regression odds-ratio plot for community-based partnerships.",
+          caption: "The finished team poster. Open the PDF for full resolution.",
+        },
+        stats: [
+          { value: "937", label: "California districts tracked" },
+          { value: "72%", label: "with no documented wildfire readiness" },
+          { value: "15% vs 36%", label: "wildfire-ready: high-risk rural vs. high-risk suburban districts" },
+        ],
+      },
     ],
     lookingForward:
-      "Next: break the gap down by type of action, then test the documentation explanation directly, to see whether smaller districts are doing less or just publishing less.",
-    note: "Preliminary results from ongoing work, building toward the team's research symposium poster.",
+      "Next: break the gap down by type of action, then test the documentation explanation directly, to see whether smaller districts are doing less or just publishing less. For the team, the goal is an interactive database that lets educators and policymakers track district progress over time.",
+    links: [{ label: "Team research poster (PDF)", href: "/work/rural-urban-gap/team-poster.pdf" }],
+    note: "My analysis is ongoing; the team poster is finished.",
   },
 
   {
