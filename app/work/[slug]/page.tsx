@@ -6,7 +6,31 @@ import { preload } from "react-dom";
 import Cover from "@/components/Cover";
 import FadeIn from "@/components/FadeIn";
 import RetrievalDiagram from "@/components/RetrievalDiagram";
-import { getProject, projects } from "@/content/projects";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { getProject, projects, type Screenshot } from "@/content/projects";
+
+// Pages are built ahead of time, so this runs once per build: a video slot stays hidden until its file is added.
+const inPublic = (src: string) => existsSync(path.join(process.cwd(), "public", src));
+
+function CaseFigure({ figure }: { figure: Screenshot }) {
+  const img = (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={figure.src} alt={figure.alt} width={figure.width} height={figure.height} loading="lazy" decoding="async" />
+  );
+  return (
+    <figure className="case-figure">
+      {figure.href ? (
+        <a href={figure.href} target="_blank" rel="noopener noreferrer" className="case-figure-link">
+          {img}
+        </a>
+      ) : (
+        img
+      )}
+      {figure.caption && <figcaption>{figure.caption}</figcaption>}
+    </figure>
+  );
+}
 
 // Pre-render one static page per project at build time; any other slug is a 404.
 export function generateStaticParams() {
@@ -97,7 +121,9 @@ export default async function CaseStudy({ params }: Props) {
 
         {project.writeup ? (
           // Write-up projects: one section per heading, in order.
-          project.writeup.map((w) => (
+          project.writeup
+            .filter((w) => !w.video || inPublic(w.video.mp4))
+            .map((w) => (
             <FadeIn as="section" key={w.heading} className="case-section">
               <h2 className="section-label">{w.heading}</h2>
               <div className="prose">
@@ -105,27 +131,41 @@ export default async function CaseStudy({ params }: Props) {
                   <p key={para.slice(0, 32)}>{para}</p>
                 ))}
               </div>
-              {w.list && (
-                <ul className="case-list">
-                  {w.list.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              )}
-              {w.figure && (
+              {w.list &&
+                (w.ordered ? (
+                  <ol className="case-list case-list--ordered">
+                    {w.list.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                ) : (
+                  <ul className="case-list">
+                    {w.list.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ))}
+              {w.video && (
                 <figure className="case-figure">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {w.figure.href ? (
-                    <a href={w.figure.href} target="_blank" rel="noopener noreferrer" className="case-figure-link">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={w.figure.src} alt={w.figure.alt} width={w.figure.width} height={w.figure.height} loading="lazy" decoding="async" />
-                    </a>
-                  ) : (
-                    <img src={w.figure.src} alt={w.figure.alt} width={w.figure.width} height={w.figure.height} loading="lazy" decoding="async" />
-                  )}
-                  {w.figure.caption && <figcaption>{w.figure.caption}</figcaption>}
+                  <video
+                    className="case-video"
+                    controls
+                    muted
+                    playsInline
+                    preload="metadata"
+                    poster={inPublic(w.video.poster) ? w.video.poster : undefined}
+                    width={w.video.width}
+                    height={w.video.height}
+                    style={{ aspectRatio: `${w.video.width} / ${w.video.height}` }}
+                    aria-label={w.video.label}
+                  >
+                    {w.video.webm && <source src={w.video.webm} type="video/webm" />}
+                    <source src={w.video.mp4} type="video/mp4" />
+                  </video>
                 </figure>
               )}
+              {w.figure && <CaseFigure figure={w.figure} />}
+              {w.figures?.map((f) => <CaseFigure key={f.src} figure={f} />)}
               {w.stats && (
                 <dl className="case-stats">
                   {w.stats.map((st) => (

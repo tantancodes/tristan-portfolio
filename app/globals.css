@@ -299,6 +299,10 @@ img, svg { display: block; max-width: 100%; }
 .case-list { margin-top: 4px; display: grid; gap: 8px; max-width: 62ch; font-size: 19px; }
 .case-list li { position: relative; padding-left: 22px; }
 .case-list li::before { content: ""; position: absolute; left: 2px; top: 0.8em; width: 8px; height: 1px; background: var(--ink-soft); }
+.case-list--ordered { counter-reset: step; gap: 14px; }
+.case-list--ordered li { counter-increment: step; padding-left: 40px; }
+.case-list--ordered li::before { content: counter(step, decimal-leading-zero); width: auto; height: auto; top: 0.3em; left: 0; background: none; font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.case-figure video { border: 1px solid var(--line); border-radius: var(--radius); }
 .case-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--line); }
 .case-stats div { display: flex; flex-direction: column-reverse; gap: 6px; }
 .case-figure { margin: 32px 0 0; }

@@ -76,8 +76,12 @@ export type Project = {
     heading: string;
     body: string[];
     list?: string[];
+    ordered?: boolean; // number the list 01, 02, … (for steps)
     stats?: { value: string; label: string }[];
     figure?: Screenshot; // one chart or map under the section text
+    figures?: Screenshot[]; // several, stacked in order (after `figure`, if both are set)
+    /** A demo video with controls. The whole section is hidden until the mp4 exists in public/. */
+    video?: Video;
   }[]; // shown instead of goal / highlights / looking forward
   note?: string; // one short line next to the links
   screenshots?: Screenshot[];
@@ -521,10 +525,9 @@ export const projects: Project[] = [
       "Dense reconstruction is the slow step of photogrammetry. Can you tell how good a reconstruction will be from the aligned camera layout alone, before running it?",
     writeup: [
       {
-        heading: "The question",
+        heading: "The problem",
         body: [
-          "Photogrammetry turns a stack of photos into a 3D model. The dense reconstruction step is slow: the 145-image reference for a museum coffin took 57 minutes on a laptop, even at reduced resolution. Knowing right after alignment that a capture will produce a poor mesh would save that time, and tell the photographer where coverage is missing while the object is still on the turntable.",
-          "Each experiment removes images from a full capture (at random, as a contiguous side, or as an elevation band), reconstructs the rest in Agisoft Metashape, and measures how far the mesh lands from a reconstruction made with all images. That distance is the label. The model's input is the set of aligned cameras: where each one is and which way it points.",
+          "Photogrammetry turns a stack of photos into a 3D model, and the dense reconstruction step is slow: the 145-image reference for a museum coffin took 57 minutes on a laptop, even at reduced resolution. The camera layout is known minutes in, right after alignment. If that layout alone could predict how good the mesh will be, a photographer would learn that coverage is missing while the object is still on the turntable, not an hour later. The number the software already reports, reprojection error, doesn't answer that question, so I set out to test whether a model can.",
         ],
         figure: {
           src: "/work/bd3d/hero.webp",
@@ -535,93 +538,99 @@ export const projects: Project[] = [
         },
       },
       {
-        heading: "First, I found my own labels were wrong",
+        heading: "The pipeline",
+        body: [],
+        ordered: true,
+        list: [
+          "Capture an object in full and reconstruct it in Agisoft Metashape as the reference: an ARF ceramic dog (50 photos) and a PAHMA museum coffin (145 photos).",
+          "Remove images from the full set: at random, as a contiguous side, or as an elevation band.",
+          "Reconstruct what's left. Every run records its provenance, and a watchdog stops it on swap growth or timeout so a laptop can run experiments overnight.",
+          "Label the run: register its mesh to the reference and measure symmetric surface distance, divided by the reference's size. Lower is closer to the full capture.",
+          "Predict the label from the aligned cameras alone (each camera's position and viewing direction), comparing Ridge on summary statistics with PointNet and attention set models in PyTorch.",
+        ],
+      },
+      {
+        heading: "The evaluation audit: v1 to v3",
         body: [
-          "The first evaluator aligned each mesh to the reference with rigid ICP from an identity start. Metashape reconstructions without markers come out in arbitrary frames, and 7 of 16 runs were rotated 136–167° from the reference. ICP can't recover a rotation that large, so those labels measured registration failure, not geometry.",
-          "I rebuilt the evaluator to start from a similarity fit of each run's cameras onto the reference cameras, then refine with ICP. All 16 runs now pass QC, and the 7 broken labels moved from about 0.043 to 0.003–0.006. Three results I had reported from the old labels did not survive, and I retracted them.",
+          "The first evaluator (v1) aligned each mesh to the reference with rigid ICP from a centroid shift and no rotation. Metashape reconstructions without markers come out in arbitrary frames, and 7 of 16 dog runs were rotated 136–167° from the reference. ICP can't recover a rotation that large, so those 7 all landed on labels of 0.042–0.044: a plateau set by registration failure, not geometry.",
+          "v2 let ICP fit scale from the same start. It didn't help: ICP shrank the meshes and the errors stayed at 0.043 or above. v3 starts from a similarity fit of each run's cameras onto the reference cameras, then refines with ICP. All 16 runs now pass QC, and the 7 broken labels fell to 0.0033–0.0055.",
+          "Three results I had reported from v1 labels did not survive the recompute, and I retracted them:",
+        ],
+        list: [
+          "A central coverage gap gave 5.7× the error of removing the strongest-overlap images. With v3 labels it's 0.58×: the central gap is lower.",
+          "Reprojection error and geometric error correlated at Spearman ρ −0.17. With v3 labels, +0.10.",
+          "An early-alignment Ridge model beat the reprojection baseline by 13.7%. With v3 labels it does 5.6% worse.",
         ],
         figure: {
           src: "/work/bd3d/evaluation_audit.webp",
           width: 1560,
           height: 570,
           alt: "Left: v1 label against frame rotation for 16 runs; runs rotated about 135–167 degrees cluster at a high plateau near 0.04, while v3 labels for the same runs are low. Right: v1 against v3 labels, with the seven formerly failed runs far from the equality line.",
-          caption: "The old error tracked how far each run's frame was rotated, not how good its geometry was.",
+          caption: "The v1 error tracked how far each run's frame was rotated, not how good its geometry was.",
         },
       },
       {
-        heading: "Reprojection error is the wrong quick check",
+        heading: "Key findings",
         body: [
-          "The number photogrammetry software reports, reprojection RMSE, measures how consistent the kept photos are, not whether the whole object is covered. Within each object it moved the wrong way: removing photos lowered it while the geometry got worse (Spearman ρ −0.68 for the dog, −0.90 for the coffin, on small samples). The coffin's worst mesh had the lowest reprojection error.",
+          "Reprojection error is the wrong quick check. It measures how consistent the kept photos are, not whether the object is covered. Within each object it moved the wrong way: removing photos lowered it while the geometry got worse (Spearman ρ −0.68 for the dog, n = 7; −0.90 for the coffin, n = 5).",
+          "Attention reads localized gaps; summaries don't. On a synthetic benchmark (predict the largest coverage gap, 5 seeds), every model beat the mean when the gap cut through all cameras. When the gap sat in one ring, Ridge barely improved on the mean, while attention reached 14.0° MAE against Ridge's 27.7°.",
+          "The coverage check works as a tool today. I turned the pipeline into a desktop app a photographer can run right after alignment. It moves the run into the reference's frame with the same camera fit the evaluator uses and counts cameras by direction and height. On the coffin run that dropped one side, it flags exactly the low cameras that were removed and nothing else.",
         ],
-        figure: {
-          src: "/work/bd3d/reprojection_vs_label.webp",
-          width: 950,
-          height: 612,
-          alt: "Scatter of reprojection RMSE against the corrected geometric label for 28 runs from two objects; within each object, lower reprojection error goes with worse geometry.",
-          caption: "Within each object, lower reprojection error went with worse geometry.",
-        },
-      },
-      {
-        heading: "Set models in PyTorch",
-        body: [
-          "Each camera becomes a point: its position and viewing direction, normalized for scale and randomly rotated during training. I compared a Ridge model on summary statistics with two PyTorch set models: PointNet (a per-camera network, then pooling) and an attention model that lets cameras compare with each other before pooling.",
-          "On a synthetic benchmark (predict the largest coverage gap, 5 seeds), all three beat the mean when the gap cut through every camera. When the gap was localized to one ring, Ridge and PointNet barely improved on the mean, while attention kept most of its skill: 14.0° MAE against 27.7° for Ridge.",
+        figures: [
+          {
+            src: "/work/bd3d/reprojection_vs_label.webp",
+            width: 950,
+            height: 612,
+            alt: "Scatter of reprojection RMSE against the corrected geometric label for 28 runs from two objects; within each object, lower reprojection error goes with worse geometry.",
+            caption: "Within each object, lower reprojection error went with worse geometry.",
+          },
+          {
+            src: "/work/bd3d/synthetic_mae.webp",
+            width: 1040,
+            height: 570,
+            alt: "Bar chart of test MAE in degrees for mean, Ridge, PointNet and attention on global and localized coverage gaps over five seeds; attention is lowest in both, 7.1 and 14.0 degrees.",
+            caption: "Synthetic benchmark, mean ± std over 5 seeds. Attention is the only model that reads localized gaps.",
+          },
+          {
+            // TODO: replace with the new coverage-app screenshot (keep this path, or update src, width and height).
+            src: "/work/bd3d/capture_check_coverage.webp",
+            width: 1716,
+            height: 728,
+            alt: "The capture-check app's coverage view for a coffin run with one side removed. Left: top-down camera positions colored by elevation, with the 145 reference cameras as hollow circles; the 23 removed cameras on one side are hollow only. Right: a grid of azimuth against elevation showing cameras per cell as run over reference, with the four low-elevation cells on the removed side shaded red.",
+            caption: "The app on the coffin's one-side-removed run (122 of 145 cameras). Red cells: the reference had cameras there and this run doesn't.",
+          },
         ],
-        figure: {
-          src: "/work/bd3d/synthetic_mae.webp",
-          width: 1040,
-          height: 570,
-          alt: "Bar chart of test MAE in degrees for mean, Ridge, PointNet and attention on global and localized coverage gaps over five seeds; attention is lowest in both, 7.1 and 14.0 degrees.",
-          caption: "Mean ± std over 5 seeds. Attention is the only model that reads localized gaps.",
-        },
         stats: [
           { value: "14.0°", label: "attention MAE on localized gaps (Ridge: 27.7°)" },
-          { value: "7 of 16", label: "original labels were registration failures" },
-          { value: "28", label: "labeled real reconstructions, 2 objects" },
+          { value: "7 of 16", label: "v1 labels were registration failures" },
+          { value: "3", label: "earlier claims retracted after the audit" },
         ],
       },
       {
-        heading: "Training",
-        body: ["Training and validation curves come from the TensorBoard logs, exported for the page."],
-        figure: {
-          src: "/work/bd3d/learning_curves_synthetic.webp",
-          width: 1485,
-          height: 952,
-          alt: "Training and validation loss curves for PointNet and attention on the global and localized synthetic benchmarks.",
-          caption: "Synthetic benchmark learning curves, train vs. validation.",
+        heading: "Demo",
+        body: ["The capture-check app from photo folder to coverage view."],
+        // TODO: add the recording. This section stays hidden until public/work/bd3d/demo.mp4 exists.
+        video: {
+          mp4: "/work/bd3d/demo.mp4",
+          poster: "/work/bd3d/demo-poster.webp",
+          width: 1280,
+          height: 800,
+          label: "Screen recording of the capture-check app: choosing a photo folder, aligning it, and reviewing the coverage view.",
         },
       },
       {
-        heading: "Real data: a two-object pilot",
+        heading: "Status and next steps",
         body: [
-          "I ran the pipeline on an ARF ceramic dog (50 photos) and a PAHMA museum coffin (145 photos). Random removal mostly loses surface. Removing a contiguous side cost less than removing the same number of images at random on both objects: for the coffin, dropping 23 wall-level cameras as one sector scored better than keeping only 60 random images.",
-          "On 28 labeled runs, holding one object out, the set models stayed in a plausible range while Ridge and the reprojection fit failed, because their inputs shift between objects. With two objects and correlated runs, that is a feasibility check, not evidence that any model predicts quality.",
+          "This is a pilot. The real-data results come from 28 labeled reconstructions of 2 objects, and runs of the same object are correlated. Holding one object out, the set models (MAE 0.0035–0.0041) beat the mean (0.0108) while Ridge (0.0237) and a reprojection fit (0.0395) failed. With two objects that is two folds: a feasibility check, not evidence that any model predicts reconstruction quality. The label is also distance from a full-capture reference, which can be wrong itself; it isn't verified physical accuracy.",
+          "Next:",
         ],
-        figure: {
-          src: "/work/bd3d/camera_layouts.webp",
-          width: 1800,
-          height: 608,
-          alt: "Four top-down camera layouts: two for the ARF dog and two for the coffin, with used and removed cameras and the largest coverage gap shaded.",
-          caption: "Example runs on the dog (left two) and the coffin (right two).",
-        },
-      },
-      {
-        heading: "Where it stands: a capture-check app",
-        body: [
-          "The research question needs more objects, and each new object means a new capture. So I turned the pipeline into a one-window desktop app that a photographer can run right after shooting: pick a photo folder, align it in Metashape, and see straight away where the cameras are thin compared with a reference capture, before spending an hour on the dense step. Building the mesh and scoring it with the corrected evaluator are optional next buttons in the same window.",
-          "The coverage view moves the new run into the reference's frame with the same camera fit the evaluator uses, then counts cameras by direction and height. On the coffin run that dropped one side, it flags exactly the low cameras that were removed and nothing else. The evaluator now lives in the package with regression tests, and a walkthrough notebook follows one coffin run from photos to label.",
+        list: [
+          "Capture more objects with the app, so holding one out means more than two folds.",
+          "Predict alignment failure as its own outcome: one 30-image coffin subset aligned only 7 cameras and never produced a mesh.",
+          "Show where on the object the geometry goes wrong, not one error number per run.",
         ],
-        figure: {
-          src: "/work/bd3d/capture_check_coverage.webp",
-          width: 1716,
-          height: 728,
-          alt: "The capture-check app's coverage view for a coffin run with one side removed. Left: top-down camera positions colored by elevation, with the 145 reference cameras as hollow circles; the 23 removed cameras on one side are hollow only. Right: a grid of azimuth against elevation showing cameras per cell as run over reference, with the four low-elevation cells on the removed side shaded red.",
-          caption: "The app on the coffin's one-side-removed run (122 of 145 cameras). Red cells: the reference had cameras there and this run doesn't.",
-        },
       },
     ],
-    lookingForward:
-      "Next: capture a third object with the app so holding one out means more than two folds, predict alignment failure as its own outcome, and show where on the object the geometry goes wrong, not just one error number per run.",
     links: [{ label: "Code and full results on GitHub", href: "https://github.com/tantancodes/reconstruction-quality" }],
   },
 
