@@ -145,6 +145,36 @@ img, svg { display: block; max-width: 100%; }
   margin: 0 0.04em;
 }
 
+/* ---------- Name intro (components/NameIntro.tsx) ----------
+   The markup is the finished state; the intro animates from offsets back to it. */
+body { overflow-x: clip; } /* the photo rolls in from past the right edge */
+.nm { font-size: clamp(40px, 13vw, 148px); cursor: default; }
+.nm-line { white-space: nowrap; display: inline-block; }
+.nm-first { position: relative; }
+.nm-base { display: inline-block; width: 0; height: 0; } /* sits exactly on the baseline; used to plant his feet */
+.nm-last { position: relative; display: inline-block; margin-left: 0.2em; transform-origin: 0 50%; }
+.nm-t { position: absolute; left: 0; top: 0; opacity: 0; }
+.nm-T { display: inline-block; transform-origin: 50% 85%; }
+.nm-photo { position: relative; display: inline-block; vertical-align: -0.08em; margin-left: 0.14em; }
+.nm-avatar { display: block; margin: 0; }
+.nm-guy {
+  position: absolute; left: 50%; bottom: calc(100% - 0.012em);
+  width: 0.36em; height: 0.6em; margin-left: -0.18em;
+  overflow: visible; pointer-events: none;
+  transform-origin: 50% 100%;
+  fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round;
+}
+.nm-guy path { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.nm-guy g { transform-box: view-box; }
+.nm-guy .g-torso { transform-origin: 30px 62px; }
+.nm-guy .g-legL, .nm-guy .g-legR { transform-origin: 30px 62px; }
+.nm-guy .g-armL, .nm-guy .g-armR { transform-origin: 30px 36px; }
+/* Before the intro starts, hide what moves (with a failsafe in case the script never runs). */
+html.intro .nm-last, html.intro .nm-avatar, html.intro .nm-guy {
+  visibility: hidden; animation: nm-failsafe 0s 3s forwards;
+}
+@keyframes nm-failsafe { to { visibility: visible; } }
+
 .hero-line { font-size: clamp(36px, 6.2vw, 72px); letter-spacing: -0.04em; }
 
 /* ---------- Arrow link (components/ArrowLink.tsx) ---------- */

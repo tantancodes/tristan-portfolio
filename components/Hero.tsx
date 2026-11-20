@@ -1,8 +1,7 @@
 import ArrowLink from "./ArrowLink";
 import FadeIn from "./FadeIn";
+import NameIntro from "./NameIntro";
 import { hero, site } from "@/content/projects";
-
-const firstName = site.name.split(" ")[0];
 
 export default function Hero() {
   return (
@@ -12,11 +11,7 @@ export default function Hero() {
       </FadeIn>
 
       <FadeIn delay={80}>
-        <h1 className="hero-name">
-          I&rsquo;m{" "}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={site.avatar} alt="" className="avatar" width={112} height={112} /> {firstName}.
-        </h1>
+        <NameIntro avatar={site.avatar} />
       </FadeIn>
 
       <FadeIn delay={150}>

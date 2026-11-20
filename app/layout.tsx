@@ -15,8 +15,9 @@ export const metadata: Metadata = {
 };
 
 // Runs before React hydrates: applies a saved theme choice (so there's no light→dark flash)
+// marks the name intro to play when the home page loads,
 // and marks that JS is available (so fade-in animations only hide content when they can reveal it).
-const bootScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}document.documentElement.classList.add('js');})();`;
+const bootScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;if(location.pathname==='/'&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('intro');}catch(e){}document.documentElement.classList.add('js');})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
