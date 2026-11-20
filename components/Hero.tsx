@@ -10,9 +10,8 @@ export default function Hero() {
         <p className="hero-eyebrow">{hero.eyebrow}</p>
       </FadeIn>
 
-      <FadeIn delay={80}>
-        <NameIntro avatar={site.avatar} />
-      </FadeIn>
+      {/* not faded in: the intro opens on it */}
+      <NameIntro avatar={site.avatar} />
 
       <FadeIn delay={150}>
         <div className="hero-ctas">

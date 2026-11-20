@@ -4,13 +4,15 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 
 /*
  * The hero name. Every time it mounts it plays a short intro:
- *   1. a hand-drawn stick guy appears next to "Tristan",
- *   2. grabs the "tan" and drags a copy of it out to the right,
- *   3. the copy lands and its "t" pops up into a capital "T": "Tristan Tan",
+ *   1. the page opens on a close-up of a hand-drawn stick guy standing next to "Tristan",
+ *   2. he grabs the "tan" and yanks on it, hard, three times (it stretches like taffy and
+ *      snaps back), and on the third pull it finally pops free,
+ *   3. the camera zooms out to the whole page as the copy slides out: "Tristan tan",
  *   4. the photo rolls in from the edge of the screen; he hops out of the way
  *      and lands on top of it, waves, and stays there.
+ * His eyes follow the mouse the whole time (they watch the "tan" while he's pulling).
  *
- * The HTML is always the finished state ("Tristan Tan", photo, guy on top), so
+ * The HTML is always the finished state ("Tristan tan", photo, guy on top), so
  * with no JavaScript or with reduced motion you just see the end result.
  * Every animation runs from a computed start back to "no transform", so there is
  * never a layout jump. Click the name to play it again.
@@ -21,19 +23,21 @@ const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
 // Easings. Ease-out for things arriving, ease-in-out for things travelling.
 const OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
 const IN_OUT = "cubic-bezier(0.65, 0, 0.35, 1)";
-// A spring with one small overshoot (generated curve, see linear-easing-generator).
-const SPRING =
-  "linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1)";
+const SNAP = "cubic-bezier(0.3, 0, 0.1, 1)"; // fast recoil
+const PULL = "cubic-bezier(0.5, 0, 0.9, 0.6)"; // effortful, speeding up
+
+type Intro = { cancel: () => void };
 
 export default function NameIntro({ avatar }: { avatar: string }) {
   const root = useRef<HTMLHeadingElement>(null);
-  const running = useRef<Animation[]>([]);
+  const running = useRef<Intro | null>(null);
   const shouldPlay = useRef<boolean | null>(null);
 
   useIso(() => {
     const el = root.current;
     if (!el) return;
     const html = document.documentElement;
+    const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Hand-drawn "boil": re-seed the wobble filter a few times a second, like redrawn frames.
     const turb = el.querySelector("feTurbulence");
@@ -42,24 +46,27 @@ export default function NameIntro({ avatar }: { avatar: string }) {
 
     // Decide once; the ref survives React re-running this effect (Strict Mode in dev).
     if (shouldPlay.current === null) {
-      // Play on every mount: full page loads and client-side navigations back home.
-      shouldPlay.current = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const r = el.getBoundingClientRect();
+      shouldPlay.current =
+        !reduced() &&
+        r.bottom > 0 && r.top < window.innerHeight && // hero is on screen (not a reload halfway down the page)
+        !(html.classList.contains("intro") && performance.now() > 2800); // the CSS failsafe already showed the page
     }
-    if (shouldPlay.current) {
-      running.current = play(el);
-    }
+    if (shouldPlay.current) running.current = play(el);
     html.classList.remove("intro");
 
     const replay = () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      running.current.forEach((a) => a.cancel());
+      if (reduced()) return;
+      running.current?.cancel();
       running.current = play(el);
     };
     el.addEventListener("click", replay);
+    const stopLook = followMouse(el);
     return () => {
       window.clearInterval(boil);
       el.removeEventListener("click", replay);
-      running.current.forEach((a) => a.cancel());
+      stopLook();
+      running.current?.cancel();
     };
   }, []);
 
@@ -67,13 +74,10 @@ export default function NameIntro({ avatar }: { avatar: string }) {
     <h1 ref={root} className="hero-name nm" aria-label="Tristan Tan" title="Click to replay">
       <span aria-hidden="true" className="nm-line">
         <span className="nm-first">
-          Tris<span className="nm-tan">tan</span>
+          Tris<span className="nm-tan">ta<span className="nm-n">n</span></span>
           <span className="nm-base" />
         </span>
-        <span className="nm-last">
-          <span className="nm-T">Tan</span>
-          <span className="nm-t">tan</span>
-        </span>
+        <span className="nm-last">tan</span>
         <span className="nm-photo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={avatar} alt="" className="avatar nm-avatar" width={112} height={112} />
@@ -101,7 +105,13 @@ function Guy() {
         <g className="g-legR"><path pathLength={1} d="M30 62 C31.5 72 34.8 84 38 97.5" /></g>
         <g className="g-torso">
           <path pathLength={1} d="M30.4 27 C29.6 38 30.6 50 30 62" />
-          <path pathLength={1} d="M30 4.6 C36.5 4.2 40.8 9.6 40.4 16 C40 22.6 35 27.2 29.4 26.8 C23.4 26.4 19.4 21.4 19.8 15.4 C20.2 9.2 24.4 5 30.6 5.4" />
+          <g className="g-head">
+            <path pathLength={1} d="M30 4.6 C36.5 4.2 40.8 9.6 40.4 16 C40 22.6 35 27.2 29.4 26.8 C23.4 26.4 19.4 21.4 19.8 15.4 C20.2 9.2 24.4 5 30.6 5.4" />
+            <g className="g-eyes">
+              <circle cx="26" cy="15" r="1.7" />
+              <circle cx="34" cy="15" r="1.7" />
+            </g>
+          </g>
           <g className="g-armL"><path pathLength={1} d="M30 36 C28.6 43 27.2 50 25.6 57" /></g>
           <g className="g-armR"><path pathLength={1} d="M30 36 C31.4 43 32.8 50 34.4 57" /></g>
         </g>
@@ -110,100 +120,216 @@ function Guy() {
   );
 }
 
+/* ---------- Eyes follow the mouse ----------
+   The pupils slide toward the pointer and the head tips a little toward it.
+   While he's pulling (data-look="tan" on the heading) he watches the letters instead. */
+function followMouse(el: HTMLElement) {
+  const head = el.querySelector<SVGGElement>(".g-head");
+  const eyes = el.querySelector<SVGGElement>(".g-eyes");
+  if (!head || !eyes) return () => {};
+  let mouse: { x: number; y: number } | null = null;
+  let x = 0, y = 0, tilt = 0, raf = 0;
+
+  const onMove = (e: PointerEvent) => { mouse = { x: e.clientX, y: e.clientY }; };
+  const tick = () => {
+    raf = requestAnimationFrame(tick);
+    let tx = 0, ty = 0, tt = 0;
+    if (el.dataset.look === "tan") {
+      tx = -1; ty = 0.45; tt = -6;
+    } else if (mouse) {
+      const r = head.getBoundingClientRect();
+      const dx = mouse.x - (r.left + r.width / 2), dy = mouse.y - (r.top + r.height / 2);
+      const d = Math.hypot(dx, dy) || 1;
+      const k = Math.min(1, d / (r.width * 3)); // look straight ahead when the mouse is right on him
+      tx = (dx / d) * k; ty = (dy / d) * k;
+      tt = Math.max(-1, Math.min(1, dx / (window.innerWidth * 0.4))) * 14;
+    }
+    x += (tx - x) * 0.2; y += (ty - y) * 0.2; tilt += (tt - tilt) * 0.12;
+    eyes.setAttribute("transform", `translate(${(x * 3.4).toFixed(2)} ${(y * 3).toFixed(2)})`);
+    head.style.rotate = `${tilt.toFixed(2)}deg`;
+  };
+  window.addEventListener("pointermove", onMove, { passive: true });
+  raf = requestAnimationFrame(tick);
+  return () => { cancelAnimationFrame(raf); window.removeEventListener("pointermove", onMove); };
+}
+
 /* ---------- The choreography ---------- */
-function play(el: HTMLElement): Animation[] {
+function play(el: HTMLElement): Intro {
   const q = <T extends Element = HTMLElement>(s: string) => el.querySelector(s) as T;
-  const tan = q(".nm-tan"), base = q(".nm-base"), last = q(".nm-last");
-  const T = q(".nm-T"), t = q(".nm-t"), img = q(".nm-avatar"), guy = q<SVGSVGElement>(".nm-guy");
+  const tan = q(".nm-tan"), n = q(".nm-n"), base = q(".nm-base"), last = q(".nm-last");
+  const img = q(".nm-avatar"), guy = q<SVGSVGElement>(".nm-guy");
   const torso = q<SVGGElement>(".g-torso"), armL = q<SVGGElement>(".g-armL"), armR = q<SVGGElement>(".g-armR");
   const legL = q<SVGGElement>(".g-legL"), legR = q<SVGGElement>(".g-legR");
+  const html = document.documentElement, body = document.body;
   const all: Animation[] = [];
+  const timers: number[] = [];
   const go = (target: Element, frames: Keyframe[], opts: KeyframeAnimationOptions) => {
     const a = target.animate(frames, { fill: "both", ...opts });
     all.push(a);
     return a;
   };
+  // Keyframes written as [time in ms, value...] → offsets within one animation of that length.
+  const timed = <K extends [number, ...unknown[]]>(keys: K[], frame: (k: K) => Keyframe) => {
+    const total = keys[keys.length - 1][0];
+    return { frames: keys.map((k) => ({ offset: k[0] / total, ...frame(k) })), duration: total };
+  };
+
+  // No page scrolling while the camera is zoomed in. (Set before measuring, so nothing shifts after.)
+  const prevOverflow = html.style.overflow;
+  html.style.overflow = "hidden";
+  const unlock = () => { html.style.overflow = prevOverflow; };
 
   // --- Measure the finished layout; everything animates *from* an offset back to 0.
-  const rTan = tan.getBoundingClientRect(), rLast = last.getBoundingClientRect();
+  const rTan = tan.getBoundingClientRect(), rLast = last.getBoundingClientRect(), rBody = body.getBoundingClientRect();
   const rBase = base.getBoundingClientRect(), rGuy = guy.getBoundingClientRect(), rImg = img.getBoundingClientRect();
   const D = rLast.left - rTan.left; // how far the copy travels
   const w = rTan.width;
-  const gap = rGuy.width * 0.08;
-  // Guy standing on the text baseline just right of "tan", relative to where he ends up (on the photo).
-  const gx0 = rTan.right + gap - rGuy.left;
-  const gy0 = rBase.top - rGuy.bottom;
+  const gy0 = rBase.top - rGuy.bottom; // feet on the text baseline
+  const rN = n.getBoundingClientRect(), nW = rN.width;
 
-  // Timeline (ms)
-  const tDraw = 150, tReach = 520, tDrag = 760, dDrag = 1150, tPop = tDrag + dDrag, tRoll = tPop + 120, dRoll = 1150;
-  const tJump = tRoll + dRoll * 0.42, dJump = 640, tWave = tJump + dJump + 60;
+  // Where his hands are, in the SVG's 60 × 100 units, for a given lean (torso rotation about the hip)
+  // and arm angle (relative to the torso). Used to put his hands exactly on what he's holding.
+  const u = rGuy.width / 60;
+  const hand = (lean: number, arm: number) => {
+    const L = (lean * Math.PI) / 180, A = ((lean + arm) * Math.PI) / 180;
+    const sx = 30 + 26 * Math.sin(L), sy = 62 - 26 * Math.cos(L); // shoulder
+    return { x: sx - 21 * Math.sin(A), y: sy + 21 * Math.cos(A) };
+  };
+  const ARM = 95; // arms held out level toward the letters (relative to the ground)
+  // Guy x offset (relative to his resting place) that puts his hands on client x `edge` at this lean.
+  const holdX = (lean: number, edge: (handY: number) => number) => {
+    const h = hand(lean, ARM - lean);
+    const handY = rGuy.top + gy0 + h.y * u;
+    return edge(handY) + u * 1.5 - (rGuy.left + h.x * u); // grip a little way into the letter
+  };
+  // The "n" bends toward him: a lean (skew about the baseline) plus a little stretch.
+  const BEND = 14, STRETCH = 0.12;
+  const nEdge = (bend: number) => (y: number) =>
+    rN.left + nW * (1 + STRETCH * bend) + Math.tan((BEND * bend * Math.PI) / 180) * (rBase.top - y);
+  const copyEdge = (p: number) => () => rTan.right + p * D;
 
-  // 1. Guy draws himself in, standing next to "tan".
-  guy.querySelectorAll("path").forEach((p, i) =>
-    go(p, [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 380, delay: tDraw + i * 45, easing: OUT }),
-  );
-
-  // 2. The copy of "tan": starts exactly on top of the original, gets yanked (a little taffy
-  //    stretch), resists for a beat, then slides out and lands with a small overshoot.
-  //    The guy's x is tied to the copy's right edge so he's always holding it.
-  const copyKeys: [number, number, number, string][] = [
-    // offset, progress along D, scaleX, easing into the next key
-    [0, 0, 1, OUT],
-    [0.1, 0.05, 1.07, IN_OUT],
-    [0.2, 0.025, 1.03, IN_OUT],
-    [0.88, 1.025, 1.0, OUT],
-    [1, 1, 1, OUT],
+  // --- Timeline (ms). Three yanks; the third one gets it out.
+  const tGrab = 300, tPop = 2300, tLand = 3450, tZoom = tPop + 60, dZoom = 1450;
+  const tRoll = 3550, dRoll = 1150, tJump = tRoll + dRoll * 0.42, dJump = 640, tWave = tJump + dJump + 60;
+  const strains: [number, number, number][] = [ // [start, end, how hard]
+    [520, 820, 0.5],
+    [1180, 1500, 0.8],
+    [1830, tPop, 1.3],
   ];
-  go(t, [{ opacity: 1 }, { opacity: 1 }], { duration: tPop }); // lowercase visible until the pop
-  go(T, [{ opacity: 0 }, { opacity: 0 }], { duration: tPop });
-  go(
-    last,
-    copyKeys.map(([offset, p, s, easing]) => ({ offset, easing, transform: `translateX(${-D + p * D}px) scaleX(${s})` })),
-    { duration: dDrag, delay: tDrag },
-  );
-  const guyX = (p: number, s: number) => gx0 + p * D + w * (s - 1);
-  go(
-    guy,
-    [
-      { offset: 0, transform: `translate(${gx0}px, ${gy0 + 8}px)`, opacity: 0 },
-      { offset: 0.35, transform: `translate(${gx0}px, ${gy0 - 10}px)`, opacity: 1, easing: OUT }, // pops up
-      { offset: 1, transform: `translate(${gx0}px, ${gy0}px)`, opacity: 1 },
-    ],
-    { duration: 520, delay: tDraw },
-  );
-  go(
-    guy,
-    copyKeys.map(([offset, p, s, easing]) => ({ offset, easing, transform: `translate(${guyX(p, s)}px, ${gy0}px)` })),
-    { duration: dDrag, delay: tDrag, fill: "forwards" }, // "forwards" so it doesn't cover the pop-up before it starts
-  );
 
-  // Poses: reach for the letters, lean back and pull, little steps while walking.
-  go(torso, [{ rotate: "0deg" }, { rotate: "16deg", offset: 0.12 }, { rotate: "10deg", offset: 0.85 }, { rotate: "0deg" }], {
-    duration: tPop - tReach + 150, delay: tReach, easing: IN_OUT,
-  });
-  for (const arm of [armL, armR]) {
-    go(arm, [{ rotate: "0deg" }, { rotate: arm === armL ? "70deg" : "80deg", offset: 0.12 }, { rotate: arm === armL ? "70deg" : "80deg", offset: 0.88 }, { rotate: "-150deg" }], {
-      duration: tPop - tReach + 250, delay: tReach, easing: IN_OUT,
+  // He watches the letters while he pulls, then goes back to watching the mouse.
+  el.dataset.look = "tan";
+  timers.push(window.setTimeout(() => delete el.dataset.look, tPop + 250));
+
+  // 1. He grabs the "n" and yanks. Each yank bends it toward him and he strains, then it springs
+  //    back. The third time a copy of "tan" pops free from behind it and slides out to its place.
+  //    One set of keys drives the letter, his lean, his arms and his position, so his hands stay on it.
+  const keys: [number, number, number, number, string][] = [
+    // time, bend of the "n", copy progress along D, his lean, easing into the next key
+    [0, 0, 0, 8, "linear"],
+    [tGrab, 0.05, 0, 8, PULL],
+    [520, 0.5, 0, 30, "linear"],
+    [820, 0.55, 0, 33, SNAP],
+    [1000, 0.12, 0, 15, PULL],
+    [1180, 0.8, 0, 38, "linear"],
+    [1500, 0.85, 0, 41, SNAP],
+    [1680, 0.2, 0, 19, PULL],
+    [1830, 1.2, 0, 46, "linear"],
+    [tPop, 1.3, 0, 50, "cubic-bezier(0.2, 0.9, 0.3, 1)"], // pop!
+    [tPop + 130, 0, 0.22, 64, OUT],
+    [tLand - 250, 0, 1.02, 8, OUT],
+    [tLand, 0, 1, 0, "linear"],
+  ];
+  const popAt = keys.findIndex((k) => k[0] === tPop);
+  const guyAt = (i: number): number => {
+    if (i === 0) return guyAt(1); // standing where he'll grab from
+    const [, bend, p, lean] = keys[i];
+    return holdX(lean, i <= popAt ? nEdge(bend) : copyEdge(p));
+  };
+  const guyMove = timed(keys, ([, , , , easing]) => ({ easing }));
+  go(guy, guyMove.frames.map((f, i) => ({ ...f, transform: `translate(${guyAt(i)}px, ${gy0}px)` })), { duration: guyMove.duration });
+  const xA = guyAt(keys.length - 1); // where he ends up, holding the finished "tan"
+
+  // The "n" itself (only up to the pop), then it wobbles back into shape.
+  const origin = `0px ${rBase.top - rN.top}px`; // bend from the baseline
+  const bendT = (b: number) => `skewX(${-BEND * b}deg) scaleX(${1 + STRETCH * Math.max(0, b)})`; // never narrower than normal
+  const nKeys = timed(keys.slice(0, popAt + 1), ([, b, , , easing]) => ({ easing, transform: bendT(b), transformOrigin: origin }));
+  go(n, nKeys.frames, { duration: nKeys.duration });
+  go(n, [1.3, -0.45, 0.2, -0.08, 0].map((b) => ({ transform: bendT(b), transformOrigin: origin })), { duration: 520, delay: tPop, easing: "ease-out", fill: "forwards" });
+
+  // The copy is clipped so only the part that's come out past the original "n" shows.
+  // (Not clamped at 0: once it's clear, a negative inset just clips nothing, and staying
+  // linear keeps the clip edge lined up between keyframes.)
+  const copy = timed(keys, ([, , p, , easing]) => ({
+    easing,
+    transform: `translateX(${-D + p * D}px)`,
+    clipPath: `inset(-50% -50% -50% ${(w - p * D).toFixed(2)}px)`,
+  }));
+  go(last, copy.frames, { duration: copy.duration });
+
+  // Trembling with effort while he strains (on `translate`, so it stacks on top of the movement).
+  const jitter = (target: Element, amp: number, from: number, to: number) => {
+    const n = Math.max(2, Math.round((to - from) / 34));
+    const frames: Keyframe[] = Array.from({ length: n + 1 }, (_, i) => {
+      const k = i / n, a = amp * (0.4 + 0.6 * k) * (i === 0 || i === n ? 0 : 1); // builds up, ends at rest
+      return { translate: `${((Math.random() * 2 - 1) * a).toFixed(2)}px ${((Math.random() * 2 - 1) * a * 0.6).toFixed(2)}px` };
     });
+    go(target, frames, { duration: to - from, delay: from, easing: "linear", fill: "none" });
+  };
+  for (const [a, b, k] of strains) jitter(guy, rGuy.width * 0.012 * k, a, b); // small, so his grip holds
+
+  // Poses: lean and arms come from the same keys, so the arms stay level on the letter.
+  const lean = timed(keys, ([, , , d, easing]) => ({ rotate: `${d}deg`, easing }));
+  go(torso, lean.frames, { duration: lean.duration });
+  for (const arm of [armL, armR]) {
+    const spread = arm === armL ? -5 : 5;
+    const pose = timed(
+      [[0, 0, IN_OUT] as [number, number, string], ...keys.slice(1).map(([t, , , d, e]) => [t, ARM - d + spread, e] as [number, number, string]), [tLand + 250, -150, "linear"]],
+      ([, d, easing]) => ({ rotate: `${d}deg`, easing }),
+    );
+    go(arm, pose.frames, { duration: pose.duration, fill: "forwards" });
   }
-  const step = { duration: 230, delay: tDrag + dDrag * 0.2, iterations: Math.floor((dDrag * 0.7) / 230), easing: IN_OUT, direction: "alternate" as const, fill: "none" as const };
-  go(legL, [{ rotate: "-24deg" }, { rotate: "18deg" }], step);
-  go(legR, [{ rotate: "20deg" }, { rotate: "-22deg" }], step);
+  // Feet braced out in front (toward the letters), digging in harder each yank.
+  for (const leg of [legL, legR]) {
+    const m = leg === legL ? 0.55 : 0.3; // not so far that his feet dig into the "n"
+    const brace = timed(
+      [[0, 0], [tGrab, 10], [520, 26], [1000, 18], [1180, 32], [1680, 22], [1830, 38], [tPop, 40], [tPop + 140, -8], [tLand, 0]] as [number, number][],
+      ([, d]) => ({ rotate: `${d * m}deg`, easing: IN_OUT }),
+    );
+    go(leg, brace.frames, { duration: brace.duration });
+  }
+  // Stumbling steps while he's carried along with the copy.
+  const step = { duration: 200, delay: tPop + 200, iterations: 4, easing: IN_OUT, direction: "alternate" as const, fill: "none" as const };
+  go(legL, [{ rotate: "-26deg" }, { rotate: "20deg" }], step);
+  go(legR, [{ rotate: "22deg" }, { rotate: "-24deg" }], step);
 
-  // 3. Lowercase "t" pops up into a capital "T".
-  go(t, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-0.08em)" }], { duration: 160, delay: tPop, fill: "forwards" });
-  go(T, [{ opacity: 0, transform: "scaleY(0.62)" }, { opacity: 1, transform: "none" }], { duration: 520, delay: tPop, easing: SPRING, fill: "both" });
+  // 2. Camera: open on a close-up of him, creep in as he strains (and shake on every yank),
+  //    then pull back to the whole page once the "tan" comes free.
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const S = Math.max(1.6, Math.min(5, (vh * 0.42) / rGuy.height, (vw * 0.92) / (w + rGuy.width * 1.6)));
+  const gcx = rGuy.left + guyAt(0) + rGuy.width / 2, gcy = rBase.top - rGuy.height / 2; // his centre at the start
+  const cam = (fx: number, fy: number, s: number) => // put client point (fx, fy) at the centre of the screen at zoom s
+    `translate(${vw / 2 - rBody.left - s * (fx - rBody.left)}px, ${vh / 2 - rBody.top - s * (fy - rBody.top)}px) scale(${s})`;
+  const fx0 = gcx * 0.7 + (rTan.left + w / 2) * 0.3;
+  const shot = timed(
+    [
+      [0, cam(fx0, gcy, S), "linear"],
+      [tGrab, cam(fx0, gcy, S), IN_OUT],
+      [tPop, cam(fx0 + w * 0.12, gcy, S * 1.12), "linear"],
+      [tZoom, cam(fx0 + w * 0.14, gcy, S * 1.12), "cubic-bezier(0.6, 0, 0.12, 1)"],
+      [tZoom + dZoom, "translate(0px, 0px) scale(1)", "linear"],
+    ] as [number, string, string][],
+    ([, transform, easing]) => ({ transform, transformOrigin: "0 0", easing }),
+  );
+  const camera = go(body, shot.frames, { duration: shot.duration });
+  for (const [a, b, k] of strains) jitter(body, 4 * k, a, b);
+  go(body, [{ translate: "0 0" }, { translate: "-10px 3px" }, { translate: "5px -2px" }, { translate: "0 0" }], { duration: 260, delay: tPop, easing: OUT, fill: "none" });
+  camera.finished.then(() => { camera.cancel(); unlock(); }, unlock);
 
-  // "T" is wider than "t", so he takes a little step back to make room.
-  const dW = rLast.width - w;
-  go(guy, [{ transform: `translate(${guyX(1, 1)}px, ${gy0}px)` }, { transform: `translate(${guyX(1, 1) + dW + gap}px, ${gy0}px)` }], {
-    duration: 260, delay: tPop + 40, easing: OUT, fill: "forwards",
-  });
-
-  // 4. The photo rolls in from off-screen. Rolling without slipping: angle = distance / radius,
+  // 3. The photo rolls in from off-screen. Rolling without slipping: angle = distance / radius,
   //    so rotation and position share one easing curve. Ends with a tiny rock back and forth.
   const r = rImg.width / 2;
-  const startX = window.innerWidth - rImg.left + r * 0.4;
+  const startX = vw - rImg.left + r * 0.4;
   const rollKeys = Array.from({ length: 41 }, (_, i) => {
     const k = i / 40;
     const e = 1 - Math.pow(1 - k, 3.2); // ease-out
@@ -215,7 +341,6 @@ function play(el: HTMLElement): Animation[] {
 
   // He sees it coming, hops up and lands on top of the photo (his resting place).
   const lift = rImg.height * 0.9 + rGuy.height * 0.25;
-  const xA = guyX(1, 1) + dW + gap;
   go(
     guy,
     [
@@ -231,13 +356,20 @@ function play(el: HTMLElement): Animation[] {
   go(armL, [{ rotate: "-150deg" }, { rotate: "-40deg", offset: 0.5 }, { rotate: "20deg" }], { duration: dJump, delay: tJump, easing: IN_OUT, fill: "forwards" });
   go(armR, [{ rotate: "-150deg" }, { rotate: "-120deg", offset: 0.5 }, { rotate: "-140deg" }], { duration: dJump, delay: tJump, easing: IN_OUT, fill: "forwards" });
 
-  // 5. Wave, then relax into the resting pose.
+  // 4. Wave, then relax into the resting pose.
   go(armR, [{ rotate: "-140deg" }, { rotate: "-165deg" }, { rotate: "-130deg" }, { rotate: "-165deg" }, { rotate: "-140deg", offset: 0.75 }, { rotate: "0deg" }], {
     duration: 1100, delay: tWave, easing: IN_OUT, fill: "forwards",
   });
   go(armL, [{ rotate: "20deg" }, { rotate: "0deg" }], { duration: 400, delay: tWave + 700, easing: IN_OUT, fill: "forwards" });
 
-  // Once everything has finished, drop the "forwards" fills so the element is back to plain CSS.
+  // Once everything has finished, drop the "forwards" fills so the elements are back to plain CSS.
   Promise.all(all.map((a) => a.finished)).then(() => all.forEach((a) => a.cancel()), () => {});
-  return all;
+  return {
+    cancel() {
+      all.forEach((a) => a.cancel());
+      timers.forEach(clearTimeout);
+      delete el.dataset.look;
+      unlock();
+    },
+  };
 }
