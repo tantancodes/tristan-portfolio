@@ -6,6 +6,7 @@ import { preload } from "react-dom";
 import Cover from "@/components/Cover";
 import FadeIn from "@/components/FadeIn";
 import RetrievalDiagram from "@/components/RetrievalDiagram";
+import ScrapbookCase from "@/components/ScrapbookCase";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { getProject, projects, type Screenshot } from "@/content/projects";
@@ -62,6 +63,9 @@ export default async function CaseStudy({ params }: Props) {
 
   const index = projects.indexOf(project);
   const next = projects[(index + 1) % projects.length];
+
+  // Some projects get a page in their own style instead of the standard case study.
+  if (project.theme === "scrapbook") return <ScrapbookCase project={project} next={next} />;
 
   const strip = [
     { label: "Timeline", value: project.timeline },

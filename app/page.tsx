@@ -77,7 +77,8 @@ export default function Home() {
             );
             return [
               heading,
-              <FadeIn as="li" key={p.title} delay={p.featured ? 0 : column * 60} className={p.featured ? "is-featured" : ""}>
+              <FadeIn as="li" key={p.title} delay={p.featured ? 0 : column * 60} className={[p.featured && "is-featured", p.sideLabel && "has-label"].filter(Boolean).join(" ")}>
+                {p.sideLabel && <h3 className="project-group-title">{p.sideLabel}</h3>}
                 {href ? (
                   <Link href={href} className="project-card is-link">
                     {inner}

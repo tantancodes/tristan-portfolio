@@ -170,6 +170,77 @@ html { scrollbar-gutter: stable; } /* scrolling is paused during the intro; keep
 .nm-guy .g-torso { transform-origin: 30px 62px; }
 .nm-guy .g-legL, .nm-guy .g-legR { transform-origin: 30px 62px; }
 .nm-guy .g-armL, .nm-guy .g-armR { transform-origin: 30px 36px; }
+/* His thought bubble: a link to the Splat Journal page.
+   .nm-thought is a zero-size anchor placed in the name's units (em of the big heading);
+   the cloud inside it is sized in px. Wide screens: to his right, "click me" further right.
+   Narrower: above him, "click me" on its left. --nm-dx (set by NameIntro) nudges it back
+   on screen if it would run off an edge. */
+.nm-thought {
+  position: absolute; width: 0; height: 0; z-index: 2;
+  left: calc(50% + 0.34em); bottom: calc(100% + 0.62em);
+  color: var(--ink); text-decoration: none;
+  letter-spacing: 0; word-spacing: normal; line-height: 1.2; font-weight: 400;
+}
+.nm-thought:hover { color: var(--ink); }
+.nm-cloud {
+  position: absolute; left: -14px; bottom: -10px; display: block;
+  width: 236px; height: 150px; margin-left: var(--nm-dx, 0px);
+  transform-origin: 10% 100%;
+  transition: translate 0.4s var(--ease), rotate 0.4s var(--ease);
+}
+.nm-cloud-ink { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.nm-cloud-ink path {
+  fill: var(--bg); stroke: currentColor; stroke-width: 2; vector-effect: non-scaling-stroke;
+  stroke-linejoin: round; stroke-linecap: round;
+  /* No dash at rest: the dash is only used while it draws itself in (NameIntro). On a stretched
+     SVG, Chrome measures the dash a bit short, which left a gap in the outline. */
+}
+.nm-clip {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+  width: 156px; aspect-ratio: 722 / 406; overflow: hidden; border-radius: 14px;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.nm-clip video { display: block; width: 100%; height: 100%; object-fit: cover; scale: 1.28; } /* crop in past the app's paper margins to the scan itself */
+.nm-pointer {
+  position: absolute; left: calc(100% + 4px); top: 34%; width: 92px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  transition: translate 0.4s var(--ease);
+}
+.nm-pointer svg {
+  width: 90px; height: 40px; overflow: visible;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.nm-pointer path { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.nm-pointer-text { font-family: var(--font-body); font-size: 15px; letter-spacing: -0.005em; padding-left: 18px; }
+.nm-thought:hover .nm-cloud, .nm-thought:focus-visible .nm-cloud { translate: 0 -4px; rotate: -1.5deg; }
+.nm-thought:hover .nm-pointer { translate: -6px 0; }
+.nm-thought:focus-visible { outline: none; }
+.nm-thought:focus-visible .nm-clip { outline: 2px solid var(--ink); outline-offset: 4px; }
+.nm-dots { position: absolute; left: 0; bottom: 0; }
+.nm-dot { position: absolute; display: block; border-radius: 50%; border: 1.6px solid currentColor; background: var(--bg); }
+.nm-dot:nth-child(1) { width: 0.035em; height: 0.035em; left: -0.21em; top: 0.06em; }
+.nm-dot:nth-child(2) { width: 0.05em; height: 0.05em; left: -0.14em; top: 0; }
+.nm-dot:nth-child(3) { width: 0.068em; height: 0.068em; left: -0.06em; top: -0.07em; }
+@media (max-width: 1199px) {
+  .nm-thought { left: 50%; bottom: calc(100% + 0.8em); }
+  .nm-cloud { left: auto; right: -36px; bottom: 0; transform-origin: 90% 100%; }
+  .nm-pointer { left: auto; right: calc(100% + 4px); }
+  .nm-pointer svg { scale: -1 1; }
+  .nm-pointer-text { padding-left: 0; padding-right: 18px; }
+  .nm-thought:hover .nm-pointer { translate: 6px 0; }
+  .nm-dot:nth-child(1) { left: 0.03em; top: 0.13em; }
+  .nm-dot:nth-child(2) { left: 0.05em; top: 0.05em; }
+  .nm-dot:nth-child(3) { left: 0.06em; top: -0.05em; }
+}
+@media (max-width: 640px) {
+  .nm { margin-top: 150px; }
+  .nm-cloud { width: 190px; height: 122px; right: -14px; }
+  .nm-clip { width: 124px; border-radius: 11px; }
+  .nm-pointer { width: 76px; }
+  .nm-pointer svg { width: 70px; height: 32px; }
+  .nm-pointer-text { font-size: 13px; }
+}
+
 /* The intro opens on a close-up, so keep the page hidden until it's ready to start
    (with a failsafe in case the script never runs). */
 html.intro body { visibility: hidden; animation: nm-failsafe 0s 3s forwards; }
@@ -548,3 +619,85 @@ html.intro body { visibility: hidden; animation: nm-failsafe 0s 3s forwards; }
     animation-duration: 0s !important; animation-delay: 0s !important;
   }
 }
+
+/* ============================================================
+   10. Scrapbook pages (components/ScrapbookCase.tsx): Splat Journal's own look.
+   Warm paper, ink, the pen font, and one red seal. Light only, like the app.
+   ============================================================ */
+html:root:has(.sb) {
+  --bg: #f8f6f0; --surface: #fffdf9; --ink: #2a2825; --ink-soft: #777168;
+  --line: rgba(42, 40, 37, 0.14); --accent: #2a2825; --accent-soft: rgba(42, 40, 37, 0.07);
+  color-scheme: light;
+}
+html:root:has(.sb) body {
+  background:
+    linear-gradient(rgba(248, 246, 240, 0.62), rgba(248, 246, 240, 0.62)),
+    url("/work/splat-journal/paper.avif") 0 0 / 1400px auto repeat,
+    #f8f6f0;
+}
+html:root:has(.sb) .theme-toggle { display: none; } /* the scrapbook is always paper */
+.sb { padding-top: 56px; }
+.sb-margin {
+  font-family: var(--font-body); font-weight: 300; font-size: 12px; letter-spacing: 0.14em;
+  color: var(--ink-soft); text-decoration: none;
+}
+a.sb-margin:hover { color: var(--ink); }
+.sb-back { display: inline-block; margin-bottom: 64px; }
+.sb-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+.sb-title {
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--font-hand), cursive; font-weight: 400; letter-spacing: 0;
+  font-size: clamp(40px, 6vw, 64px); line-height: 1;
+}
+.sb-seal {
+  display: inline-grid; place-items: center; flex: none;
+  width: 34px; height: 34px; border-radius: 4px; rotate: -5deg;
+  background: #b63f2f; color: #f8f6f0; font-size: 21px; line-height: 1;
+  font-family: "Hiragino Mincho ProN", "Songti SC", serif;
+  box-shadow: inset 0 0 0 2px rgba(248, 246, 240, 0.18);
+}
+.sb-how {
+  max-width: 34em; margin: 0 0 56px;
+  font-family: var(--font-hand), cursive; font-size: 19px; line-height: 1.55; color: var(--ink);
+}
+.sb-prints { position: relative; padding-top: 8px; }
+.sb-print {
+  margin: 0; background: #fffdf9; padding: 10px 10px 36px;
+  box-shadow: 0 1px 2px rgba(42, 40, 37, 0.1), 0 14px 34px -16px rgba(42, 40, 37, 0.35);
+}
+.sb-print video { display: block; width: 100%; height: auto; filter: saturate(0.88) contrast(0.96); }
+.sb-print--a { width: min(100%, 860px); rotate: -0.6deg; }
+.sb-print--b { position: relative; width: min(80%, 600px); margin: -24px 0 0 auto; rotate: 1.3deg; }
+
+/* "try me": a breathing ink speech box pinned to the corner of the first print */
+.sb-bubble {
+  position: absolute; z-index: 2; display: block; width: 132px; height: 58px;
+  left: calc(min(100%, 860px) - 150px); top: -54px;
+  color: var(--ink); text-decoration: none;
+  transition: translate 0.3s var(--ease), rotate 0.3s var(--ease);
+}
+.sb-bubble:hover, .sb-bubble:focus-visible { translate: 0 -4px; rotate: -2deg; color: var(--ink); }
+.sb-bubble:focus-visible { outline: 1px dashed var(--ink-soft); outline-offset: 8px; }
+.sb-bubble-ink { position: absolute; inset: 0; overflow: visible; }
+.sb-bubble-ink rect { fill: var(--bg); }
+.sb-bubble-ink path {
+  fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0; transition: opacity 0.4s ease-in-out;
+}
+.sb-bubble-ink path.is-front { opacity: 1; }
+.sb-bubble-text {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-hand), cursive; font-size: 23px; letter-spacing: 0.02em;
+}
+.sb-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-top: 72px; }
+@media (max-width: 640px) {
+  .sb-back { margin-bottom: 44px; }
+  .sb-how { font-size: 17px; margin-bottom: 72px; }
+  .sb-print--b { width: 88%; margin-top: 16px; }
+  .sb-bubble { left: auto; right: 4px; top: -62px; }
+}
+
+/* A card with its own small label (two labelled cards can share a row) */
+.project-grid > li.has-label { flex-direction: column; gap: 14px; }
+.project-grid > li.has-label > .project-group-title { padding-top: 28px; }
+.project-grid > li.has-label > .project-card { flex: 1; }

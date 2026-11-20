@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef } from "react";
 
 /*
- * The hero name. Every time it mounts it plays a short intro:
+ * The hero name. On the first home-page view of each page load it plays a short intro:
  *   1. the page opens on a close-up of a hand-drawn stick guy standing next to "Tristan",
  *   2. he grabs the "tan" and yanks on it, hard, three times (it stretches like taffy and
  *      snaps back), and on the third pull it finally pops free,
@@ -15,7 +16,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
  * The HTML is always the finished state ("Tristan tan", photo, guy on top), so
  * with no JavaScript or with reduced motion you just see the end result.
  * Every animation runs from a computed start back to "no transform", so there is
- * never a layout jump. Click the name to play it again.
+ * never a layout jump. A click or key press anywhere skips straight to the end.
  */
 
 const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -26,7 +27,12 @@ const IN_OUT = "cubic-bezier(0.65, 0, 0.35, 1)";
 const SNAP = "cubic-bezier(0.3, 0, 0.1, 1)"; // fast recoil
 const PULL = "cubic-bezier(0.5, 0, 0.9, 0.6)"; // effortful, speeding up
 
-type Intro = { cancel: () => void };
+type Intro = { cancel: () => void; skip: () => void };
+
+// Set once the intro has played in this page load. Module state survives moving around the site
+// (Next swaps pages without reloading), so coming back to the home page doesn't play it again;
+// a real reload starts fresh.
+let introPlayed = false;
 
 export default function NameIntro({ avatar }: { avatar: string }) {
   const root = useRef<HTMLHeadingElement>(null);
@@ -48,43 +54,93 @@ export default function NameIntro({ avatar }: { avatar: string }) {
     if (shouldPlay.current === null) {
       const r = el.getBoundingClientRect();
       shouldPlay.current =
+        !introPlayed && // only the first time the home page shows in this page load
         !reduced() &&
         r.bottom > 0 && r.top < window.innerHeight && // hero is on screen (not a reload halfway down the page)
         !(html.classList.contains("intro") && performance.now() > 2800); // the CSS failsafe already showed the page
     }
-    if (shouldPlay.current) running.current = play(el);
+    // Keep the bubble (and its "click me") on screen: nudge it sideways if it would run off an edge.
+    const thought = el.querySelector<HTMLElement>(".nm-thought");
+    const fit = () => {
+      if (!thought) return;
+      thought.style.setProperty("--nm-dx", "0px");
+      const parts = [".nm-cloud-ink", ".nm-pointer"].map((s) => thought.querySelector(s)!.getBoundingClientRect());
+      const left = Math.min(...parts.map((r) => r.left)), right = Math.max(...parts.map((r) => r.right));
+      const pad = 12, vw = document.documentElement.clientWidth;
+      const dx = right > vw - pad ? vw - pad - right : left < pad ? pad - left : 0;
+      thought.style.setProperty("--nm-dx", `${Math.round(dx)}px`);
+    };
+    fit();
+    window.addEventListener("resize", fit);
+
+    if (shouldPlay.current) {
+      introPlayed = true;
+      running.current = play(el);
+    }
     html.classList.remove("intro");
 
-    const replay = () => {
-      if (reduced()) return;
-      running.current?.cancel();
-      running.current = play(el);
-    };
-    el.addEventListener("click", replay);
     const stopLook = followMouse(el);
     return () => {
       window.clearInterval(boil);
-      el.removeEventListener("click", replay);
+      window.removeEventListener("resize", fit);
       stopLook();
       running.current?.cancel();
     };
   }, []);
 
   return (
-    <h1 ref={root} className="hero-name nm" aria-label="Tristan Tan" title="Click to replay">
-      <span aria-hidden="true" className="nm-line">
-        <span className="nm-first">
+    <h1 ref={root} className="hero-name nm" aria-label="Tristan Tan">
+      <span className="nm-line">
+        <span aria-hidden="true" className="nm-first">
           Tris<span className="nm-tan">ta<span className="nm-n">n</span></span>
           <span className="nm-base" />
         </span>
-        <span className="nm-last">tan</span>
+        <span aria-hidden="true" className="nm-last">tan</span>
         <span className="nm-photo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={avatar} alt="" className="avatar nm-avatar" width={112} height={112} />
           <Guy />
+          <Thought />
         </span>
       </span>
     </h1>
+  );
+}
+
+/* ---------- His thought bubble ----------
+   A hand-drawn cloud with a trail of little circles back to his head. Inside it, a tiny
+   looping clip of Splat Journal instead of words; beside it, a hand-drawn arrow and
+   "click me". The whole thing links to the Splat Journal page. */
+function Thought() {
+  return (
+    <Link href="/work/splat-journal" className="nm-thought" aria-label="Splat Journal, a 3D scrapbook: see the project">
+      <span className="nm-dots" aria-hidden="true">
+        <span className="nm-dot" />
+        <span className="nm-dot" />
+        <span className="nm-dot" />
+      </span>
+      <span className="nm-cloud" aria-hidden="true">
+        <svg className="nm-cloud-ink" viewBox="0 0 220 140" preserveAspectRatio="none">
+          <path
+            filter="url(#nm-wobble)"
+            pathLength={1}
+            d="M36 34 C38 14 64 6 80 20 C88 4 118 2 128 18 C140 4 170 8 176 28 C200 26 214 46 206 66 C218 80 210 110 188 112 C184 130 156 136 142 124 C130 138 98 138 90 124 C74 136 46 132 44 116 C22 120 6 100 16 82 C2 70 8 38 36 34 Z"
+          />
+        </svg>
+        <span className="nm-clip">
+          <video src="/work/splat-journal/card.mp4" poster="/work/splat-journal/card-poster.webp" autoPlay muted loop playsInline preload="metadata" />
+        </span>
+        <span className="nm-pointer">
+          <svg viewBox="0 0 90 40" aria-hidden="true">
+            <g filter="url(#nm-wobble)">
+              <path pathLength={1} d="M84 30 C70 34 52 30 40 22 C30 15 20 14 8 18" />
+              <path pathLength={1} d="M18 10 C14 13 10 15 7 18 C11 20 14 23 17 27" />
+            </g>
+          </svg>
+          <span className="nm-pointer-text">click me</span>
+        </span>
+      </span>
+    </Link>
   );
 }
 
@@ -362,14 +418,54 @@ function play(el: HTMLElement): Intro {
   });
   go(armL, [{ rotate: "20deg" }, { rotate: "0deg" }], { duration: 400, delay: tWave + 700, easing: IN_OUT, fill: "forwards" });
 
+  // 5. He puts a hand to his chin and thinks: the dots float up one at a time, then the bubble
+  //    puffs open and the words write themselves in, line by line.
+  const tThink = tWave + 700;
+  go(armR, [{ rotate: "0deg" }, { rotate: "-128deg", offset: 0.25 }, { rotate: "-128deg", offset: 0.85 }, { rotate: "0deg" }], {
+    duration: 3400, delay: tThink, easing: IN_OUT, fill: "none",
+  });
+  el.querySelectorAll(".nm-dot").forEach((d, i) =>
+    go(d, [{ opacity: 0, transform: "translateY(6px) scale(0.2)" }, { opacity: 1, transform: "none" }], {
+      duration: 420, delay: tThink + 350 + i * 220, easing: "cubic-bezier(0.34, 1.5, 0.5, 1)",
+    }),
+  );
+  const tCloud = tThink + 350 + 3 * 220;
+  go(q(".nm-cloud"), [{ opacity: 0, transform: "scale(0.3)" }, { opacity: 1, transform: "none" }], {
+    duration: 620, delay: tCloud, easing: "cubic-bezier(0.34, 1.45, 0.5, 1)",
+  });
+  go(q(".nm-cloud path"), [{ strokeDasharray: "1.2 1.2", strokeDashoffset: 1.2 }, { strokeDasharray: "1.2 1.2", strokeDashoffset: 0 }], { duration: 700, delay: tCloud, easing: OUT });
+  go(q(".nm-clip"), [{ opacity: 0, transform: "scale(0.85)" }, { opacity: 1, transform: "none" }], { duration: 500, delay: tCloud + 300, easing: OUT });
+  el.querySelectorAll(".nm-pointer path").forEach((p, i) =>
+    go(p, [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: i ? 220 : 520, delay: tCloud + 900 + i * 500, easing: OUT }),
+  );
+  go(q(".nm-pointer-text"), [{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }], { duration: 400, delay: tCloud + 1250, easing: OUT });
+
+  // A click or key press anywhere skips to the end: every animation jumps to its last frame,
+  // and the cleanup below then hands everything back to plain CSS (the finished layout).
+  const stopListening = () => {
+    window.removeEventListener("pointerdown", skip, true);
+    window.removeEventListener("keydown", skip, true);
+  };
+  function skip() {
+    stopListening();
+    all.forEach((a) => { try { a.finish(); } catch {} });
+    timers.forEach(clearTimeout);
+    delete el.dataset.look;
+    unlock();
+  }
+  window.addEventListener("pointerdown", skip, true);
+  window.addEventListener("keydown", skip, true);
+
   // Once everything has finished, drop the "forwards" fills so the elements are back to plain CSS.
-  Promise.all(all.map((a) => a.finished)).then(() => all.forEach((a) => a.cancel()), () => {});
+  Promise.all(all.map((a) => a.finished)).then(() => { stopListening(); all.forEach((a) => a.cancel()); }, () => {});
   return {
     cancel() {
+      stopListening();
       all.forEach((a) => a.cancel());
       timers.forEach(clearTimeout);
       delete el.dataset.look;
       unlock();
     },
+    skip,
   };
 }

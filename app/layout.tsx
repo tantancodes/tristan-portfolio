@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Zen_Kurenaido } from "next/font/google";
 import Footer from "@/components/Footer";
 import { site } from "@/content/projects";
 import "./globals.css";
@@ -8,6 +8,8 @@ import "./globals.css";
 // Each exposes a CSS variable that globals.css uses.
 const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+// Splat Journal's pen font, for its scrapbook-style page (components/ScrapbookCase.tsx).
+const hand = Zen_Kurenaido({ weight: "400", subsets: ["latin"], variable: "--font-hand" });
 
 export const metadata: Metadata = {
   title: { default: site.name, template: `%s · ${site.name}` },
@@ -21,7 +23,7 @@ const bootScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${hand.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>

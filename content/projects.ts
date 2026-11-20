@@ -86,6 +86,10 @@ export type Project = {
   note?: string; // one short line next to the links
   screenshots?: Screenshot[];
   screenshotsLabel?: string; // heading over the screenshots, "Screenshots" by default
+  /** "scrapbook": a short, plain page in the project's own sketchbook style (components/ScrapbookCase.tsx). */
+  theme?: "scrapbook";
+  /** The live app; the scrapbook page's "try me" bubble links here. */
+  liveUrl?: string;
 };
 
 /** One role on the Experience timeline (LinkedIn + resume). */
@@ -116,6 +120,8 @@ export type ProjectCard = {
   featured?: boolean; // spans the full width of the Selected work grid on desktop (use on one card)
   /** Small heading shown above the first card of a group, e.g. "Ten Strands". Cards in a group sit together. */
   group?: string;
+  /** A small heading over just this card (instead of a full-row group heading), so two labelled cards can share a row. */
+  sideLabel?: string;
   caseStudy?: string;
   href?: string;
 };
@@ -347,19 +353,33 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
-    group: "Design & outreach",
+    sideLabel: "Design & outreach",
     title: "ANova Spring 2026 Recruitment Campaign",
     status: "Marketing · 2026",
     stack: ["Motion design", "Illustration", "Social media"],
     summary: "Animated Instagram posts and an infosession poster for Berkeley ANova's spring recruitment, a club teaching computer science to under-resourced Bay Area students.",
     caseStudy: "anova-marketing",
-    featured: true,
     video: {
       mp4: "/work/anova-marketing/computer-card.mp4",
       poster: "/work/anova-marketing/computer-card.webp",
       width: 722,
       height: 406,
       label: "Animated ANova Spring 2026 poster: a retro computer whose screen flickers on to show the ANova logo.",
+    },
+  },
+  {
+    sideLabel: "Personal projects",
+    title: "Splat Journal: a 3D scrapbook",
+    status: "Personal project · 2026",
+    stack: ["React", "TypeScript", "three.js", "Spark", "Gaussian splats"],
+    summary: "Scan a place, and it becomes a page in a sketchbook: float through it, pin typed or handwritten notes in 3D, and draw right onto the scene.",
+    caseStudy: "splat-journal",
+    video: {
+      mp4: "/work/splat-journal/card.mp4",
+      poster: "/work/splat-journal/card-poster.webp",
+      width: 722,
+      height: 406,
+      label: "Floating around a scanned library table with a hand-drawn note bubble reading 'studying hard!' pinned above a laptop.",
     },
   },
 ];
@@ -400,6 +420,47 @@ export const about = {
 /* ---------- Work ---------- */
 
 export const projects: Project[] = [
+  {
+    slug: "splat-journal",
+    theme: "scrapbook",
+    liveUrl: "https://splat-journal.vercel.app/",
+    headline: "splat journal",
+    year: "2026–now",
+    org: "Personal project",
+    role: "Designer and developer",
+
+    label: "a 3D scrapbook",
+    timeline: "Nov 2026 – present",
+    team: "Solo",
+    myRole: "Design and development",
+    skills: ["React", "TypeScript", "three.js", "Spark"],
+    cover: "mesh",
+    video: {
+      mp4: "/work/splat-journal/demo.mp4",
+      poster: "/work/splat-journal/demo-poster.webp",
+      width: 1280,
+      height: 698,
+      label: "Splat Journal demo: in a scan of a library table, leaving a typed note, 'studying hard!', and a handwritten one, 'yum!', then floating around as the notes stay pinned in 3D.",
+    },
+    goal: "A 3D scrapbook. Scan a place on your phone, open it here, and write in it.",
+    writeup: [
+      {
+        heading: "how",
+        body: [
+          "Scan a place with Scaniverse or Polycam and export it as .spz or .ply. Tap open, and the scan becomes a page. Tap anywhere in it to leave a note.",
+        ],
+        video: {
+          mp4: "/work/splat-journal/demo-2.mp4",
+          poster: "/work/splat-journal/demo-2-poster.webp",
+          width: 1280,
+          height: 698,
+          label: "A second page: a scan of a bathroom counter and mirror with two handwritten note bubbles pinned in it.",
+        },
+      },
+    ],
+    links: [{ label: "code", href: "https://github.com/tantancodes/splat-journal" }],
+  },
+
   {
     slug: "egyptology-3d",
     headline: "Reading ancient coffins where the words were written",
