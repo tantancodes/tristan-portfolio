@@ -57,16 +57,14 @@ export default function Home() {
                 ) : (
                   media
                 )}
-                <p className="project-status">{p.status}</p>
+                <p className="project-meta">
+                  <strong>{p.org}</strong>
+                  <strong>{p.role}</strong>
+                </p>
                 <h3 className="project-title">{p.title}</h3>
                 <p className="project-summary">{p.summary}</p>
                 {p.stat && <p className="project-stat">{p.stat}</p>}
-                <p className="project-stack">{p.stack.join(" · ")}</p>
-                {href && (
-                  <span className="project-go" aria-hidden="true">
-                    {p.caseStudy ? "Case study →" : "Visit ↗"}
-                  </span>
-                )}
+
               </>
             );
             // A group heading ("Ten Strands") goes in front of the first card of each group.
@@ -77,8 +75,7 @@ export default function Home() {
             );
             return [
               heading,
-              <FadeIn as="li" key={p.title} delay={p.featured ? 0 : column * 60} className={[p.featured && "is-featured", p.sideLabel && "has-label"].filter(Boolean).join(" ")}>
-                {p.sideLabel && <h3 className="project-group-title">{p.sideLabel}</h3>}
+              <FadeIn as="li" key={p.title} delay={p.featured ? 0 : column * 60} className={p.featured ? "is-featured" : ""}>
                 {href ? (
                   <Link href={href} className="project-card is-link">
                     {inner}

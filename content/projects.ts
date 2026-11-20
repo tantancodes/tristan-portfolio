@@ -82,6 +82,8 @@ export type Project = {
     figures?: Screenshot[]; // several, stacked in order (after `figure`, if both are set)
     /** A demo video with controls. The whole section is hidden until the mp4 exists in public/. */
     video?: Video;
+    /** Show the visual full width under the text instead of beside it (for wide, headline charts). */
+    wide?: boolean;
   }[]; // shown instead of goal / highlights / looking forward
   note?: string; // one short line next to the links
   screenshots?: Screenshot[];
@@ -108,6 +110,9 @@ export type Job = {
 
 /** A project card. Case studies link to /work/<slug>; others can link out or not at all. */
 export type ProjectCard = {
+  /** Shown bold at the top of the card: where (left) and my role (right). */
+  org: string;
+  role: string;
   title: string;
   /** Small label above the title: what kind of work it is and when, e.g. "Research · 2026". */
   status: string;
@@ -120,8 +125,6 @@ export type ProjectCard = {
   featured?: boolean; // spans the full width of the Selected work grid on desktop (use on one card)
   /** Small heading shown above the first card of a group, e.g. "Ten Strands". Cards in a group sit together. */
   group?: string;
-  /** A small heading over just this card (instead of a full-row group heading), so two labelled cards can share a row. */
-  sideLabel?: string;
   caseStudy?: string;
   href?: string;
 };
@@ -189,7 +192,8 @@ export const experience: Job[] = [
         dates: "Sep 2026 – Present",
         points: [
           "Analyzed climate preparedness in 937 California school districts across 200+ demographic and policy indicators (Python, pandas, statsmodels, GeoPandas).",
-          "Found district enrollment was the strongest predictor of documented climate protections in county-clustered regression; the urban–rural gap disappeared after controlling for district size.",
+          "Found political lean was the most consistent predictor of documented community climate action: within the same county, +10 points of Democratic vote went with 21% more documented activities (p < 0.001), and Democratic-leaning districts documented 22 of 23 common practices more often.",
+          "Showed the urban–rural gap in documented climate protections disappeared after controlling for district size, and that lower-income communities documented about 5% fewer activities per +10 points of low-income students.",
           "Identified 199 high-wildfire-risk and 176 high-pollution districts with no matching documented protections, and mapped geographic clusters with spatial autocorrelation (Moran's I).",
           "Co-authored the team's research poster on environmental and climate action across California school districts, mentored by Judy He and Sarah Whiting.",
         ],
@@ -217,12 +221,12 @@ export const experience: Job[] = [
     caseStudy: "bd3d",
     roles: [
       {
-        title: "Undergraduate Machine Learning Researcher",
-        dates: "Aug 2025 – May 2026",
+        title: "Undergraduate Researcher",
+        dates: "Aug 2025 – present",
         points: [
-          "Built PyTorch PointNet and self-attention set models that predict camera-coverage gaps from aligned camera layouts; on localized gaps, attention cut MAE from 27.7° (Ridge) to 14.0° across 5 seeds.",
-          "Audited the geometric evaluator: 7 of 16 labels were ICP registration failures (frames rotated 136–167°). Rebuilt it with camera-initialized similarity ICP and retracted three earlier results that relied on the bad labels.",
-          "Ran Agisoft Metashape experiments on two artifacts, including a 145-photo museum coffin, with provenance tracking and a resource watchdog; piloted set models on 28 labeled reconstructions.",
+          "Built a Metashape experiment pipeline (photo manifests, memory watchdog) and a camera-initialized evaluator that scores each build against a full capture; found 7 of 16 broken labels, fixed them, and retracted 3 earlier results.",
+          "Trained PyTorch PointNet and attention set models on camera layouts: 14.0° vs. 27.7° (Ridge) error on localized coverage gaps; on 28 real builds, attention held 0.0035 error with a whole object held out.",
+          "Shipped a desktop capture app that flags missing camera coverage right after alignment, and a 3D viewer showing each build's mesh, cameras and missing surface.",
         ],
       },
     ],
@@ -265,10 +269,13 @@ export const experienceAlso =
 
 export const projectCards: ProjectCard[] = [
   {
-    title: "BD3D: 3D Egyptian Coffin Research Viewer",
+    org: "Archaeological Research Facility",
+    role: "Research Assistant",
+    title: "BD3D Coffin Viewer",
     status: "Research · 2026",
-    stack: ["Next.js", "TypeScript", "React Three Fiber", "three.js", "glTF", "Playwright"],
-    summary: "Read six ancient coffins in 3D: 314 scholarly annotations linked to 607 surface regions, raking light, word-to-location links, and a compressed asset pipeline that cut downloads by 74%.",
+    stack: ["Next.js", "React Three Fiber", "TypeScript"],
+    summary: "Six ancient coffins in 3D, every inscription linked to its translation.",
+    stat: "607 regions linked · 74% smaller downloads",
     caseStudy: "egyptology-3d",
     featured: true,
     // 1280px because the featured card is ~1000px wide on desktop. No WebM: at this size VP9
@@ -282,65 +289,31 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
-    group: "Ten Strands",
-    title: "K–12 Sustainability Evidence Retrieval",
-    status: "Project · 2026",
-    stack: ["Python", "BM25", "Sentence Transformers", "CrossEncoder"],
-    art: "retrieval",
-    summary: "Keyword + neural search over district pages and policies, with answers that quote and cite their sources.",
-    stat: "97.1% Recall@5 vs. 88.2% for BM25 (exploratory, 34 queries)",
-    caseStudy: "k12-retrieval",
-    // No WebM: VP9 came out larger than this H.264 for a mostly-static UI recording.
-    video: {
-      mp4: "/projects/k12-retrieval/demo-720.mp4",
-      poster: "/projects/k12-retrieval/poster-720.webp",
-      width: 720,
-      height: 452,
-      label:
-        "Screen recording of the K–12 sustainability evidence search: a short intro where a magnifying glass sweeps through bushes that part to reveal the app, then searching \"fire protection\", the saved evidence list, and opening a source document.",
-    },
-  },
-  {
-    group: "Ten Strands",
-    title: "Rural–Urban Gaps in Documented Climate Action",
-    status: "Research · 2026 · In progress",
-    video: {
-      mp4: "/work/rural-urban-gap/demo-720.mp4",
-      poster: "/work/rural-urban-gap/poster-720.webp",
-      width: 720,
-      height: 450,
-      label:
-        "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
-    },
-    stack: ["Python", "pandas", "Jupyter"],
-    summary: "Rural California districts document fewer climate protections than urban ones. Is that a gap in capacity, or in paperwork? A regression analysis of 865 districts.",
-    stat: "The rural–urban gap disappears once district size is accounted for",
-    caseStudy: "rural-urban-gap",
-  },
-  {
-    group: "More projects",
-    title: "Predicting 3D Reconstruction Quality",
+    org: "Lucarelli Photogrammetry Labs",
+    role: "Undergraduate Researcher",
+    title: "Reconstruction Quality",
     status: "Research · 2025–26",
     cover: "mesh",
-    stack: ["Python", "PyTorch", "Agisoft Metashape", "ICP"],
-    summary: "Can you tell how good a 3D scan will be from the camera layout alone, before the slow reconstruction step? Set models in PyTorch, a corrected evaluator, and a two-object pilot.",
-    stat: "Attention: 14.0° vs 27.7° MAE for Ridge on localized coverage gaps (synthetic, 5 seeds)",
+    stack: ["Python", "PyTorch", "Metashape"],
+    summary: "Predicting how good a 3D scan will be from the camera layout alone, before the slow step.",
+    stat: "14.0° vs. 27.7° error on hidden coverage gaps (attention vs. Ridge)",
     video: {
-      mp4: "/work/bd3d/coverage-720.mp4",
-      poster: "/work/bd3d/coverage-720.webp",
+      mp4: "/work/bd3d/viewer-card.mp4",
+      poster: "/work/bd3d/viewer-card.webp",
       width: 720,
       height: 450,
-      label: "Illustration: cameras orbit an object; a block of cameras on one side is removed and highlighted, showing the kind of coverage gap the models predict.",
+      label: "The reconstruction viewer: a scanned museum coffin with its cameras, the missing surface in red growing as the build switches from 60 photos to 30.",
     },
     caseStudy: "bd3d",
   },
   {
-    group: "More projects",
-    title: "California Home Value Estimator",
+    org: "IDX Exchange Internship",
+    role: "Data Science Intern",
+    title: "Home Value Estimator",
     status: "Internship · 2026",
-    stack: ["Python", "XGBoost", "scikit-learn", "GeoPandas", "Streamlit"],
-    summary: "Predicts California home sale prices from property and location data, with an explanation for every estimate.",
-    stat: "7.7% median error on 11,900 held-out sales",
+    stack: ["Python", "XGBoost", "Streamlit"],
+    summary: "What will a California home sell for, and why?",
+    stat: "7.7% median error on 11,890 held-out sales",
     caseStudy: "idx-home-prices",
     video: {
       mp4: "/projects/home-value-estimator/demo-720.mp4",
@@ -353,11 +326,51 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
-    sideLabel: "Design & outreach",
-    title: "ANova Spring 2026 Recruitment Campaign",
+    org: "Ten Strands Internship",
+    role: "Data Research Intern",
+    title: "K–12 Evidence Search",
+    status: "Project · 2026",
+    stack: ["Python", "BM25", "Sentence Transformers"],
+    art: "retrieval",
+    summary: "Search district policies and get answers that quote and cite their sources.",
+    stat: "97.1% Recall@5, vs. 88.2% keyword-only",
+    caseStudy: "k12-retrieval",
+    // No WebM: VP9 came out larger than this H.264 for a mostly-static UI recording.
+    video: {
+      mp4: "/projects/k12-retrieval/demo-720.mp4",
+      poster: "/projects/k12-retrieval/poster-720.webp",
+      width: 720,
+      height: 452,
+      label:
+        "Screen recording of the K–12 sustainability evidence search: a short intro where a magnifying glass sweeps through bushes that part to reveal the app, then searching \"fire protection\", the saved evidence list, and opening a source document.",
+    },
+  },
+  {
+    org: "Ten Strands Internship",
+    role: "Data Research Intern",
+    title: "Climate Action in Schools",
+    status: "Research · 2026",
+    video: {
+      mp4: "/work/rural-urban-gap/demo-720.mp4",
+      poster: "/work/rural-urban-gap/poster-720.webp",
+      width: 720,
+      height: 450,
+      label:
+        "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
+    },
+    stack: ["Python", "pandas", "statsmodels"],
+    summary: "What predicts whether a school district publicly documents climate action? 937 districts, modeled.",
+    stat: "51% vs. 27% document a community partnership (Democratic- vs. Republican-leaning)",
+    caseStudy: "rural-urban-gap",
+  },
+  {
+    org: "Berkeley ANova",
+    role: "Marketing Officer",
+    title: "ANova Recruitment",
     status: "Marketing · 2026",
-    stack: ["Motion design", "Illustration", "Social media"],
-    summary: "Animated Instagram posts and an infosession poster for Berkeley ANova's spring recruitment, a club teaching computer science to under-resourced Bay Area students.",
+    stack: ["Motion design", "Illustration", "Social"],
+    summary: "Animated recruitment posts for a club teaching CS to under-resourced students.",
+    stat: "100,000+ impressions · +137% recruitment engagement",
     caseStudy: "anova-marketing",
     video: {
       mp4: "/work/anova-marketing/computer-card.mp4",
@@ -368,11 +381,13 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
-    sideLabel: "Personal projects",
-    title: "Splat Journal: a 3D scrapbook",
+    org: "Personal Project",
+    role: "Designer & Developer",
+    title: "Splat Journal",
     status: "Personal project · 2026",
-    stack: ["React", "TypeScript", "three.js", "Spark", "Gaussian splats"],
-    summary: "Scan a place, and it becomes a page in a sketchbook: float through it, pin typed or handwritten notes in 3D, and draw right onto the scene.",
+    stack: ["React", "three.js", "Gaussian splats"],
+    summary: "Scan a place, and it becomes a sketchbook page you can write in, in 3D.",
+    stat: "Live: try it at splat-journal.vercel.app",
     caseStudy: "splat-journal",
     video: {
       mp4: "/work/splat-journal/card.mp4",
@@ -485,42 +500,37 @@ export const projects: Project[] = [
     ],
     cover: "coffin",
     goal:
-      "Egyptian coffins were written to be read in place: where a spell sits on the lid or the foot end is part of its meaning. The Berkeley Book of the Dead in 3D project had photogrammetric models of six coffins and scholarly editions tying 314 entries to 607 regions on their surfaces. I built the research viewer that brings the two together: turn a coffin, click any outlined region to read its hieroglyphs, transliteration and translation, or start from the text and fly to where it is written.",
+      "Egyptian coffins were written to be read in place. I built the viewer that links six scanned coffins to their scholarly editions: click any inscription to read its hieroglyphs and translation, or start from the text and fly to where it's written.",
     highlights: [
       {
         title: "The object and the text, linked both ways",
-        body:
-          "Selection reuses the source edition's own polygon rule, so what you click is exactly what the editors drew. Hover a region and its entry lights up; hover an entry and its regions light up. Words in a transliteration link to the edition's dictionary and to every place that word occurs on the coffin. Every view, selection and light angle is a shareable link.",
+        body: "Hover a region and its entry lights up, and the reverse. Words link to the dictionary and to every place they occur, and every view is a shareable link.",
         stat: "607",
         statLabel: "regions linked to 314 entries",
       },
       {
         title: "A 3D asset pipeline with provenance",
-        body:
-          "I converted the source OBJ models and 4096 px photographs into compressed glTF and tiered textures without moving a vertex. Each file records its own checksum and its source's, and tests check every compressed model against the original. The viewer shows the coffin from small preview files first, then loads the resolution each device can handle.",
+        body: "Source OBJ models and 4096 px photos become compressed glTF and tiered textures, checksummed and tested against the originals. Phones load small files first.",
         stat: "−74%",
         statLabel: "total download, all six coffins (standard quality)",
       },
       {
         title: "Raking light, kept honest",
-        body:
-          "A real directional light with shadow maps sweeps across the scanned surface to show its relief. The meshes are too coarse to hold individual carved signs, which live in the photographs, so the interface says so rather than faking detail the scan never measured.",
+        body: "A real directional light sweeps the scanned relief. Where the mesh is too coarse to hold carved signs, the interface says so instead of faking it.",
       },
       {
         title: "Engineered to be trusted",
-        body:
-          "Research data is validated against a schema with two-way link checks at build time. 82 unit tests cover the geometry math, search and linking logic; 45 browser tests drive every coffin, including accessibility scans; CI runs it all on every push.",
+        body: "Research data is schema-checked at build time; 82 unit tests and 45 browser tests, including accessibility, run on every push.",
         stat: "127",
         statLabel: "automated tests in CI",
       },
       {
         title: "From apprentice to lead",
-        body:
-          "I joined through URAP as an apprentice and moved into a Research Assistant role. I now lead the incoming URAP students and the design team: scoping work, reviewing code, and keeping design and engineering in step.",
+        body: "Joined through URAP as an apprentice; now a Research Assistant leading the URAP students and the design team.",
       },
     ],
     lookingForward:
-      "With the lab's high-resolution scans, I could bake normal maps so raking light reveals individual carved signs. Next on the list: testing on physical phones, and a side-by-side view for comparing the same spell across coffins.",
+      "Next: normal maps from the lab's high-res scans so raking light shows carved signs, testing on real phones, and side-by-side spell comparison.",
     links: [
       { label: "View the code", href: "https://github.com/tantancodes/bd3d-website/tree/redesign/foundation" },
       { label: "Engineering write-up", href: "https://github.com/tantancodes/bd3d-website/blob/redesign/foundation/docs/CASE-STUDY.md" },
@@ -567,77 +577,77 @@ export const projects: Project[] = [
     headline: "Predicting 3D scan quality from the camera layout, before the slow step",
     year: "2025–26",
     org: "Lucarelli Photogrammetry Lab, UC Berkeley",
-    role: "Undergraduate Machine Learning Researcher",
+    role: "Undergraduate Researcher",
 
     label: "Research · Photogrammetry · Machine learning",
-    timeline: "Aug 2025 – May 2026",
+    timeline: "Aug 2025 – present",
     team: "Lucarelli Photogrammetry Lab (BD3D)",
-    myRole: "Experiment pipeline, evaluation, and modeling",
+    myRole: "Pipeline, evaluator, models, capture app and 3D viewer",
     skills: ["Python", "PyTorch", "Agisoft Metashape", "ICP", "TensorBoard"],
-    cover: "mesh", // fallback only; the page shows the animation
+    cover: "mesh", // fallback only; the page shows the viewer recording
     video: {
-      mp4: "/work/bd3d/coverage-1280.mp4",
-      poster: "/work/bd3d/coverage-1280.webp",
+      mp4: "/work/bd3d/viewer-1280.mp4",
+      poster: "/work/bd3d/viewer-1280.webp",
       width: 1280,
-      height: 800,
-      label: "Illustration: cameras orbit an object; a block of cameras on one side is removed and highlighted, showing the kind of coverage gap the models predict.",
+      height: 720,
+      label: "The reconstruction viewer on the PAHMA 5-613 coffin: builds ranked from best to worst by geometric error, each shown as its mesh and cameras with the surface it is missing in red; switching from a 60-photo build to a 30-photo build grows the red area.",
     },
     goal:
       "Dense reconstruction is the slow step of photogrammetry. Can you tell how good a reconstruction will be from the aligned camera layout alone, before running it?",
     writeup: [
       {
         heading: "The problem",
-        body: [
-          "Photogrammetry turns a stack of photos into a 3D model, and the dense reconstruction step is slow: the 145-image reference for a museum coffin took 57 minutes on a laptop, even at reduced resolution. The camera layout is known minutes in, right after alignment. If that layout alone could predict how good the mesh will be, a photographer would learn that coverage is missing while the object is still on the turntable, not an hour later. The number the software already reports, reprojection error, doesn't answer that question, so I set out to test whether a model can.",
-        ],
+        body: ["Dense reconstruction is the slow step: 57 minutes for a 145-photo museum coffin on a laptop. The usual quick check doesn't help: the worst coffin mesh had the lowest reprojection error (0.67 px) and the best had the highest (1.16 px). So I tested whether the camera layout alone, known minutes in, can predict quality."],
         figure: {
-          src: "/work/bd3d/hero.webp",
-          width: 829,
-          height: 780,
-          alt: "Top-down polar view of the 145 reference cameras around a museum coffin; 23 wall-level cameras removed for one run are shown hollow, and the resulting largest coverage gap is shaded.",
-          caption: "The coffin's 145 cameras seen from above. Hollow points are the 23 removed for one run; the shaded arc is the resulting coverage gap.",
+          src: "/work/bd3d/walkthrough_cameras.webp",
+          width: 1079,
+          height: 492,
+          alt: "The 145 reference cameras around the coffin, top-down and as azimuth against elevation, with the 23 removed wall-level cameras for build side40_s1 shown in red.",
+          caption: "One real build: 122 of 145 photos, with 23 wall-level photos removed from one side (red).",
         },
       },
       {
-        heading: "The pipeline",
-        body: [],
-        ordered: true,
-        list: [
-          "Capture an object in full and reconstruct it in Agisoft Metashape as the reference: an ARF ceramic dog (50 photos) and a PAHMA museum coffin (145 photos).",
-          "Remove images from the full set: at random, as a contiguous side, or as an elevation band.",
-          "Reconstruct what's left. Every run records its provenance, and a watchdog stops it on swap growth or timeout so a laptop can run experiments overnight.",
-          "Label the run: register its mesh to the reference and measure symmetric surface distance, divided by the reference's size. Lower is closer to the full capture.",
-          "Predict the label from the aligned cameras alone (each camera's position and viewing direction), comparing Ridge on summary statistics with PointNet and attention set models in PyTorch.",
+        heading: "How a build is scored",
+        body: ["Every build is traced to its exact photos and settings, and runs in Metashape under a memory watchdog. Its mesh is aligned to the full capture by fitting cameras first, then ICP, and scored by surface distance. This build scores 0.0080, and 98% of that error is missing surface on the side with no cameras."],
+        figures: [
+          {
+            src: "/work/bd3d/walkthrough_registration.webp",
+            width: 1390,
+            height: 674,
+            alt: "Surface samples of the build and the reference in three panels: in the build's own frame, after fitting the build's cameras to the reference cameras, and after ICP.",
+            caption: "Registration: the build's own frame, after the camera fit, after ICP.",
+          },
+          {
+            src: "/work/bd3d/walkthrough_distances.webp",
+            width: 1478,
+            height: 390,
+            alt: "Histograms of missing and extra surface distances, and the missing distance mapped onto the reference coffin, largest on the side where cameras were removed.",
+            caption: "Missing surface is largest exactly where the cameras were removed.",
+          },
         ],
       },
       {
-        heading: "The evaluation audit: v1 to v3",
-        body: [
-          "The first evaluator (v1) aligned each mesh to the reference with rigid ICP from a centroid shift and no rotation. Metashape reconstructions without markers come out in arbitrary frames, and 7 of 16 dog runs were rotated 136–167° from the reference. ICP can't recover a rotation that large, so those 7 all landed on labels of 0.042–0.044: a plateau set by registration failure, not geometry.",
-          "v2 let ICP fit scale from the same start. It didn't help: ICP shrank the meshes and the errors stayed at 0.043 or above. v3 starts from a similarity fit of each run's cameras onto the reference cameras, then refines with ICP. All 16 runs now pass QC, and the 7 broken labels fell to 0.0033–0.0055.",
-          "Three results I had reported from v1 labels did not survive the recompute, and I retracted them:",
-        ],
-        list: [
-          "A central coverage gap gave 5.7× the error of removing the strongest-overlap images. With v3 labels it's 0.58×: the central gap is lower.",
-          "Reprojection error and geometric error correlated at Spearman ρ −0.17. With v3 labels, +0.10.",
-          "An early-alignment Ridge model beat the reprojection baseline by 13.7%. With v3 labels it does 5.6% worse.",
-        ],
+        heading: "Finding and fixing a broken evaluator",
+        body: ["7 of 16 labels from my first evaluator were registration failures: those meshes came out rotated 136–167° and ICP couldn't recover them. Fitting cameras first fixed all 16 (bad labels fell from 0.043 to 0.0033–0.0055), and I retracted 3 earlier results that relied on them."],
         figure: {
           src: "/work/bd3d/evaluation_audit.webp",
           width: 1560,
           height: 570,
           alt: "Left: v1 label against frame rotation for 16 runs; runs rotated about 135–167 degrees cluster at a high plateau near 0.04, while v3 labels for the same runs are low. Right: v1 against v3 labels, with the seven formerly failed runs far from the equality line.",
-          caption: "The v1 error tracked how far each run's frame was rotated, not how good its geometry was.",
+          caption: "The old error tracked how far each build's frame was rotated, not how good its geometry was.",
         },
       },
       {
-        heading: "Key findings",
-        body: [
-          "Reprojection error is the wrong quick check. It measures how consistent the kept photos are, not whether the object is covered. Within each object it moved the wrong way: removing photos lowered it while the geometry got worse (Spearman ρ −0.68 for the dog, n = 7; −0.90 for the coffin, n = 5).",
-          "Attention reads localized gaps; summaries don't. On a synthetic benchmark (predict the largest coverage gap, 5 seeds), every model beat the mean when the gap cut through all cameras. When the gap sat in one ring, Ridge barely improved on the mean, while attention reached 14.0° MAE against Ridge's 27.7°.",
-          "The coverage check works as a tool today. I turned the pipeline into a desktop app a photographer can run right after alignment. It moves the run into the reference's frame with the same camera fit the evaluator uses and counts cameras by direction and height. On the coffin run that dropped one side, it flags exactly the low cameras that were removed and nothing else.",
-        ],
+        heading: "Results",
+        body: ["On synthetic camera sets, attention was the only model that could find a gap hidden in one ring: 14.0° error vs. 27.7° for Ridge. On 28 real builds of 2 objects, it held 0.0035 error with a whole object held out, where Ridge (0.0237) and reprojection error (0.0395) fell apart."],
         figures: [
+          {
+            src: "/work/bd3d/synthetic_mae.webp",
+            width: 1040,
+            height: 570,
+            alt: "Bar chart of test MAE in degrees for mean, Ridge, PointNet and attention on global and localized coverage gaps over five seeds; attention is lowest in both, 7.1 and 14.0 degrees.",
+            caption: "Synthetic benchmark, mean ± std over 5 seeds.",
+          },
           {
             src: "/work/bd3d/reprojection_vs_label.webp",
             width: 950,
@@ -645,49 +655,27 @@ export const projects: Project[] = [
             alt: "Scatter of reprojection RMSE against the corrected geometric label for 28 runs from two objects; within each object, lower reprojection error goes with worse geometry.",
             caption: "Within each object, lower reprojection error went with worse geometry.",
           },
-          {
-            src: "/work/bd3d/synthetic_mae.webp",
-            width: 1040,
-            height: 570,
-            alt: "Bar chart of test MAE in degrees for mean, Ridge, PointNet and attention on global and localized coverage gaps over five seeds; attention is lowest in both, 7.1 and 14.0 degrees.",
-            caption: "Synthetic benchmark, mean ± std over 5 seeds. Attention is the only model that reads localized gaps.",
-          },
-          {
-            src: "/work/bd3d/capture_check_coverage.webp",
-            width: 2560,
-            height: 1700,
-            alt: "The capture-check app showing the coffin build side40_s1 compared with the 145-camera reference ref145b. Left: cameras seen from above, colored by height, with the reference cameras as hollow circles; the removed low cameras on one side are hollow only. Right: a grid of direction around the object against camera height, each cell showing this build's cameras over the reference's, with the low cells from 300 to 60 degrees shaded red. Below: the summary 'Missing vs reference: low cameras from 300° to 60°', an experimental predicted-quality box (error about 0.0182), and the measured score vs ref145b of 0.0080.",
-            caption: "The app on the coffin's one-side-removed run (122 of 145 cameras). Red cells: the reference had cameras there and this run doesn't. The measured score (0.0080) is shown below the experimental prediction, never mixed with it.",
-          },
         ],
         stats: [
-          { value: "14.0°", label: "attention MAE on localized gaps (Ridge: 27.7°)" },
-          { value: "7 of 16", label: "v1 labels were registration failures" },
-          { value: "3", label: "earlier claims retracted after the audit" },
+          { value: "14.0°", label: "attention on localized gaps (Ridge: 27.7°)" },
+          { value: "0.0035", label: "attention error, object held out (mean: 0.0108)" },
+          { value: "ρ −0.90", label: "reprojection error vs. real error, coffin" },
         ],
       },
       {
-        heading: "Demo",
-        body: ["The capture-check app opening two existing coffin builds against the full reference. side40_s1 lost its low cameras on one side, and the app marks exactly those cells red. drop_s3 lost the high cameras, and the red moves to the top row. Each build also shows the experimental predicted quality and the measured score from the v3 evaluator. Recorded live from the app; the only edits are two half-second blank redraws, cut out."],
+        heading: "The capture app and 3D viewer",
+        body: ["A desktop app takes a photo folder through alignment and flags missing camera directions before the slow step. A browser viewer shows every build's mesh, cameras and the surface it's missing, ranked best to worst."],
         video: {
-          mp4: "/work/bd3d/demo.mp4",
-          poster: "/work/bd3d/demo-poster.webp",
+          mp4: "/work/bd3d/app-1280.mp4",
+          poster: "/work/bd3d/app-1280.webp",
           width: 1280,
-          height: 850,
-          label: "Screen recording of the capture-check app: from the start screen, opening the build list, opening side40_s1 to show red low-camera cells on one side and a score of 0.0080, then going back and opening drop_s3 to show red high-camera cells and a score of 0.0106.",
+          height: 720,
+          label: "Screen recording of the capture app: the start screen, the build list, choosing photos of one object, alignment, the coverage check with missing directions in red, and the score against the reference build.",
         },
       },
       {
         heading: "Status and next steps",
-        body: [
-          "This is a pilot. The real-data results come from 28 labeled reconstructions of 2 objects, and runs of the same object are correlated. Holding one object out, the set models (MAE 0.0035–0.0041) beat the mean (0.0108) while Ridge (0.0237) and a reprojection fit (0.0395) failed. With two objects that is two folds: a feasibility check, not evidence that any model predicts reconstruction quality. The label is also distance from a full-capture reference, which can be wrong itself; it isn't verified physical accuracy.",
-          "Next:",
-        ],
-        list: [
-          "Capture more objects with the app, so holding one out means more than two folds.",
-          "Predict alignment failure as its own outcome: one 30-image coffin subset aligned only 7 cameras and never produced a mesh.",
-          "Show where on the object the geometry goes wrong, not one error number per run.",
-        ],
+        body: ["A pilot: 28 labeled builds of 2 objects, so holding an object out is only two folds. Next: more objects, predicting alignment failure, and showing where on the object the geometry goes wrong."],
       },
     ],
     links: [{ label: "Code and full results on GitHub", href: "https://github.com/tantancodes/reconstruction-quality" }],
@@ -749,16 +737,16 @@ export const projects: Project[] = [
 
   {
     slug: "rural-urban-gap",
-    headline: "Is the rural climate-action gap about capacity, or paperwork?",
-    year: "2026–now",
+    headline: "Which California school districts document climate action, and which don't?",
+    year: "2026",
     org: "Ten Strands",
     role: "Data Research Intern",
 
-    label: "Research · Education policy · In progress",
-    timeline: "Oct 2026 – Present",
+    label: "Research · Education policy",
+    timeline: "Sep – Dec 2026",
     team: "Ten Strands Indicator Expansion Team 1 (UC Berkeley Data Discovery)",
     myRole: "Research question, data cleaning, modeling, and figures",
-    skills: ["Python", "pandas", "statsmodels", "GeoPandas", "seaborn"],
+    skills: ["Python", "pandas", "statsmodels", "GeoPandas", "matplotlib"],
     cover: "gap", // fallback only; the page shows the animated chart
     video: {
       mp4: "/work/rural-urban-gap/demo.mp4",
@@ -769,20 +757,91 @@ export const projects: Project[] = [
         "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
     },
     goal:
-      "Rural California school districts document fewer climate protections than urban ones. I'm testing whether that gap reflects what districts can do, or what they write down.",
+      "Which district characteristics predict whether a California school district publicly documents climate action, especially action that involves students and the community?",
     writeup: [
       {
         heading: "The question",
-        body: [
-          "Rural California school districts publicly document fewer climate protections than urban ones. That could mean they have less capacity to act: fewer staff, smaller budgets. Or it could mean they act just as much but publish less of it. The two call for very different responses, so I wanted to know which one the data supports.",
+        body: ["Our team collected 66 yes/no climate indicators for all 937 California districts. Most are thin (only 23 are documented by at least 10% of districts), so I chose outcomes by how much data they had before looking at any results: a count of 9 community and student activities, plus community partnerships on their own."],
+        figure: {
+          src: "/work/rural-urban-gap/final-coverage.webp",
+          width: 992,
+          height: 896,
+          alt: "Horizontal bar chart of the share of California districts with a documented yes for each of the 23 practices documented by at least 10% of districts, with the community and student practices highlighted in blue.",
+          caption: "The 23 practices with enough data to analyze. Blue: community and student activities.",
+        },
+      },
+      {
+        heading: "Political lean is the most consistent pattern",
+        wide: true,
+        body: ["51% of Democratic-leaning districts document a community environmental partnership, vs. 27% of Republican-leaning ones. Comparing districts in the same county with similar size, income and poverty, every +10 points of Democratic vote goes with 21% more documented community activities (p < 0.001)."],
+        figure: {
+          src: "/work/rural-urban-gap/final-politics.webp",
+          width: 1079,
+          height: 469,
+          alt: "Two bar charts by 2024 political leaning. Left: districts with a documented community environmental partnership, 27% Republican-leaning, 36% neutral, 51% Democratic-leaning. Right: average community and student activities documented out of 9, 0.7, 1.2 and 1.6.",
+          caption: "275 Republican-leaning, 414 neutral and 248 Democratic-leaning districts.",
+        },
+        stats: [
+          { value: "51% vs 27%", label: "with a documented community partnership" },
+          { value: "+21%", label: "community activities per +10 pts Democratic vote, within county" },
+          { value: "+33%", label: "1.00 → 1.32 activities, 35% vs. 65% Democratic (all else equal)" },
         ],
       },
       {
-        heading: "The team poster",
-        body: [
-          "My analysis is one strand of our team's research poster, School Districts in California Are Lagging Behind in Environmental Action, made with Aritra Nag, Nata Petrovi and Kevin Phongsa and mentored by Judy He and Sarah Whiting. It draws on the indicators our team collected this fall from district websites, board policies, social media and local news, using LLM-assisted search with manual verification.",
-          "Across the 937 districts, most indicators are rare: only five of the climate practices we tracked are documented by more than 40% of districts. 72% of districts show no documented wildfire readiness, and rural and town districts trail urban and suburban ones at both lower and higher wildfire risk, which fits the size story in my analysis below. A logistic regression on community-based partnerships found higher English-learner shares going with more partnerships, and higher pollution burden and BIPOC enrollment going with fewer.",
+        heading: "Not one lucky indicator",
+        body: ["Across all 23 well-documented practices, Democratic-leaning districts document 22 more often (sign test p < 0.001). 7 stay significant after correcting for running 23 tests, from school gardens to plant-based meals and recycling."],
+        figure: {
+          src: "/work/rural-urban-gap/final-practices.webp",
+          width: 992,
+          height: 945,
+          alt: "Dumbbell chart of 23 practices showing the share of Republican-leaning (red) and Democratic-leaning (blue) districts documenting each; Democratic-leaning districts are higher on 22 of 23, with starred gaps that hold within county.",
+          caption: "Red: Republican-leaning. Blue: Democratic-leaning. ★ = the gap holds within county.",
+        },
+        stats: [
+          { value: "22 of 23", label: "practices documented more by Democratic-leaning districts" },
+          { value: "7", label: "still significant after correcting for 23 tests" },
         ],
+      },
+      {
+        heading: "Lower-income communities document less",
+        body: ["Each +10 points of low-income students goes with about 5% fewer documented community activities (p = 0.002), and the odds are lower for all 9 activities. Student poverty and community income move together (r = −0.58), so it's best read as a gap for lower-income communities overall."],
+        figure: {
+          src: "/work/rural-urban-gap/final-poverty.webp",
+          width: 992,
+          height: 549,
+          alt: "Bar chart of average community and student activities documented by share of students receiving free or reduced-price meals: 1.5 under 34%, 1.2 at 34–57%, 1.0 at 57–75%, 1.0 over 75%.",
+          caption: "Holding size, locale, type, politics and pollution equal: 1.35 activities at 25% low-income vs. 1.04 at 75%.",
+        },
+      },
+      {
+        heading: "Size, and the rural–urban gap",
+        body: ["27% of districts under 1,000 students document a partnership, vs. 56% of districts over 20,000. Earlier in the project, the rural–urban gap in documented climate protections (0.76) vanished (−0.03) once I accounted for district size."],
+        figure: {
+          src: "/work/rural-urban-gap/rural_gap_size.webp",
+          width: 1400,
+          height: 700,
+          alt: "Coefficient plot comparing each locale with rural districts. Without size, urban and suburban districts document about 0.7 more protections; after adjusting for district size, all three estimates sit at or near zero with intervals crossing zero.",
+          caption: "Gray: without district size. Blue: adjusting for district size.",
+        },
+        stats: [
+          { value: "27% vs 56%", label: "partnerships: under 1,000 vs. over 20,000 students" },
+          { value: "+0.76 → −0.03", label: "urban vs. rural gap, before and after size" },
+        ],
+      },
+      {
+        heading: "Pollution is a regional story",
+        body: ["The most-polluted quarter of districts is the least likely to document a partnership (26%). That comes from where those districts are, like the Central Valley: within counties it disappears, so it stays exploratory."],
+        figure: {
+          src: "/work/rural-urban-gap/final-pollution.webp",
+          width: 992,
+          height: 549,
+          alt: "Bar chart of districts with a documented community partnership by pollution burden quartile: 38%, 47%, 36%, and 26% for the highest quarter.",
+          caption: "Share with a documented community partnership, by CalEnviroScreen pollution quartile.",
+        },
+      },
+      {
+        heading: "The team poster",
+        body: ["My analysis is one strand of our team poster with Aritra Nag, Nata Petrovi and Kevin Phongsa, mentored by Judy He and Sarah Whiting."],
         figure: {
           src: "/work/rural-urban-gap/team-poster.webp",
           width: 2400,
@@ -794,78 +853,16 @@ export const projects: Project[] = [
         stats: [
           { value: "937", label: "California districts tracked" },
           { value: "72%", label: "with no documented wildfire readiness" },
-          { value: "15% vs 36%", label: "wildfire-ready: high-risk rural vs. high-risk suburban districts" },
         ],
       },
       {
-        heading: "The data",
-        body: [
-          "937 California districts, combining Ten Strands' district dataset (enrollment, demographics, income, politics, locale) with indicators our Indicator Expansion team collected this fall from district websites and documents. The outcome is a count of seven climate protections a district documents publicly: heat, wildfire, poor air quality, indoor air quality, energy resilience, air conditioning, and stormwater. 865 districts had complete data for the models.",
-        ],
-      },
-      {
-        heading: "The gap is real",
-        body: [
-          "Rural districts document 1.2 of the seven protections on average; suburban and urban districts document about 2.1. The difference is largest for heat protection (7% of rural districts vs. 32% of urban ones), stormwater, and air quality planning.",
-        ],
-        figure: {
-          src: "/work/rural-urban-gap/protection_heatmap.webp",
-          width: 1800,
-          height: 736,
-          alt: "Heatmap of the share of districts documenting each of seven climate protections, by locale and by enrollment quartile. Both rise from rural to urban and from smallest to largest districts; for heat protection, 7% of rural vs. 32% of urban districts, and 4% of the smallest vs. 40% of the largest.",
-          caption: "The same pattern shows up by locale (left) and by district size (right).",
-        },
-      },
-      {
-        heading: "It disappears once size is accounted for",
-        body: [
-          "In a regression with income, poverty, and politics, urban districts document 0.76 more protections than rural ones (95% CI 0.32 to 1.20). Adding district size (log enrollment) changes that to −0.03 (95% CI −0.57 to 0.50): no rural–urban difference left. A district ten times larger documents about 0.55 more protections, holding everything else equal.",
-          "The result held when I kept districts with missing values as zeros, added region controls, and refit without the most influential districts.",
-        ],
-        figure: {
-          src: "/work/rural-urban-gap/rural_gap_size.webp",
-          width: 1400,
-          height: 700,
-          alt: "Coefficient plot comparing each locale with rural districts. Without size, urban and suburban districts document about 0.7 more protections; after adjusting for district size, all three estimates sit at or near zero with intervals crossing zero.",
-          caption: "Gray: without district size. Blue: adjusting for district size.",
-        },
-        stats: [
-          { value: "+0.76 → −0.03", label: "urban vs. rural gap, before and after size" },
-          { value: "+0.55", label: "protections per 10× enrollment" },
-          { value: "865", label: "districts in the model" },
-        ],
-      },
-      {
-        heading: "Income matters less than expected",
-        body: [
-          "Community income predicts documented protections on its own, but that relationship disappears once size and political context are included. The share of low-income students shows no consistent relationship. Democratic vote share has a modest positive association. Even so, low-income districts with zero documented protections cluster in the far north and the inland south of the state, which is where follow-up matters most.",
-        ],
-        figure: {
-          src: "/work/rural-urban-gap/protection_predictors.webp",
-          width: 1200,
-          height: 600,
-          alt: "Standardized coefficient plot: district size has a clear positive association with documented protections; Democratic vote share a small positive one; median income and percent low-income students have intervals crossing zero.",
-          caption: "Change in documented protections per standard deviation of each predictor. Standard errors clustered by county.",
-        },
-      },
-      {
-        heading: "What this doesn't show yet",
-        body: [
-          "Size explains the rural gap, but size can mean two things: larger districts may have more capacity to act, or more staff to publish what they do. This analysis can't separate those yet; that's the next stage. Everything here is an association, not a cause, the model explains about 18% of the variation, and it measures what districts document publicly, not what they actually do.",
-        ],
-        figure: {
-          src: "/work/rural-urban-gap/income_vs_protection_maps.webp",
-          width: 1800,
-          height: 810,
-          alt: "Three maps of California districts: community median income, number of documented climate protections, and low-income districts with no documented protections, which cluster in the far north and the inland south.",
-          caption: "Left to right: community median income, documented protections, and low-income districts with none documented.",
-        },
+        heading: "What this can't show",
+        body: ["Documented isn't the same as done: bigger districts may simply publish more. These are associations in 864 districts, not causes; political lean stands in for local context, not votes causing programs."],
       },
     ],
     lookingForward:
-      "Next: break the gap down by type of action, then test the documentation explanation directly, to see whether smaller districts are doing less or just publishing less. For the team, the goal is an interactive database that lets educators and policymakers track district progress over time.",
+      "What it suggests: support for documenting and sharing climate work (templates, staff time, partners) aimed at smaller, higher-poverty and Republican-leaning districts, where work may be happening but is harder to see.",
     links: [{ label: "Team research poster (PDF)", href: "/work/rural-urban-gap/team-poster.pdf" }],
-    note: "My analysis is ongoing; the team poster is finished.",
   },
 
   {
@@ -891,26 +888,25 @@ export const projects: Project[] = [
         "Demo of the K–12 sustainability evidence search: the bushes-and-magnifier intro, searching \"fire protection\", the saved evidence list with export, and opening the original source PDF.",
     },
     goal:
-      "Evidence about California K-12 sustainability is scattered across district webpages and policy documents, and finding it by hand is slow. I built a local search tool over 50 of those documents (2,157 passages): ask a question, get the most relevant passages and a short answer that only quotes its sources, or an honest “not enough evidence.”",
+      "Evidence on California K-12 sustainability is scattered across district pages and policies. I built a local search over 50 documents (2,157 passages) that returns the best passages and an answer that only quotes its sources.",
     highlights: [
       {
         title: "Keyword, meaning, then a second opinion",
-        body:
-          "The system combines BM25 keyword search with dense transformer embeddings, then reranks the candidates with a sentence-transformers CrossEncoder. Each stage catches what the one before it misses.",
+        body: "BM25 keyword search plus dense embeddings find candidates; a CrossEncoder reranks them. Each stage catches what the last one missed.",
       },
       {
         title: "More of the right answers up top",
-        body: "On 34 development queries, the reranked pipeline found the known source in the top five for 97.1% of questions, versus 88.2% for BM25 alone. That's 33 of 34 versus 30 of 34: promising, but too few questions to call the gain significant (95% CI 0 to 20 points).",
+        body: "Known source in the top five for 97.1% of 34 dev questions, vs. 88.2% for BM25 alone. Promising, but too few questions to call significant.",
         stat: "97.1%",
         statLabel: "known-source Recall@5 (BM25: 88.2%)",
       },
       {
         title: "Answers that quote instead of invent",
-        body: "The local LLM may only answer with verbatim excerpts from the retrieved passages, each cited. Automated checks reject unsupported quotes, and when the evidence is thin the app says so instead of guessing.",
+        body: "The local LLM may only answer with cited, verbatim excerpts. Unsupported quotes are rejected, and thin evidence gets \"not enough evidence.\"",
       },
     ],
     lookingForward:
-      "Next is a held-out evaluation: about 50 new questions from districts the system has never seen, with passages judged by people rather than matched against a known URL. That's what it takes to turn a promising result into a real one.",
+      "Next: about 50 held-out questions from districts it has never seen, with answers judged by people.",
   },
 
   {
@@ -938,29 +934,12 @@ export const projects: Project[] = [
     },
     writeup: [
       {
-        heading: "The problem",
-        body: [
-          "I wanted to estimate what a California single-family home will sell for from its property details and location, and to be honest about how far off that estimate is likely to be.",
-        ],
-      },
-      {
-        heading: "The data",
-        body: [
-          "I used 309K cleaned single-family sales from CRMLS, January 2024 through April 2026, through a data science internship at IDX Exchange. I added location, property age and school district as features, matching each home to one of 680 school districts with a spatial join.",
-        ],
-      },
-      {
-        heading: "How I evaluated it",
-        body: [
-          "Chronologically, never on a random split. I tuned on earlier months, locked the model, and only then scored April 2026, once. Leakage rules kept list price and other sale-process fields out of the model.",
-        ],
+        heading: "The problem and the data",
+        body: ["Estimate what a California home will sell for, and be honest about how far off it might be. 309K CRMLS sales (Jan 2024 – Apr 2026), matched to 680 school districts, tested once on April 2026 only, with list price kept out."],
       },
       {
         heading: "Results",
-        body: [
-          "The final model is XGBoost. On the 11,890 April sales inside the training price range, its median error is 7.7%, and 85.5% of homes are estimated within 20% of their sale price. Across all 12,022 April sales, the median error is 7.8%.",
-          "In the app, every estimate comes with per-feature contributions, so you can see what pushed the price up or down, and an empirical error range.",
-        ],
+        body: ["XGBoost reached 7.7% median error on 11,890 April sales, with 85.5% of homes within 20% of their sale price. Every estimate shows what moved it and an error range."],
         stats: [
           { value: "7.7%", label: "median error, 11,890 April sales" },
           { value: "85.5%", label: "of homes within 20% of sale price" },
@@ -969,9 +948,7 @@ export const projects: Project[] = [
       },
       {
         heading: "What didn't work",
-        body: [
-          "A more powerful model barely mattered. Adding location, property age and school district features took a random forest from 9.2% to 7.8% median error. Switching to gradient boosting improved that by only about 0.1 points. What boosting did change was size: the model went from 268 MB to 4 MB.",
-        ],
+        body: ["A stronger model barely mattered. Better features cut error from 9.2% to 7.8%; boosting added only ~0.1 points, but shrank the model from 268 MB to 4 MB."],
       },
       {
         heading: "Limitations",

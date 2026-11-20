@@ -67,6 +67,8 @@ export default async function CaseStudy({ params }: Props) {
   // Some projects get a page in their own style instead of the standard case study.
   if (project.theme === "scrapbook") return <ScrapbookCase project={project} next={next} />;
 
+  let splitIndex = 0; // counts side-by-side sections, to alternate which side the visual is on
+
   const strip = [
     { label: "Timeline", value: project.timeline },
     { label: "Team", value: project.team },
@@ -127,61 +129,85 @@ export default async function CaseStudy({ params }: Props) {
           // Write-up projects: one section per heading, in order.
           project.writeup
             .filter((w) => !w.video || inPublic(w.video.mp4))
-            .map((w) => (
-            <FadeIn as="section" key={w.heading} className="case-section">
-              <h2 className="section-label">{w.heading}</h2>
-              <div className="prose">
-                {w.body.map((para) => (
-                  <p key={para.slice(0, 32)}>{para}</p>
-                ))}
-              </div>
-              {w.list &&
-                (w.ordered ? (
-                  <ol className="case-list case-list--ordered">
-                    {w.list.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                ) : (
-                  <ul className="case-list">
-                    {w.list.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                ))}
-              {w.video && (
-                <figure className="case-figure">
-                  <video
-                    className="case-video"
-                    controls
-                    muted
-                    playsInline
-                    preload="metadata"
-                    poster={inPublic(w.video.poster) ? w.video.poster : undefined}
-                    width={w.video.width}
-                    height={w.video.height}
-                    style={{ aspectRatio: `${w.video.width} / ${w.video.height}` }}
-                    aria-label={w.video.label}
-                  >
-                    {w.video.webm && <source src={w.video.webm} type="video/webm" />}
-                    <source src={w.video.mp4} type="video/mp4" />
-                  </video>
-                </figure>
-              )}
-              {w.figure && <CaseFigure figure={w.figure} />}
-              {w.figures?.map((f) => <CaseFigure key={f.src} figure={f} />)}
-              {w.stats && (
-                <dl className="case-stats">
-                  {w.stats.map((st) => (
-                    <div key={st.label}>
-                      <dt className="stat-label">{st.label}</dt>
-                      <dd className="stat-value">{st.value}</dd>
+            .map((w) => {
+              // Sections with a visual sit side by side with it, alternating sides, so the page
+              // reads across instead of scrolling one long column. Text-only sections stay full width.
+              const media = !w.wide && Boolean(w.video || w.figure || w.figures?.length);
+              const flip = media && splitIndex++ % 2 === 1;
+              const text = (
+                <>
+                  <h2 className="section-label">{w.heading}</h2>
+                  {w.body.length > 0 && (
+                    <div className="prose">
+                      {w.body.map((para) => (
+                        <p key={para.slice(0, 32)}>{para}</p>
+                      ))}
                     </div>
-                  ))}
-                </dl>
-              )}
-            </FadeIn>
-          ))
+                  )}
+                  {w.list &&
+                    (w.ordered ? (
+                      <ol className="case-list case-list--ordered">
+                        {w.list.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ol>
+                    ) : (
+                      <ul className="case-list">
+                        {w.list.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    ))}
+                  {w.stats && (
+                    <dl className="case-stats">
+                      {w.stats.map((st) => (
+                        <div key={st.label}>
+                          <dt className="stat-label">{st.label}</dt>
+                          <dd className="stat-value">{st.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                </>
+              );
+              if (!media) {
+                return (
+                  <FadeIn as="section" key={w.heading} className="case-section">
+                    {text}
+                    {w.figure && <CaseFigure figure={w.figure} />}
+                    {w.figures?.map((f) => <CaseFigure key={f.src} figure={f} />)}
+                  </FadeIn>
+                );
+              }
+              return (
+                <FadeIn as="section" key={w.heading} className={`case-section case-split${flip ? " case-split--flip" : ""}`}>
+                  <div className="case-split-text">{text}</div>
+                  <div className="case-split-media">
+                    {w.video && (
+                      <figure className="case-figure">
+                        <video
+                          className="case-video"
+                          controls
+                          muted
+                          playsInline
+                          preload="metadata"
+                          poster={inPublic(w.video.poster) ? w.video.poster : undefined}
+                          width={w.video.width}
+                          height={w.video.height}
+                          style={{ aspectRatio: `${w.video.width} / ${w.video.height}` }}
+                          aria-label={w.video.label}
+                        >
+                          {w.video.webm && <source src={w.video.webm} type="video/webm" />}
+                          <source src={w.video.mp4} type="video/mp4" />
+                        </video>
+                      </figure>
+                    )}
+                    {w.figure && <CaseFigure figure={w.figure} />}
+                    {w.figures?.map((f) => <CaseFigure key={f.src} figure={f} />)}
+                  </div>
+                </FadeIn>
+              );
+            })
         ) : (
           <FadeIn as="section" className="case-section">
             <h2 className="section-label">The goal</h2>

@@ -184,7 +184,7 @@ html { scrollbar-gutter: stable; } /* scrolling is paused during the intro; keep
 .nm-thought:hover { color: var(--ink); }
 .nm-cloud {
   position: absolute; left: -14px; bottom: -10px; display: block;
-  width: 236px; height: 150px; margin-left: var(--nm-dx, 0px);
+  width: 236px; height: 150px; margin-left: var(--nm-dx, 0px); margin-bottom: calc(-1 * var(--nm-dy, 0px));
   transform-origin: 10% 100%;
   transition: translate 0.4s var(--ease), rotate 0.4s var(--ease);
 }
@@ -701,3 +701,53 @@ a.sb-margin:hover { color: var(--ink); }
 .project-grid > li.has-label { flex-direction: column; gap: 14px; }
 .project-grid > li.has-label > .project-group-title { padding-top: 28px; }
 .project-grid > li.has-label > .project-card { flex: 1; }
+
+/* ============================================================
+   11. Results first
+   ============================================================ */
+
+/* Project cards: the result line reads as the headline number */
+.project-stat {
+  font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink);
+  padding-left: 12px; border-left: 2px solid var(--ink);
+}
+
+/* Case study: a section with a visual sits side by side with it (text ~5/12, visual ~7/12),
+   alternating sides down the page. The text stays in view while a tall visual scrolls past. */
+.case-split {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px 56px; align-items: start;
+}
+.case-split--flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.case-split--flip .case-split-text { order: 2; }
+.case-split-text { position: sticky; top: 96px; }
+.case-split .prose { font-size: 17px; line-height: 1.6; }
+.case-split .case-stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); margin-top: 24px; }
+.case-split .case-stats .stat-value { font-size: 30px; }
+.case-split-media { display: grid; gap: 24px; }
+.case-split-media > .case-figure:first-child { margin-top: 0; }
+.case-split .section-label { margin-bottom: 14px; }
+
+/* Highlights: two across instead of one long list */
+.highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+.highlight { grid-template-columns: 32px 1fr; padding: 28px 0; }
+.highlight h3 { font-size: 20px; }
+.highlight p { font-size: 16px; line-height: 1.55; }
+.highlight .stat { grid-column: 2; text-align: left; margin-top: 4px; }
+.highlight .stat-value { font-size: 30px; }
+
+@media (max-width: 860px) {
+  .case-split, .case-split--flip { grid-template-columns: minmax(0, 1fr); }
+  .case-split--flip .case-split-text { order: 0; }
+  .case-split-text { position: static; }
+  .highlights { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Card header: where (left) and my role (right), both bold */
+.project-meta {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  font-size: 13px; letter-spacing: -0.005em; color: var(--ink);
+}
+.project-meta strong { font-weight: 600; }
+.project-meta strong:last-child { text-align: right; }
+.project-title { font-size: 22px; }
+.is-featured .project-title { font-size: 26px; }

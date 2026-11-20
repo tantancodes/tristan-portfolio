@@ -64,11 +64,15 @@ export default function NameIntro({ avatar }: { avatar: string }) {
     const fit = () => {
       if (!thought) return;
       thought.style.setProperty("--nm-dx", "0px");
+      thought.style.setProperty("--nm-dy", "0px");
       const parts = [".nm-cloud-ink", ".nm-pointer"].map((s) => thought.querySelector(s)!.getBoundingClientRect());
       const left = Math.min(...parts.map((r) => r.left)), right = Math.max(...parts.map((r) => r.right));
+      const top = Math.min(...parts.map((r) => r.top)) + window.scrollY; // from the top of the page
       const pad = 12, vw = document.documentElement.clientWidth;
       const dx = right > vw - pad ? vw - pad - right : left < pad ? pad - left : 0;
+      const dy = top < pad ? pad - top : 0; // never above the top of the page
       thought.style.setProperty("--nm-dx", `${Math.round(dx)}px`);
+      thought.style.setProperty("--nm-dy", `${Math.round(dy)}px`);
     };
     fit();
     window.addEventListener("resize", fit);
