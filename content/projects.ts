@@ -660,7 +660,7 @@ export const projects: Project[] = [
       {
         heading: "The brief",
         body: [
-          "ANova recruits new members every semester, and most students first hear about it through Instagram. As Marketing Officer, I made the posts for the Spring 2026 recruitment cycle: an introduction to who we are, a call to apply, and the poster for our infosessions.",
+          "ANova recruits new members every semester, and most students first hear about it through Instagram. As Marketing Officer, I made the posts for the Spring 2026 recruitment cycle: an introduction to who we are, a call to apply, the poster for our infosessions, and an animated polaroid post for our big/little reveal.",
         ],
       },
       {
@@ -682,6 +682,9 @@ export const projects: Project[] = [
       { src: "/work/anova-marketing/who-we-are.webp", video: "/work/anova-marketing/who-we-are.mp4", width: 720, height: 720, alt: "Who are we: ANova teaches computer science to under-resourced middle and high school students in the Bay Area.", caption: "Who we are" },
       { src: "/work/anova-marketing/apply.webp", video: "/work/anova-marketing/apply.mp4", width: 720, height: 720, alt: "Interested in joining? Apply by Saturday, January 31st, with the mascot saying 'Do it!' next to member photos.", caption: "Call to apply" },
       { src: "/work/anova-marketing/computer.webp", video: "/work/anova-marketing/computer.mp4", width: 720, height: 720, alt: "Infosession poster: a retro computer whose screen lights up with the ANova logo.", caption: "Infosession poster" },
+      { src: "/work/anova-marketing/polaroids-1.webp", video: "/work/anova-marketing/polaroids-1.mp4", width: 720, height: 720, alt: "Polaroids of ANova members at the big/little reveal, clipped to the page one by one.", caption: "Big/little polaroids, 1 of 3" },
+      { src: "/work/anova-marketing/polaroids-2.webp", video: "/work/anova-marketing/polaroids-2.mp4", width: 720, height: 720, alt: "More polaroids from the big/little reveal drop into place.", caption: "Big/little polaroids, 2 of 3" },
+      { src: "/work/anova-marketing/polaroids-3.webp", video: "/work/anova-marketing/polaroids-3.mp4", width: 720, height: 720, alt: "A polaroid flips over to a handwritten note: ANOVA RULES!!!", caption: "Big/little polaroids, 3 of 3" },
     ],
   },
 
