@@ -592,12 +592,11 @@ export const projects: Project[] = [
             caption: "Synthetic benchmark, mean ± std over 5 seeds. Attention is the only model that reads localized gaps.",
           },
           {
-            // TODO: replace with the new coverage-app screenshot (keep this path, or update src, width and height).
             src: "/work/bd3d/capture_check_coverage.webp",
-            width: 1716,
-            height: 728,
-            alt: "The capture-check app's coverage view for a coffin run with one side removed. Left: top-down camera positions colored by elevation, with the 145 reference cameras as hollow circles; the 23 removed cameras on one side are hollow only. Right: a grid of azimuth against elevation showing cameras per cell as run over reference, with the four low-elevation cells on the removed side shaded red.",
-            caption: "The app on the coffin's one-side-removed run (122 of 145 cameras). Red cells: the reference had cameras there and this run doesn't.",
+            width: 2560,
+            height: 1700,
+            alt: "The capture-check app showing the coffin build side40_s1 compared with the 145-camera reference ref145b. Left: cameras seen from above, colored by height, with the reference cameras as hollow circles; the removed low cameras on one side are hollow only. Right: a grid of direction around the object against camera height, each cell showing this build's cameras over the reference's, with the low cells from 300 to 60 degrees shaded red. Below: the summary 'Missing vs reference: low cameras from 300° to 60°', an experimental predicted-quality box (error about 0.0182), and the measured score vs ref145b of 0.0080.",
+            caption: "The app on the coffin's one-side-removed run (122 of 145 cameras). Red cells: the reference had cameras there and this run doesn't. The measured score (0.0080) is shown below the experimental prediction, never mixed with it.",
           },
         ],
         stats: [
@@ -608,14 +607,13 @@ export const projects: Project[] = [
       },
       {
         heading: "Demo",
-        body: ["The capture-check app from photo folder to coverage view."],
-        // TODO: add the recording. This section stays hidden until public/work/bd3d/demo.mp4 exists.
+        body: ["The capture-check app opening two existing coffin builds against the full reference. side40_s1 lost its low cameras on one side, and the app marks exactly those cells red. drop_s3 lost the high cameras, and the red moves to the top row. Each build also shows the experimental predicted quality and the measured score from the v3 evaluator. Recorded live from the app; the only edits are two half-second blank redraws, cut out."],
         video: {
           mp4: "/work/bd3d/demo.mp4",
           poster: "/work/bd3d/demo-poster.webp",
           width: 1280,
-          height: 800,
-          label: "Screen recording of the capture-check app: choosing a photo folder, aligning it, and reviewing the coverage view.",
+          height: 850,
+          label: "Screen recording of the capture-check app: from the start screen, opening the build list, opening side40_s1 to show red low-camera cells on one side and a score of 0.0080, then going back and opening drop_s3 to show red high-camera cells and a score of 0.0106.",
         },
       },
       {
