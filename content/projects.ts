@@ -155,6 +155,8 @@ export const site = {
 /** The opening screen (components/Hero.tsx). */
 export const hero = {
   eyebrow: "Data Science & Economics · UC Berkeley",
+  intro: "I build 3D research tools and data products, and design the interfaces people use them through.",
+  now: "Now: Research Assistant at Berkeley's Archaeological Research Facility, and Data Research Intern at Ten Strands.",
   ctas: [
     { label: "View projects", href: "#projects" },
     { label: "View experience", href: "/experience" },
@@ -275,7 +277,7 @@ export const projectCards: ProjectCard[] = [
     status: "Research · 2026",
     stack: ["Next.js", "React Three Fiber", "TypeScript"],
     summary: "Six ancient coffins in 3D, every inscription linked to its translation.",
-    stat: "607 regions linked · 74% smaller downloads",
+    stat: "607 surface regions linked · 74% smaller downloads",
     caseStudy: "egyptology-3d",
     featured: true,
     // 1280px because the featured card is ~1000px wide on desktop. No WebM: at this size VP9
@@ -289,14 +291,14 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
-    org: "Lucarelli Photogrammetry Labs",
+    org: "Lucarelli Photogrammetry Lab",
     role: "Undergraduate Researcher",
     title: "Reconstruction Quality",
     status: "Research · 2025–26",
     cover: "mesh",
     stack: ["Python", "PyTorch", "Metashape"],
-    summary: "Predicting how good a 3D scan will be from the camera layout alone, before the slow step.",
-    stat: "14.0° vs. 27.7° error on hidden coverage gaps (attention vs. Ridge)",
+    summary: "Checks a 3D scan's camera coverage before the slow reconstruction step, and shows what each build is missing.",
+    stat: "Flags missing coverage before a 57-minute reconstruction",
     video: {
       mp4: "/work/bd3d/viewer-card.mp4",
       poster: "/work/bd3d/viewer-card.webp",
@@ -307,12 +309,12 @@ export const projectCards: ProjectCard[] = [
     caseStudy: "bd3d",
   },
   {
-    org: "IDX Exchange Internship",
+    org: "IDX Exchange",
     role: "Data Science Intern",
     title: "Home Value Estimator",
     status: "Internship · 2026",
     stack: ["Python", "XGBoost", "Streamlit"],
-    summary: "What will a California home sell for, and why?",
+    summary: "Estimates what a California home will sell for, and shows what moved the estimate.",
     stat: "7.7% median error on 11,890 held-out sales",
     caseStudy: "idx-home-prices",
     video: {
@@ -326,14 +328,14 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
-    org: "Ten Strands Internship",
+    org: "Ten Strands",
     role: "Data Research Intern",
     title: "K–12 Evidence Search",
     status: "Project · 2026",
     stack: ["Python", "BM25", "Sentence Transformers"],
     art: "retrieval",
     summary: "Search district policies and get answers that quote and cite their sources.",
-    stat: "97.1% Recall@5, vs. 88.2% keyword-only",
+    stat: "97.1% Recall@5 (keyword search alone: 88.2%)",
     caseStudy: "k12-retrieval",
     // No WebM: VP9 came out larger than this H.264 for a mostly-static UI recording.
     video: {
@@ -346,7 +348,7 @@ export const projectCards: ProjectCard[] = [
     },
   },
   {
-    org: "Ten Strands Internship",
+    org: "Ten Strands",
     role: "Data Research Intern",
     title: "Climate Action in Schools",
     status: "Research · 2026",
@@ -359,8 +361,8 @@ export const projectCards: ProjectCard[] = [
         "Animated chart of 865 California school districts, enrollment against documented climate protections: rural districts average 1.2 protections and urban 2.2, then a single size trend line (+0.55 protections per 10× enrollment) shows rural districts sitting at the small end of it.",
     },
     stack: ["Python", "pandas", "statsmodels"],
-    summary: "What predicts whether a school district publicly documents climate action? 937 districts, modeled.",
-    stat: "51% vs. 27% document a community partnership (Democratic- vs. Republican-leaning)",
+    summary: "Modeled which of 937 California school districts publicly document climate action, and what predicts it.",
+    stat: "+10 points Democratic vote: 21% more documented activities",
     caseStudy: "rural-urban-gap",
   },
   {
@@ -503,7 +505,7 @@ export const projects: Project[] = [
       "Egyptian coffins were written to be read in place. I built the viewer that links six scanned coffins to their scholarly editions: click any inscription to read its hieroglyphs and translation, or start from the text and fly to where it's written.",
     highlights: [
       {
-        title: "The object and the text, linked both ways",
+        title: "Object and text, linked both ways",
         body: "Hover a region and its entry lights up, and the reverse. Words link to the dictionary and to every place they occur, and every view is a shareable link.",
         stat: "607",
         statLabel: "regions linked to 314 entries",
@@ -515,17 +517,17 @@ export const projects: Project[] = [
         statLabel: "total download, all six coffins (standard quality)",
       },
       {
-        title: "Raking light, kept honest",
+        title: "Raking light",
         body: "A real directional light sweeps the scanned relief. Where the mesh is too coarse to hold carved signs, the interface says so instead of faking it.",
       },
       {
-        title: "Engineered to be trusted",
+        title: "Tested on every push",
         body: "Research data is schema-checked at build time; 82 unit tests and 45 browser tests, including accessibility, run on every push.",
         stat: "127",
         statLabel: "automated tests in CI",
       },
       {
-        title: "From apprentice to lead",
+        title: "Leading the team",
         body: "Joined through URAP as an apprentice; now a Research Assistant leading the URAP students and the design team.",
       },
     ],
@@ -683,7 +685,7 @@ export const projects: Project[] = [
 
   {
     slug: "anova-marketing",
-    headline: "Recruiting the next class of CS mentors, one animated post at a time",
+    headline: "Animated recruitment posts for Berkeley ANova",
     year: "2026",
     org: "Berkeley ANova",
     role: "Marketing Officer",
@@ -891,17 +893,17 @@ export const projects: Project[] = [
       "Evidence on California K-12 sustainability is scattered across district pages and policies. I built a local search over 50 documents (2,157 passages) that returns the best passages and an answer that only quotes its sources.",
     highlights: [
       {
-        title: "Keyword, meaning, then a second opinion",
+        title: "Hybrid search, then reranking",
         body: "BM25 keyword search plus dense embeddings find candidates; a CrossEncoder reranks them. Each stage catches what the last one missed.",
       },
       {
-        title: "More of the right answers up top",
+        title: "Better top-five results",
         body: "Known source in the top five for 97.1% of 34 dev questions, vs. 88.2% for BM25 alone. Promising, but too few questions to call significant.",
         stat: "97.1%",
         statLabel: "known-source Recall@5 (BM25: 88.2%)",
       },
       {
-        title: "Answers that quote instead of invent",
+        title: "Answers only from quoted sources",
         body: "The local LLM may only answer with cited, verbatim excerpts. Unsupported quotes are rejected, and thin evidence gets \"not enough evidence.\"",
       },
     ],

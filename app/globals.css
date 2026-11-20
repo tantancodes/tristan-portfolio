@@ -751,3 +751,28 @@ a.sb-margin:hover { color: var(--ink); }
 .project-meta strong:last-child { text-align: right; }
 .project-title { font-size: 22px; }
 .is-featured .project-title { font-size: 26px; }
+
+/* ---------- The roaming "click me" (components/ClickPointer.tsx) ----------
+   Hidden until it lifts off the bubble; then the bubble's own arrow hides. Its transform is
+   set every frame from script; the box is offset so (x, y) lands on the arrow's tip. */
+.cp {
+  position: fixed; left: 0; top: 0; z-index: 40; pointer-events: none;
+  display: none; width: 92px; margin-top: -20px; transform-origin: 0 20px;
+  flex-direction: column; align-items: center; gap: 2px; color: var(--ink);
+  will-change: transform;
+}
+.cp svg {
+  width: 90px; height: 40px; overflow: visible;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.cp-text { font-family: var(--font-body); font-size: 15px; letter-spacing: -0.005em; padding-left: 18px; white-space: nowrap; }
+.cp.is-on .cp-text { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; }
+.cp.is-left { margin-left: -92px; transform-origin: 92px 20px; }
+.cp.is-left svg { scale: -1 1; }
+.cp.is-left .cp-text { padding-left: 0; padding-right: 18px; }
+.cp-live .cp { display: flex; }
+.cp-live .nm-pointer { visibility: hidden; }
+
+/* One plain line on what I do, and where I am now (content/projects.ts → hero). */
+.hero-intro { font-size: clamp(18px, 1.6vw, 21px); line-height: 1.45; letter-spacing: -0.01em; max-width: 34em; margin: 4px 0 6px; }
+.hero-now { font-size: 15px; color: var(--ink-soft); max-width: 44em; margin: 0 0 22px; }
