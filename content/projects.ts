@@ -194,16 +194,35 @@ export const hero = {
 
 export const experience: Job[] = [
   {
+    org: "Lucarelli Photogrammetry Lab, UC Berkeley",
+    place: "Berkeley, CA",
+    caseStudy: "bd3d",
+    roles: [
+      {
+        title: "Undergraduate Machine Learning Researcher",
+        dates: "Aug 2025 – Present",
+        points: [
+          "Investigated geometry-aware multi-head attention in PyTorch with learned pairwise geometric biases; reduced synthetic angular-gap MAE by 19% vs. standard attention at a matched training budget and 20% on unseen camera counts across 3 seeds.",
+          "Benchmarked PointNet, self-attention, and classical ML baselines; built a Metashape and ICP-based pipeline to quantify 3D surface RMSE across 28 reconstructions of 2 objects.",
+          "Conducted shuffled-geometry ablations and grouped holdouts; identified inverse relationships between reprojection and surface error within 2 of 3 capture groups and corrected 7 of 16 mislabeled runs.",
+          "Built a desktop capture app that flags missing camera coverage right after alignment, and a browser viewer for camera networks, coverage and predicted-vs-measured error.",
+        ],
+      },
+    ],
+  },
+  {
     org: "Archaeological Research Facility, UC Berkeley",
     place: "Berkeley, CA",
     caseStudy: "egyptology-3d",
     roles: [
       {
-        title: "Undergraduate Research Assistant",
-        dates: "Sep 2026 – Present", // joined as a URAP apprentice in Jan 2026 (LinkedIn: "Jan 2026 – Present")
+        title: "Undergraduate Researcher, Lead Developer",
+        dates: "Jan 2026 – Present", // URAP apprentice Jan–Aug 2026, Research Assistant since Sep 2026
         points: [
           "Built the BD3D research viewer (Next.js, TypeScript, React Three Fiber), linking 314 scholarly annotations to 607 surface regions across 6 photogrammetric Egyptian coffin models, with two-way selection, raking-light inspection, and collection-wide search.",
           "Designed a compressed 3D asset pipeline (meshopt glTF, tiered textures, checksummed provenance) that cut exhibit downloads by 74% (82 MB to 21 MB across six coffins) and geometry parsing from 82–132 ms to 2–3 ms.",
+          "Engineered a surface-conforming annotation editor using mesh raycasting, edge resampling, and interpolated surface normals, enabling region authoring and along-surface measurement validated to 0.08% median error.",
+          "Built a hieroglyphic typesetting engine that parses Manuel de Codage encoding into glyph layouts, with two-way linking between scholarly text and its location on the 3D model.",
           "Built a structured annotation data pipeline with schema validation, replacing manual XML lookup; 127 automated tests run in CI.",
           "Lead the incoming URAP students and the design team.",
         ],
@@ -217,11 +236,13 @@ export const experience: Job[] = [
     roles: [
       {
         title: "Data Research Intern",
-        dates: "Sep 2026 – Present",
+        dates: "Sep 2026 – Nov 2026",
         points: [
+          "Built and benchmarked a hybrid retrieval pipeline (BM25, dense embeddings, CrossEncoder reranking) over 2,157 passages of California K–12 district documents; reranking reached 97% Recall@5 vs. 88% for BM25.",
           "Analyzed climate preparedness in 937 California school districts across 200+ demographic and policy indicators (Python, pandas, statsmodels, GeoPandas).",
           "Found political lean was the most consistent predictor of documented community climate action: within the same county, +10 points of Democratic vote went with 21% more documented activities (p < 0.001), and Democratic-leaning districts documented 22 of 23 common practices more often.",
           "Showed the urban–rural gap in documented climate protections disappeared after controlling for district size, and that lower-income communities documented about 5% fewer activities per +10 points of low-income students.",
+          "Evaluated 23 environmental practices with covariate-adjusted linear probability models and county-clustered standard errors; 7 associations survived Benjamini–Hochberg correction and 4 survived Holm correction.",
           "Identified 199 high-wildfire-risk and 176 high-pollution districts with no matching documented protections, and mapped geographic clusters with spatial autocorrelation (Moran's I).",
           "Co-authored the team's research poster on environmental and climate action across California school districts, mentored by Judy He and Sarah Whiting.",
         ],
@@ -238,33 +259,18 @@ export const experience: Job[] = [
         dates: "May 2026 – Aug 2026",
         points: [
           "Built a model that estimates California single-family sale prices from 309K cleaned CRMLS sales (Jan 2024 – Apr 2026), adding location, property-age, and school-district features via a spatial join across 680 districts.",
-          "Evaluated chronologically with leakage rules: the final XGBoost model reached 7.7% median error on 11,890 held-out April 2026 sales, versus 16.5% for a linear baseline.",
+          "Evaluated chronologically with leakage rules: the final XGBoost model reached 7.7% median error on 11,890 held-out April 2026 sales, versus 16.5% for a linear baseline, with 0.90 R² and 38% lower MAE.",
         ],
       },
     ],
   },
-  {
-    org: "Lucarelli Photogrammetry Lab, UC Berkeley",
-    place: "Berkeley, CA",
-    caseStudy: "bd3d",
-    roles: [
-      {
-        title: "Undergraduate Researcher",
-        dates: "Aug 2025 – present",
-        points: [
-          "Built a Metashape experiment pipeline (photo manifests, memory watchdog) and a camera-initialized evaluator that scores each build against a full capture; found 7 of 16 broken labels, fixed them, and retracted 3 earlier results.",
-          "Built PyTorch PointNet, self-attention and geometry-aware attention set models over camera poses: on synthetic coverage gaps, attention cut error from 27.7° (Ridge) to 14.0°; on 28 real builds, no model separated, and Ridge ranked builds within an unseen object best.",
-          "Shipped a desktop capture app that flags missing camera coverage right after alignment, and a 3D viewer showing each build's mesh, cameras and missing surface.",
-        ],
-      },
-    ],
-  },
+
   {
     org: "Berkeley ANova",
     caseStudy: "anova-marketing",
     roles: [
       {
-        title: "Marketing Officer",
+        title: "Marketing Officer & Python Instructor",
         dates: "Aug 2025 – May 2026",
         points: [
           "Taught weekly Python lessons and programming labs to 100+ students across 7 Bay Area schools.",
@@ -298,7 +304,7 @@ export const experienceAlso =
 export const projectCards: ProjectCard[] = [
   {
     org: "Archaeological Research Facility",
-    role: "Research Assistant",
+    role: "Lead Developer",
     title: "BD3D Coffin Viewer",
     status: "Research · 2026",
     stack: ["Next.js", "React Three Fiber", "TypeScript"],
@@ -318,7 +324,7 @@ export const projectCards: ProjectCard[] = [
   },
   {
     org: "Lucarelli Photogrammetry Lab",
-    role: "Undergraduate Researcher",
+    role: "ML Researcher",
     title: "Reconstruction Quality",
     status: "Research · 2025–26",
     cover: "mesh",
@@ -509,7 +515,7 @@ export const projects: Project[] = [
     headline: "Reading ancient coffins where the words were written",
     year: "2026–now",
     org: "Archaeological Research Facility, UC Berkeley",
-    role: "Undergraduate Research Assistant",
+    role: "Undergraduate Researcher, Lead Developer",
 
     label: "Research platform · Egyptology · 3D",
     timeline: "Jan 2026 – present\nURAP apprentice (Jan–Aug), Research Assistant (Sep–)",
@@ -605,10 +611,10 @@ export const projects: Project[] = [
     headline: "Predicting 3D reconstruction quality from camera geometry",
     year: "2025–26",
     org: "Lucarelli Photogrammetry Lab, UC Berkeley",
-    role: "Undergraduate Researcher",
+    role: "Undergraduate Machine Learning Researcher",
 
     label: "Research · 3D computer vision · Ongoing",
-    timeline: "Aug 2025 – present",
+    timeline: "Aug 2025 – Present",
     team: "Lucarelli Photogrammetry Lab (BD3D)",
     myRole: "Research question, experiments, evaluation, models",
     skills: ["PyTorch", "Geometric deep learning", "Photogrammetry (Metashape)", "ICP registration", "three.js"],
@@ -895,7 +901,7 @@ export const projects: Project[] = [
     role: "Data Research Intern",
 
     label: "Research · Education policy",
-    timeline: "Sep – Dec 2026",
+    timeline: "Sep – Nov 2026",
     team: "Ten Strands Indicator Expansion Team 1 (UC Berkeley Data Discovery)",
     myRole: "Research question, data cleaning, modeling, and figures",
     skills: ["Python", "pandas", "statsmodels", "GeoPandas", "matplotlib"],
@@ -1020,12 +1026,12 @@ export const projects: Project[] = [
   {
     slug: "k12-retrieval",
     headline: "Searching K‑12 sustainability evidence, with sources attached",
-    year: "2026–now",
+    year: "2026",
     org: "Ten Strands",
     role: "Data Research Intern",
 
     label: "Applied NLP · Education",
-    timeline: "Sep 2026 – Present",
+    timeline: "Sep – Nov 2026",
     team: "Ten Strands and the UC Berkeley Data Discovery program", // TODO: team size/roles
     myRole: "Retrieval system design and evaluation",
     skills: ["Python", "BM25", "Sentence Transformers", "CrossEncoder", "Recall@K / MRR"],
