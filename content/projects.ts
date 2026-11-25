@@ -826,7 +826,6 @@ export const projects: Project[] = [
         heading: "My role",
         body: [
           "I proposed this project, framed the research question, and designed the experiments: which photos each build removes, the label, the leakage-safe splits, the controls and what counts as evidence. I ran every Metashape build, audited the evaluator and retracted my own earlier results, and wrote the conclusions, including the negative ones.",
-          "I used an AI coding assistant (Claude) extensively for implementation: much of the pipeline, evaluator, model and figure code and the viewer was written with it under my direction and review. I am now working through the PyTorch models and training code myself, layer by layer, to own them fully.",
         ],
       },
       meta: "Every number on this page is traced to a tracked results file in the repository.",
