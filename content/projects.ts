@@ -89,9 +89,37 @@ export type Project = {
   screenshots?: Screenshot[];
   screenshotsLabel?: string; // heading over the screenshots, "Screenshots" by default
   /** "scrapbook": a short, plain page in the project's own sketchbook style (components/ScrapbookCase.tsx). */
-  theme?: "scrapbook";
+  theme?: "scrapbook" | "research";
+  /** The content of a research page (theme "research"). */
+  research?: Research;
   /** The live app; the scrapbook page's "try me" bubble links here. */
   liveUrl?: string;
+};
+
+/* ---------- Research page (project.theme = "research", components/ResearchCase.tsx) ---------- */
+export type ResearchFigure = { src: string; width: number; height: number; alt: string; caption: string };
+export type ResearchSection = {
+  heading: string;
+  /** Marks which kind of data a section is about, e.g. "Synthetic data" or "Real reconstructions". */
+  tag?: string;
+  body?: string[];
+  list?: string[];
+  figures?: ResearchFigure[];
+  pair?: boolean; // two figures side by side on wide screens
+  table?: { caption: string; head: string[]; rows: string[][]; highlight?: string[] };
+  after?: string[]; // paragraphs after the figures/table
+};
+export type Research = {
+  title: string;
+  authors: string;
+  affiliation: string;
+  links: { label: string; href: string }[];
+  teaser: ResearchFigure;
+  abstract: string;
+  findings?: { mark: "yes" | "no" | "mixed"; text: string; evidence?: string }[];
+  sections: ResearchSection[];
+  contribution: { heading: string; body: string[] };
+  meta: string;
 };
 
 /** One role on the Experience timeline (LinkedIn + resume). */
@@ -155,8 +183,6 @@ export const site = {
 /** The opening screen (components/Hero.tsx). */
 export const hero = {
   eyebrow: "Data Science & Economics · UC Berkeley",
-  intro: "I build 3D research tools and data products, and design the interfaces people use them through.",
-  now: "Now: Research Assistant at Berkeley's Archaeological Research Facility, and Data Research Intern at Ten Strands.",
   ctas: [
     { label: "View projects", href: "#projects" },
     { label: "View experience", href: "/experience" },
@@ -227,7 +253,7 @@ export const experience: Job[] = [
         dates: "Aug 2025 – present",
         points: [
           "Built a Metashape experiment pipeline (photo manifests, memory watchdog) and a camera-initialized evaluator that scores each build against a full capture; found 7 of 16 broken labels, fixed them, and retracted 3 earlier results.",
-          "Trained PyTorch PointNet and attention set models on camera layouts: 14.0° vs. 27.7° (Ridge) error on localized coverage gaps; on 28 real builds, attention held 0.0035 error with a whole object held out.",
+          "Built PyTorch PointNet, self-attention and geometry-aware attention set models over camera poses: on synthetic coverage gaps, attention cut error from 27.7° (Ridge) to 14.0°; on 28 real builds, no model separated, and Ridge ranked builds within an unseen object best.",
           "Shipped a desktop capture app that flags missing camera coverage right after alignment, and a 3D viewer showing each build's mesh, cameras and missing surface.",
         ],
       },
@@ -296,8 +322,8 @@ export const projectCards: ProjectCard[] = [
     title: "Reconstruction Quality",
     status: "Research · 2025–26",
     cover: "mesh",
-    stack: ["Python", "PyTorch", "Metashape"],
-    summary: "Checks a 3D scan's camera coverage before the slow reconstruction step, and shows what each build is missing.",
+    stack: ["PyTorch", "Geometric deep learning", "Metashape"],
+    summary: "Tests whether the camera layout alone can predict 3D reconstruction quality, before the slow dense step.",
     stat: "Flags missing coverage before a 57-minute reconstruction",
     video: {
       mp4: "/work/bd3d/viewer-card.mp4",
@@ -576,110 +602,235 @@ export const projects: Project[] = [
 
   {
     slug: "bd3d",
-    headline: "Predicting 3D scan quality from the camera layout, before the slow step",
+    headline: "Predicting 3D reconstruction quality from camera geometry",
     year: "2025–26",
     org: "Lucarelli Photogrammetry Lab, UC Berkeley",
     role: "Undergraduate Researcher",
 
-    label: "Research · Photogrammetry · Machine learning",
+    label: "Research · 3D computer vision · Ongoing",
     timeline: "Aug 2025 – present",
     team: "Lucarelli Photogrammetry Lab (BD3D)",
-    myRole: "Pipeline, evaluator, models, capture app and 3D viewer",
-    skills: ["Python", "PyTorch", "Agisoft Metashape", "ICP", "TensorBoard"],
-    cover: "mesh", // fallback only; the page shows the viewer recording
-    video: {
-      mp4: "/work/bd3d/viewer-1280.mp4",
-      poster: "/work/bd3d/viewer-1280.webp",
-      width: 1280,
-      height: 720,
-      label: "The reconstruction viewer on the PAHMA 5-613 coffin: builds ranked from best to worst by geometric error, each shown as its mesh and cameras with the surface it is missing in red; switching from a 60-photo build to a 30-photo build grows the red area.",
-    },
+    myRole: "Research question, experiments, evaluation, models",
+    skills: ["PyTorch", "Geometric deep learning", "Photogrammetry (Metashape)", "ICP registration", "three.js"],
+    cover: "mesh",
     goal:
-      "Dense reconstruction is the slow step of photogrammetry. Can you tell how good a reconstruction will be from the aligned camera layout alone, before running it?",
-    writeup: [
-      {
-        heading: "The problem",
-        body: ["Dense reconstruction is the slow step: 57 minutes for a 145-photo museum coffin on a laptop. The usual quick check doesn't help: the worst coffin mesh had the lowest reprojection error (0.67 px) and the best had the highest (1.16 px). So I tested whether the camera layout alone, known minutes in, can predict quality."],
-        figure: {
-          src: "/work/bd3d/walkthrough_cameras.webp",
-          width: 1079,
-          height: 492,
-          alt: "The 145 reference cameras around the coffin, top-down and as azimuth against elevation, with the 23 removed wall-level cameras for build side40_s1 shown in red.",
-          caption: "One real build: 122 of 145 photos, with 23 wall-level photos removed from one side (red).",
-        },
+      "Can the aligned camera layout, available minutes into a capture, predict how good the final 3D reconstruction will be?",
+    theme: "research",
+    research: {
+      title: "Predicting photogrammetric reconstruction quality from camera geometry",
+      authors: "Tristan Tan",
+      affiliation: "Lucarelli Photogrammetry Lab, UC Berkeley · ongoing undergraduate research, Aug 2025 – present",
+      links: [
+        { label: "Code", href: "https://github.com/tantancodes/reconstruction-quality" },
+        { label: "Interactive viewer", href: "/reconstruction-viewer/index.html" },
+        { label: "Full write-up", href: "https://github.com/tantancodes/reconstruction-quality#readme" },
+        { label: "Attention study", href: "https://github.com/tantancodes/reconstruction-quality/blob/main/experiments/geometry-aware/REPORT.md" },
+      ],
+      teaser: {
+        src: "/work/bd3d/research/teaser.webp",
+        width: 1550,
+        height: 600,
+        alt: "Three panels. (a) 145 camera frustums around a museum coffin, 23 low wall-level cameras in red. (b) Cameras plotted as azimuth against elevation over a 12 by 3 grid of cells, with four low cells outlined red where the build has fewer than two cameras. (c) Reprojection error against surface error for dog and coffin builds: within each object, lower reprojection error goes with higher surface error.",
+        caption:
+          "(a) The 145 aligned cameras of a museum coffin capture; one build drops 23 wall-level photos (red). (b) The same cameras in azimuth and elevation about the camera ring: red cells have fewer than 2 cameras where the full capture has 2 or more. (c) Reprojection RMSE, the usual check after alignment, runs opposite to measured surface error within each object (Spearman ρ −0.68 on 7 dog builds, −0.90 on 5 coffin builds).",
       },
-      {
-        heading: "How a build is scored",
-        body: ["Every build is traced to its exact photos and settings, and runs in Metashape under a memory watchdog. Its mesh is aligned to the full capture by fitting cameras first, then ICP, and scored by surface distance. This build scores 0.0080, and 98% of that error is missing surface on the side with no cameras."],
-        figures: [
-          {
-            src: "/work/bd3d/walkthrough_registration.webp",
-            width: 1390,
-            height: 674,
-            alt: "Surface samples of the build and the reference in three panels: in the build's own frame, after fitting the build's cameras to the reference cameras, and after ICP.",
-            caption: "Registration: the build's own frame, after the camera fit, after ICP.",
+      abstract:
+        "Dense multi-view reconstruction is the slow stage of photogrammetry: 57 minutes for a 145-photo museum coffin on a laptop. I study whether the aligned camera poses, known minutes into a capture, predict the geometric quality of the final mesh. I built a reproducible Metashape pipeline and a camera-initialised ICP evaluator that scores each build against a full capture, and compared tabular baselines with permutation-invariant set models over cameras: PointNet, self-attention, and self-attention with a learned bias from pairwise camera geometry. On synthetic camera sets, models that compare cameras before pooling find a localized coverage gap that PointNet and summary statistics miss, and the geometric bias makes attention learn faster, more stably, and transfer best to larger sets. On 28 real reconstructions of two objects, no set model separates from another, and a simple Ridge model ranks builds within an unseen object better than any network. The limiting factor is labelled real data, not the architecture.",
+      findings: [
+        { mark: "yes", text: "Reprojection error does not indicate geometric quality; within each object it is inversely ranked.", evidence: "(28 real builds)" },
+        { mark: "yes", text: "On synthetic sets, models that compare cameras find a gap hidden in one ring; PointNet and summary statistics do not.", evidence: "(attention 14.0° vs. Ridge 27.7°, PointNet 28.8°; 5 seeds)" },
+        { mark: "yes", text: "A pairwise-geometry bias makes attention learn faster and more stably, and transfer best to larger camera sets; a shuffled-geometry control does not reproduce this.", evidence: "(synthetic; 3 seeds)" },
+        { mark: "no", text: "The bias is not shown to be more accurate at convergence: a differently initialised standard attention ends lower.", evidence: "(1 seed, initialisation confound)" },
+        { mark: "no", text: "On real builds, no set model is distinguishable from another, and the geometry-aware model is no better than its shuffled control.", evidence: "(28 builds, 2 objects)" },
+        { mark: "mixed", text: "The networks' lower cross-object error comes from predicting the right error level; Ridge ranks builds within an unseen object better.", evidence: "(2-fold, ρ +0.59 vs. ≤ +0.46)" },
+      ],
+      sections: [
+        {
+          heading: "Problem",
+          body: [
+            "Structure-from-motion gives camera poses in minutes; multi-view stereo then spends most of the compute building the dense surface. If a side of the object was never photographed, the surface there will be missing, but the standard alignment diagnostic does not see it: reprojection RMSE measures how consistent the kept observations are, not whether the object was seen from every side. In the coffin builds, the worst mesh had the lowest reprojection RMSE (0.67 px) and the best mesh had the highest (1.16 px).",
+            "The question is therefore a set-regression problem on camera poses: the order of cameras is meaningless, the global frame is arbitrary (no markers), and the quantity that matters is relational: a coverage gap is a large angle between neighbouring cameras.",
+          ],
+        },
+        {
+          heading: "Data and labels",
+          tag: "Real reconstructions",
+          body: [
+            "28 labelled Metashape builds of two objects, each a controlled subset of a full capture: 23 of a dog sculpture (16 from an older CPU pipeline, 7 GPU) and 5 of a museum coffin, plus one coffin build that failed to align. Every build is defined by a manifest of photo hashes and settings and runs under a memory watchdog. The label is the symmetric surface RMSE between the build's mesh and the full-capture mesh, as a fraction of the bounding-box diagonal.",
+            "Builds without markers come out in arbitrary frames. My first evaluator started ICP with no rotation, and 7 of 16 dog builds, rotated 136–167° from the reference, received labels set by misregistration. The fix registers by fitting each build's cameras to the reference cameras first, then ICP. I retracted three earlier results that had used the broken labels.",
+          ],
+          figures: [
+            {
+              src: "/work/bd3d/research/evaluation_audit.webp",
+              width: 1560,
+              height: 570,
+              alt: "Left: old labels against frame rotation for 16 builds; builds rotated 135–167 degrees sit on a high plateau near 0.043, new labels for the same builds are low. Right: old against new labels, with the seven failed builds far from the equality line.",
+              caption:
+                "Evaluation audit. The old label tracked how far each build's frame was rotated, not its geometry (left); camera-initialised registration fixes all 16 (right).",
+            },
+          ],
+        },
+        {
+          heading: "Method",
+          body: [
+            "Each aligned camera is a token of 6 numbers: its centre and optical axis, centred and scale-normalised per build. Rotation is left in, since there is no canonical frame without a reference; the networks see a fresh random SO(3) rotation of each set at every training step. All three models share a per-camera MLP, a max-pool over cameras (so the order of cameras cannot matter) and an output MLP. They differ in whether cameras see each other before pooling.",
+          ],
+          list: [
+            "PointNet encodes each camera on its own: the pooled vector can say “some camera is high”, but not “there is a gap between neighbours”.",
+            "Self-attention adds one 4-head attention block, so each camera is updated from the others before pooling.",
+            "Geometry-aware attention adds a learned bias g(rᵢⱼ) to the attention logits, from the distance, angular separation and view agreement of each camera pair. The relations are rotation-invariant, and g adds about 100 parameters, so it is not a capacity increase: the same idea as relative position bias in Swin or spatial encoding in Graphormer.",
+            "Controls: the same model with relations shuffled within each set (same parameters and compute, geometry destroyed), a fully rotation-invariant variant, and XGBoost given the same pairwise angles. Baselines: training mean, a fit on reprojection RMSE, Ridge, MLP and XGBoost on summary statistics.",
+          ],
+          figures: [
+            {
+              src: "/work/bd3d/research/architecture.webp",
+              width: 1313,
+              height: 542,
+              alt: "Three model diagrams. PointNet: camera set to per-camera MLP to max-pool to output MLP. Self-attention: adds multi-head self-attention with residual and feed-forward before the pool. Geometry-aware attention: the same, with a learned bias g of pairwise relations added inside the softmax.",
+              caption: "The three set models. Only the attention logits differ between self-attention and geometry-aware attention.",
+            },
+            {
+              src: "/work/bd3d/research/pairwise_relations.webp",
+              width: 1312,
+              height: 381,
+              alt: "Three 122 by 122 matrices for a real coffin build, cameras ordered by azimuth: pairwise distance, angular cosine and view agreement, each with a bright diagonal band.",
+              caption: "The pairwise relations of one real coffin build (122 cameras, ordered by azimuth): distance, angular cosine and view agreement.",
+            },
+          ],
+        },
+        {
+          heading: "Synthetic experiments",
+          tag: "Synthetic data",
+          body: [
+            "To test the architectures where the answer is known, I generate camera sets in rings and predict their largest azimuthal coverage gap in degrees. This target is a geometric proxy for coverage, not reconstruction error. In the localized condition one ring is complete and the gap is in another, so a model has to work out which cameras are missing. In the count-shift condition, models train on 20–35 cameras and are tested on 45–60.",
+          ],
+          figures: [
+            {
+              src: "/work/bd3d/research/results_synthetic.webp",
+              width: 1598,
+              height: 564,
+              alt: "Three dot plots of test MAE in degrees by model. (a) Original benchmark: attention lowest on both global and localized gaps. (b) Localized gap: geo and geo_inv lowest at about 17 degrees, attention 21.7 with a wide spread. (c) Count shift: geo lowest at 8.5.",
+              caption:
+                "Test MAE (mean ± s.d.). (a) The original benchmark, 400 epochs, 5 seeds; open markers: gap in one band, filled: localized gap. (b, c) The geometry-aware study, 150 epochs, 3 seeds.",
+            },
+            {
+              src: "/work/bd3d/research/curves.webp",
+              width: 1446,
+              height: 529,
+              alt: "Validation curves. (a) On the localized task, geo and geo_inv drop to about 18 degrees by epoch 50, attention takes about 200 epochs. (b) On count shift, geo ends lowest. (c) Over 400 epochs, geo and attention end near 16 degrees, above a dashed line at 13.09 for the original attention model.",
+              caption:
+                "Validation MAE over training. The geometric bias learns much faster (a, b), but at 400 epochs (c, one seed) a standard attention with Xavier initialisation reaches 13.1° against geo's 15.8°.",
+            },
+          ],
+          table: {
+            caption: "Synthetic localized gap, 150 epochs, test MAE in degrees (mean ± s.d., 3 seeds).",
+            head: ["model", "MAE (°)", "note"],
+            rows: [
+              ["Ridge on summaries", "27.7 ± 0.8", "tuned on validation"],
+              ["XGBoost + pairwise angles", "21.9 ± 0.6", "same relations, no attention"],
+              ["PointNet", "30.5 ± 0.3", "no camera sees another"],
+              ["Self-attention", "21.7 ± 3.4", ""],
+              ["Geometry shuffled (control)", "23.1 ± 2.3", "same parameters as geo"],
+              ["Geometry-aware attention", "17.5 ± 0.5", ""],
+            ],
+            highlight: ["Geometry-aware attention"],
           },
-          {
-            src: "/work/bd3d/walkthrough_distances.webp",
-            width: 1478,
-            height: 390,
-            alt: "Histograms of missing and extra surface distances, and the missing distance mapped onto the reference coffin, largest on the side where cameras were removed.",
-            caption: "Missing surface is largest exactly where the cameras were removed.",
+          after: [
+            "The shuffled control has the same parameters and compute as the geometry-aware model but is no better than plain attention, so the gain comes from the geometry. The honest claim is sample efficiency and stability (± 0.5° vs. ± 3.4° across seeds), not final accuracy: the convergence comparison is confounded by initialisation, and the clean rerun has not been done. Under the camera-count shift, the geometry-aware model generalises best (8.5° vs. 10.6° for attention).",
+          ],
+        },
+        {
+          heading: "What the attention learns",
+          tag: "Synthetic data",
+          body: [
+            "With the bias, attention concentrates on cameras within about 50° of the query and almost ignores the rest: a neighbourhood structure that standard attention has to learn from raw, randomly rotated coordinates.",
+          ],
+          figures: [
+            {
+              src: "/work/bd3d/research/attention_vs_angle.webp",
+              width: 707,
+              height: 284,
+              alt: "Line plot of attention weight times N against angular separation between query and key. Geo stays near 3 up to 45 degrees then drops to near zero by 75; standard attention decays smoothly to about 0.5.",
+              caption: "Mean attention weight (× N; 1 = uniform) against the angle between query and key camera, over 300 test sets.",
+            },
+            {
+              src: "/work/bd3d/research/attention_maps.webp",
+              width: 1717,
+              height: 707,
+              alt: "Two rows of five attention matrices for one test set: mean of heads and four heads, for standard attention (top) and geometry-aware attention (bottom). Geo's maps are sharper diagonal bands within each ring.",
+              caption: "Attention matrices for one test set (rows: queries, columns: keys, ordered by ring then azimuth). Top: standard attention. Bottom: geometry-aware.",
+            },
+          ],
+        },
+        {
+          heading: "Real reconstructions",
+          tag: "Real reconstructions",
+          body: [
+            "Builds of one capture share photos, so leaving out a single build leaks near-duplicates into training. The splits instead hold out a whole capture group (3 folds) or a whole object (2 folds). Besides error, I report how well each model ranks builds inside each held-out fold, which is what matters for choosing between captures.",
+          ],
+          figures: [
+            {
+              src: "/work/bd3d/research/results_real.webp",
+              width: 1655,
+              height: 601,
+              alt: "Three panels. (a, b) MAE by model for capture group held out and object held out: networks near 0.4 to 0.5 percent, Ridge 1.39 and 2.37, reprojection fit 3.95 with the object held out. (c) Heatmap of Spearman rho inside each held-out fold: Ridge row is consistently blue around 0.5 to 0.7, the network rows weak, attention and geo negative on the CPU dog group.",
+              caption:
+                "Real builds. (a, b) MAE in % of the reference diagonal (5 seeds). (c) Rank correlation between prediction and label inside each held-out fold; the coffin column has only 5 builds.",
+            },
+          ],
+          table: {
+            caption: "Object held out (2 folds): error level vs. ranking within the unseen object.",
+            head: ["model", "MAE (% diag.)", "ρ dog (n = 23)", "ρ coffin (n = 5)"],
+            rows: [
+              ["Reprojection RMSE fit", "3.95", "−0.40", "−0.90"],
+              ["Ridge on summaries", "2.37", "+0.59", "+0.70"],
+              ["PointNet", "0.41 ± 0.06", "+0.40", "+0.30"],
+              ["Self-attention", "0.41 ± 0.05", "+0.36", "+0.30"],
+              ["Geometry shuffled (control)", "0.36 ± 0.07", "+0.46", "+0.30"],
+              ["Geometry-aware attention", "0.36 ± 0.07", "+0.34", "+0.30"],
+            ],
           },
+          after: [
+            "The set models overlap within one standard deviation, and the geometry-aware model is no better than its shuffled control, so these data cannot show an effect of geometry. Ridge predicts the wrong overall level on a new object, because its inputs shift between the dog and the coffin, but it ranks builds within the object best. An earlier claim of “~6× lower error on an unseen object” compared attention with Ridge on these two folds; it measures level, not ranking, and I no longer make it.",
+          ],
+        },
+        {
+          heading: "Interactive viewer",
+          body: [
+            "A browser tool for inspecting the camera data behind these results: 3D camera networks with frustums, the same azimuth × elevation coverage analysis as the pipeline (tested against it on every build), comparison against a reference by a similarity fit, a sortable camera table, and predicted-vs-measured plots from the saved out-of-fold predictions. The public copy holds camera poses and labels only; meshes and photos can be opened from a local folder and never leave the browser.",
+          ],
+          figures: [
+            {
+              src: "/work/bd3d/research/viewer.webp",
+              width: 1600,
+              height: 1000,
+              alt: "The viewer: a dataset list on the left, a 3D view of the coffin's camera network in the centre with removed cameras dashed red, build details on the right, and a coverage panel below with an azimuth-elevation plot.",
+              caption: "The viewer on coffin build side40_s1 against its reference: removed cameras dashed in red, coverage analysis below.",
+            },
+          ],
+        },
+        {
+          heading: "Limitations and next steps",
+          list: [
+            "Two objects and 28 builds; builds within a capture are correlated, and holding out an object is only two folds.",
+            "Labels are relative to a full-capture build of the same object, not a ground-truth scan, and use reduced depth-map resolution to fit a 16 GB laptop.",
+            "The models see camera centres and axes only (no image content), and predict one number per build rather than where the geometry fails.",
+            "The synthetic target is an angular gap, not surface error; the synthetic study uses 3 seeds and the convergence check one.",
+          ],
+          after: [
+            "Next: more objects first, so that leaving an object out means something; then a matched-initialisation rerun, per-region prediction of missing surface, and the same relational bias over learned image features (DINOv2) or feed-forward reconstruction (DUSt3R, VGGT).",
+          ],
+        },
+      ],
+      contribution: {
+        heading: "My role",
+        body: [
+          "I proposed this project, framed the research question, and designed the experiments: which photos each build removes, the label, the leakage-safe splits, the controls and what counts as evidence. I ran every Metashape build, audited the evaluator and retracted my own earlier results, and wrote the conclusions, including the negative ones.",
+          "I used an AI coding assistant (Claude) extensively for implementation: much of the pipeline, evaluator, model and figure code and the viewer was written with it under my direction and review. I am now working through the PyTorch models and training code myself, layer by layer, to own them fully.",
         ],
       },
-      {
-        heading: "Finding and fixing a broken evaluator",
-        body: ["7 of 16 labels from my first evaluator were registration failures: those meshes came out rotated 136–167° and ICP couldn't recover them. Fitting cameras first fixed all 16 (bad labels fell from 0.043 to 0.0033–0.0055), and I retracted 3 earlier results that relied on them."],
-        figure: {
-          src: "/work/bd3d/evaluation_audit.webp",
-          width: 1560,
-          height: 570,
-          alt: "Left: v1 label against frame rotation for 16 runs; runs rotated about 135–167 degrees cluster at a high plateau near 0.04, while v3 labels for the same runs are low. Right: v1 against v3 labels, with the seven formerly failed runs far from the equality line.",
-          caption: "The old error tracked how far each build's frame was rotated, not how good its geometry was.",
-        },
-      },
-      {
-        heading: "Results",
-        body: ["On synthetic camera sets, attention was the only model that could find a gap hidden in one ring: 14.0° error vs. 27.7° for Ridge. On 28 real builds of 2 objects, it held 0.0035 error with a whole object held out, where Ridge (0.0237) and reprojection error (0.0395) fell apart."],
-        figures: [
-          {
-            src: "/work/bd3d/synthetic_mae.webp",
-            width: 1040,
-            height: 570,
-            alt: "Bar chart of test MAE in degrees for mean, Ridge, PointNet and attention on global and localized coverage gaps over five seeds; attention is lowest in both, 7.1 and 14.0 degrees.",
-            caption: "Synthetic benchmark, mean ± std over 5 seeds.",
-          },
-          {
-            src: "/work/bd3d/reprojection_vs_label.webp",
-            width: 950,
-            height: 612,
-            alt: "Scatter of reprojection RMSE against the corrected geometric label for 28 runs from two objects; within each object, lower reprojection error goes with worse geometry.",
-            caption: "Within each object, lower reprojection error went with worse geometry.",
-          },
-        ],
-        stats: [
-          { value: "14.0°", label: "attention on localized gaps (Ridge: 27.7°)" },
-          { value: "0.0035", label: "attention error, object held out (mean: 0.0108)" },
-          { value: "ρ −0.90", label: "reprojection error vs. real error, coffin" },
-        ],
-      },
-      {
-        heading: "The capture app and 3D viewer",
-        body: ["A desktop app takes a photo folder through alignment and flags missing camera directions before the slow step. A browser viewer shows every build's mesh, cameras and the surface it's missing, ranked best to worst."],
-        video: {
-          mp4: "/work/bd3d/app-1280.mp4",
-          poster: "/work/bd3d/app-1280.webp",
-          width: 1280,
-          height: 720,
-          label: "Screen recording of the capture app: the start screen, the build list, choosing photos of one object, alignment, the coverage check with missing directions in red, and the score against the reference build.",
-        },
-      },
-      {
-        heading: "Status and next steps",
-        body: ["A pilot: 28 labeled builds of 2 objects, so holding an object out is only two folds. Next: more objects, predicting alignment failure, and showing where on the object the geometry goes wrong."],
-      },
-    ],
+      meta: "Every number on this page is traced to a tracked results file in the repository.",
+    },
     links: [{ label: "Code and full results on GitHub", href: "https://github.com/tantancodes/reconstruction-quality" }],
   },
 

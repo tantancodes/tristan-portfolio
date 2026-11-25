@@ -776,3 +776,61 @@ a.sb-margin:hover { color: var(--ink); }
 /* One plain line on what I do, and where I am now (content/projects.ts → hero). */
 .hero-intro { font-size: clamp(18px, 1.6vw, 21px); line-height: 1.45; letter-spacing: -0.01em; max-width: 34em; margin: 4px 0 6px; }
 .hero-now { font-size: 15px; color: var(--ink-soft); max-width: 44em; margin: 0 0 22px; }
+
+/* ============================================================
+   12. Research page (components/ResearchCase.tsx)
+   An academic project page inside the site's own type and colours:
+   numbered sections, numbered figures with captions, rule-only tables.
+   ============================================================ */
+.rs { padding-top: 64px; max-width: 920px; }
+.rs-title { font-size: clamp(30px, 4.4vw, 46px); letter-spacing: -0.02em; line-height: 1.12; max-width: 24ch; margin-top: 12px; }
+.rs-authors { margin-top: 22px; font-size: 18px; }
+.rs-affil { margin-top: 2px; font-size: 15px; color: var(--ink-soft); }
+.rs-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.rs-links .button { padding: 7px 16px; font-size: 14px; }
+
+.rs-figure { margin: 40px 0 0; }
+.rs-figure-img { display: block; background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: clamp(6px, 1.4vw, 14px); cursor: zoom-in; }
+.rs-figure img { display: block; width: 100%; height: auto; }
+.rs-figure figcaption, .rs-table caption { margin-top: 10px; font-size: 14px; line-height: 1.5; color: var(--ink-soft); max-width: 78ch; text-align: left; }
+.rs-num { color: var(--ink); font-weight: 500; }
+.rs-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; align-items: start; }
+
+.rs-section { margin-top: 72px; }
+.rs-abstract p { font-size: 18px; line-height: 1.62; max-width: 68ch; margin-top: 12px; }
+.rs-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font-size: clamp(22px, 2.6vw, 28px); padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.rs-secnum { font-family: var(--font-code); font-size: 14px; color: var(--ink-soft); font-variant-numeric: tabular-nums; min-width: 1.4em; }
+.rs-tag { font-family: var(--font-code); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-left: auto; }
+.rs-p { margin-top: 16px; max-width: 70ch; }
+.rs-list { margin-top: 16px; display: grid; gap: 10px; max-width: 70ch; }
+.rs-list li { position: relative; padding-left: 22px; }
+.rs-list li::before { content: ""; position: absolute; left: 2px; top: 0.8em; width: 8px; height: 1px; background: var(--ink-soft); }
+
+.rs-findings { margin-top: 14px; border-top: 1px solid var(--line); }
+.rs-finding { display: grid; grid-template-columns: 28px 1fr; gap: 0 10px; padding: 12px 0; border-bottom: 1px solid var(--line); max-width: 80ch; }
+.rs-mark { font-family: var(--font-code); font-size: 15px; text-align: center; }
+.rs-finding--no .rs-mark { color: #b3261e; }
+.rs-finding--mixed .rs-mark { color: var(--ink-soft); }
+.rs-evidence { color: var(--ink-soft); font-size: 15px; }
+
+.rs-table-wrap { margin-top: 32px; overflow-x: auto; }
+.rs-table { border-collapse: collapse; font-size: 15px; min-width: 100%; caption-side: bottom; }
+.rs-table th, .rs-table td { padding: 7px 18px 7px 0; text-align: left; white-space: nowrap; }
+.rs-table thead th { font-weight: 500; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--ink); font-size: 14px; }
+.rs-table tbody tr:last-child th, .rs-table tbody tr:last-child td { border-bottom: 1.5px solid var(--ink); }
+.rs-table tbody th { font-weight: 400; }
+.rs-table td { font-variant-numeric: tabular-nums; }
+.rs-table td:nth-child(n+2) { color: var(--ink); }
+.rs-table tr.is-hl th, .rs-table tr.is-hl td { font-weight: 600; }
+
+.rs-role { padding-top: 28px; border-top: 1px solid var(--line); }
+.rs-role .rs-p:first-of-type { margin-top: 12px; }
+.rs-meta { margin-top: 20px; font-size: 14px; color: var(--ink-soft); }
+
+@media (max-width: 720px) {
+  .rs { padding-top: 40px; }
+  .rs-pair { grid-template-columns: minmax(0, 1fr); }
+  .rs-section { margin-top: 56px; }
+  .rs-abstract p { font-size: 17px; }
+  .rs-tag { margin-left: 0; width: 100%; }
+}

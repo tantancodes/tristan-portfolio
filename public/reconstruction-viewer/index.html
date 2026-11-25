@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BD3D viewer: camera coverage and reconstruction quality</title>
+<link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+<header class="bar">
+  <span class="app">BD3D viewer</span>
+  <button id="open-folder" title="Open a build folder (cameras.csv, raw-mesh.obj), an export folder (scene.json) or a folder of builds. Read locally; nothing is uploaded.">Open folder…</button>
+  <button id="open-file" title="Open one cameras.csv">Open cameras.csv…</button>
+  <input id="pick-folder" type="file" webkitdirectory multiple hidden>
+  <input id="pick-file" type="file" accept=".csv" hidden>
+  <span class="sep"></span>
+  <label for="ref">Reference</label>
+  <select id="ref" title="Compare this build's cameras with a reference build of the same capture (shared photo labels)"></select>
+  <span class="grow"></span>
+  <label for="shot-scale">Image</label>
+  <select id="shot-scale"><option value="1">1×</option><option value="2" selected>2×</option><option value="4">4×</option></select>
+  <button id="shot" title="Save the viewport as PNG">Save view</button>
+  <a href="https://github.com/tantancodes/reconstruction-quality/blob/main/viewer/README.md" target="_blank" rel="noopener" style="color:inherit">Help</a>
+</header>
+
+<div class="main" id="main">
+  <nav class="side" aria-label="Datasets">
+    <h3>Datasets</h3>
+    <ul class="tree" id="tree"></ul>
+    <h3>Display</h3>
+    <div class="sec" id="display">
+      <div class="chk"><input type="checkbox" id="L-frusta" checked><label for="L-frusta">Camera frustums</label></div>
+      <div class="chk"><input type="checkbox" id="L-rays"><label for="L-rays">Optical axes to centre</label></div>
+      <div class="chk"><input type="checkbox" id="L-shell"><label for="L-shell">Coverage cells (az × el)</label></div>
+      <div class="chk"><input type="checkbox" id="L-refcams" checked><label for="L-refcams">Reference-only cameras</label></div>
+      <div class="chk"><input type="checkbox" id="L-mesh" checked><label for="L-mesh">Mesh</label></div>
+      <div class="chk"><input type="checkbox" id="L-missing" checked><label for="L-missing">Missing reference surface</label></div>
+      <div class="chk"><input type="checkbox" id="L-error"><label for="L-error">Surface error colouring</label></div>
+      <div class="chk"><input type="checkbox" id="L-axes" checked><label for="L-axes">Frame axes</label></div>
+      <div class="row"><label for="color-by">Colour cameras</label>
+        <select id="color-by">
+          <option value="state">by state</option><option value="nnAngle">nearest-neighbour angle</option>
+          <option value="offAxis">off-axis angle</option><option value="elevation">elevation</option>
+          <option value="reprojection_px">reprojection RMSE</option><option value="projections">projections</option>
+          <option value="image_quality">image quality</option>
+        </select></div>
+      <div class="row"><label for="fsize">Frustum size</label><input type="range" id="fsize" min="0.005" max="0.08" step="0.001" value="0.022"><span class="num" id="fsize-v"></span></div>
+      <div class="row" id="thresh-row"><label for="thresh">Gap depth ≥</label><input type="range" id="thresh" min="0.2" max="4" step="0.1" value="1"><span class="num" id="thresh-v"></span></div>
+    </div>
+  </nav>
+
+  <section class="vp" id="vp" aria-label="3D viewport">
+    <div id="gl"></div>
+    <div class="vtools">
+      <div class="g"><button data-view="iso" title="Fit, oblique">Fit</button><button data-view="top" title="Look down the up axis">Top</button><button data-view="front">Az 0°</button><button data-view="side">Az 90°</button></div>
+      <button id="ortho" aria-pressed="false" title="Orthographic projection">Ortho</button>
+      <button id="look" disabled title="Place the view at the selected camera, looking along its optical axis (field of view not stored in cameras.csv: 50° shown)">Through camera</button>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="vinfo" id="vinfo"></div>
+    <div class="empty" id="empty">Loading…</div>
+  </section>
+
+  <aside class="insp" id="insp" aria-label="Inspector"></aside>
+
+  <section class="dock" aria-label="Analysis">
+    <div class="grip" id="grip" title="Drag to resize"></div>
+    <div class="tabs" role="tablist" id="tabs">
+      <button role="tab" data-tab="cameras" aria-selected="true">Cameras</button>
+      <button role="tab" data-tab="coverage" aria-selected="false">Coverage</button>
+      <button role="tab" data-tab="evaluation" aria-selected="false">Predicted vs measured</button>
+      <span class="grow"></span>
+      <span class="tools" id="tab-tools"></span>
+    </div>
+    <div class="pane" id="pane"></div>
+  </section>
+</div>
+<footer class="status" id="status"></footer>
+<div id="tip"></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
